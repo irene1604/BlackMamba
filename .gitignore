@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#modules c produced by Cython
+
+CythonModules/*.c
+CythonModules/LEXER/*.c 
+CythonModules/LEXER/seg/*.c 
+CythonModules/DEEP_PARSER/*.c
+
 # HTML
 *.html
 

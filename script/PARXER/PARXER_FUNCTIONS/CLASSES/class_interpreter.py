@@ -1,17 +1,15 @@
-from script.PARXER.PARXER_FUNCTIONS.CLASSES     import end_class
-from script.PARXER.PARXER_FUNCTIONS.FUNCTIONS   import functions, def_interpreter
-from script.PARXER.PARXER_FUNCTIONS.CLASSES     import classes
+from script.PARXER.PARXER_FUNCTIONS.FUNCTIONS   import def_interpreter
+from src.classes                                import errorClass           as classes
 from script.STDIN.WinSTDIN                      import stdin
 from script.LEXER.FUNCTION                      import main
-from script.STDIN.LinuxSTDIN                    import bm_configure as bm
+from statement                                  import externalRest
 from script                                     import control_string
-from script.PARXER.PARXER_FUNCTIONS._IF_        import if_inter
-try:
-    from CythonModules.Windows                  import fileError as fe
-except ImportError:
-    from CythonModules.Linux                    import fileError as fe
+from src.classes                                import db
+from classes                                    import internalClass        as IC
+from script.PARXER.PARXER_FUNCTIONS._IF_        import IfError              as Ie
 
-class EXTERNAL_DEF_STATEMENT:
+
+class EXTERNAL_CLASS_STATEMENT:
     def __init__(self,
                 master      : any, 
                 data_base   : dict, 
@@ -54,6 +52,7 @@ class EXTERNAL_DEF_STATEMENT:
         }
         self.loop_list          = loop_list
         self.next_line          = 0
+        self.comments           = []
         ##########################################################
         
         for j, _string_ in enumerate( self.loop_list):
@@ -66,23 +65,22 @@ class EXTERNAL_DEF_STATEMENT:
                     k = stdin.STDIN(self.data_base, self.line ).ENCODING(_string_)                   
                     self.string, self.normal_string, self.active_tab, self.error =  stdin.STDIN(self.data_base,
                                                                         self.line ).STDIN_FOR_INTERPRETER( k, _string_ ) 
-                    
                     if self.error is None:
                         if self.active_tab is True:
-                            self.get_block, self.value, self.error = end_class.INTERNAL_BLOCKS( self.string,
-                                        self.normal_string, self.data_base, self.line ).BLOCKS( k + 1, loop = True)
+                            self.get_block, self.value, self.error = IC.INTERNAL_BLOCKS(normal_string=self.normal_string, data_base=self.data_base,
+                                                            line=self.line).BLOCKS(tabulation=k+1, loop=True)
                             
                             if self.error is None:
-                                if self.get_block   == 'def:'   :
+                                if self.get_block   == 'def:'           :
                                     self.next_line  = j+1
-                                    self.NewLIST    = stdin.STDIN(self.data_base, self.line ).GROUPBY(k, self.loop_list[self.next_line : ],
+                                    self.NewLIST    = stdin.STDIN(self.data_base, self.line ).GROUPBY(k, self.loop_list[self.next_line: ],
                                                                                                     index = 'int', _class_ = True)
                                     
-                                    self.db = classes.DB.def_data_base
+                                    self.db = db.DB.def_data_base
                                     self.lexer, _, self.error = main.MAIN(self.value, self.db, self.line).MAIN( _type_ = 'class' )
                                     
                                     if self.error is None:
-                                        self.key_init, self.error = EXTERNAL_DEF_STATEMENT(self.master, self.data_base,
+                                        self.key_init, self.error = EXTERNAL_CLASS_STATEMENT(self.master, self.data_base,
                                                 self.line, self.extra_class_data).UPDATE_FUNCTION_BEFORE( self.lexer )
                                         if self.error is None:
                                             
@@ -90,11 +88,11 @@ class EXTERNAL_DEF_STATEMENT:
                                                 self.next_line  += len(self.NewLIST)
                                                 self.error = def_interpreter.EXTERNAL_DEF_STATEMENT( self.master, self.db, 
                                                                     self.line ).DEF( k, self.data_base[ 'current_class' ], self.key_init, _type_,
-                                                                                self.NewLIST, loop = True )
+                                                                                self.NewLIST[:-1], loop = True )# herre
                                                 
                                                 if self.error is None:
                                                     
-                                                    self.error = EXTERNAL_DEF_STATEMENT(self.master, self.data_base,
+                                                    self.error = EXTERNAL_CLASS_STATEMENT(self.master, self.data_base,
                                                         self.line, self.extra_class_data).UPDATE_FUNCTION_AFTER(
                                                         ( self.normal_string, True ), self.db )
                                                     
@@ -109,24 +107,24 @@ class EXTERNAL_DEF_STATEMENT:
                                                     else: break
                                                 else: break
                                             else: 
-                                                self.error = if_inter.ERRORS( self.line ).ERROR4()
+                                                self.error = Ie.ERRORS( self.line ).ERROR4()
                                                 break  
                                         else: break
                                     else: break
-                                elif self.get_block == 'class:' :
+                                elif self.get_block == 'class:'         :
                                     self.next_line              = j+1
                                     self.NewLIST    = stdin.STDIN(self.data_base, self.line ).GROUPBY(self.tabulation, self.loop_list[self.next_line : ],
                                                                                                     index = 'int', _class_ = True)
                 
-                                    self.db =  classes.DB.class_data_base
+                                    self.db =  db.DB.class_data_base
                                     self.lexer, _, self.error = main.MAIN(self.value, self.db, self.line).MAIN( _type_ = 'class' )
                                     if self.error is None:
                                         if self.NewLIST:
                                             self.next_line  += len(self.NewLIST)
-                                            self.error = INTERNAL_DEF_STATTEMENT( None, self.db, self.line, 
+                                            self.error = INTERNAL_CLASS_STATTEMENT( None, self.db, self.line, 
                                                                             self.lexer['class'] ).CLASSES( k, self.NewLIST, _type_ )
                                             if self.error is None:
-                                                self.error = EXTERNAL_DEF_STATEMENT(self.master, self.db,
+                                                self.error = EXTERNAL_CLASS_STATEMENT(self.master, self.db,
                                                     self.line, self.extra_class_data).UPDATE_FUNCTION_AFTER(
                                                     ( self.normal_string, True ), self.db , True, self._subClass_ )
                                                 
@@ -145,21 +143,23 @@ class EXTERNAL_DEF_STATEMENT:
                                                     break
                                             else: break
                                         else:
-                                            self.error = if_inter.ERRORS( self.line ).ERROR4()
+                                            self.error = Ie.ERRORS( self.line ).ERROR4()
                                             break 
                                     else: break
-                                elif self.get_block == 'empty'  :
+                                elif self.get_block == 'empty'          :
                                         if self.space <= 2:
                                             self.space += 1
                                             self.class_starage.append( ( self.normal_string, True ) )
                                         else:
                                             self.error =  classes.ERRORS(self.line).ERROR10()
                                             break
-                                
+                                elif self.get_block == 'comment_line'   :
+                                    self.comments.append(self.normal_string)
+                                    self.space = 0
                                 #######################################################
                                 #######################################################
                                 
-                                elif self.get_block   == 'end:'   :
+                                elif self.get_block   == 'end:'         :
                             
                                     if self.store_value:
                                         del self.store_value[ : ]
@@ -168,14 +168,13 @@ class EXTERNAL_DEF_STATEMENT:
                                         
                                     else:
                                         self.error =  classes.ERRORS( self.line ).ERROR17( self.history[ -1 ] )
-                                        break
-                            
+                                        break                        
                             else: break
                         else:
-                            self.get_block, self.value, self.error = end_class.EXTERNAL_BLOCKS(self.string,
-                                            self.normal_string, self.data_base, self.line).BLOCKS( self.tabulation )
+                            self.get_block, self.value, self.error = externalRest.EXTERNAL_BLOCKS(normal_string=self.normal_string, 
+                                                                data_base=self.data_base, line=self.line).BLOCKS(tabulation=self.tabulation)
                             if self.error is None:
-                                if self.get_block   == 'end:'   :
+                                if   self.get_block   == 'end:'           :
                                     if self.store_value:
                                         del self.store_value[ : ]
                                         del self.history[ : ]
@@ -184,7 +183,7 @@ class EXTERNAL_DEF_STATEMENT:
                                     else:
                                         self.error =  classes.ERRORS( self.line ).ERROR17( self.history[ -1 ] )
                                         break
-                                elif self.get_block == 'empty'  :
+                                elif self.get_block   == 'empty'          :
                                     if self.space <= 2:
                                         self.space += 1
                                         self.class_starage.append( ( self.normal_string, False ) )
@@ -198,11 +197,10 @@ class EXTERNAL_DEF_STATEMENT:
                     else: break
                 else: pass
             else:
-                self.error = if_inter.ERRORS( self.line ).ERROR4()
+                self.error = Ie.ERRORS( self.line ).ERROR4()
                 break
 
-        if self.error is None:
-            EXTERNAL_DEF_STATEMENT( self.master, self.data_base, self.line, {} ).UPDATE_CLASS( self.class_starage )
+        if self.error is None: EXTERNAL_CLASS_STATEMENT( self.master, self.data_base, self.line, {} ).UPDATE_CLASS( self.class_starage )
         else:
             self.data_base[ 'classes' ]     = self.classes_before
             self.data_base[ 'class_names' ] = self.names_before
@@ -222,7 +220,7 @@ class EXTERNAL_DEF_STATEMENT:
         self.arguments          = self.functions[ 'arguments' ]
         self.values             = self.functions[ 'value' ]
         self.history            = self.functions[ 'history_of_data' ]
-        self.db                 =  classes.DB.def_data_base
+        self.db                 =  db.DB.def_data_base
         self.func_name          = self.db[ 'func_names' ][ 0 ]
         self.class_name         = self.data_base[ 'current_class' ]
 
@@ -313,7 +311,7 @@ class EXTERNAL_DEF_STATEMENT:
         self.data_base[ 'classes' ][ self.position_in_lists ] = history_of_data
         self.data_base[ 'current_class' ]         = None
 
-class INTERNAL_DEF_STATTEMENT:
+class INTERNAL_CLASS_STATTEMENT:
     def __init__(self, 
                 master      : any, 
                 data_base   : dict, 
@@ -356,6 +354,7 @@ class INTERNAL_DEF_STATTEMENT:
         }
         self.loop_list          = loop_list
         self.next_line          = 0
+        self.comments           = []
         ##########################################################
        
         for j, _string_ in enumerate(self.loop_list):
@@ -370,20 +369,20 @@ class INTERNAL_DEF_STATTEMENT:
                     
                     if self.error is None:
                         if self.active_tab is True:
-                                self.get_block, self.value, self.error = end_class.INTERNAL_BLOCKS( self.string,
-                                            self.normal_string, self.data_base, self.line ).BLOCKS( k + 1 , loop = True)
+                                self.get_block, self.value, self.error = IC.INTERNAL_BLOCKS(normal_string=self.normal_string, data_base=self.data_base,
+                                                            line=self.line).BLOCKS(tabulation=k+1, loop=True)
                                
                                 if self.error is None:
-                                    if self.get_block   == 'def:'   :
+                                    if self.get_block   == 'def:'           :
                                         self.next_line              = j+1
                                         self.NewLIST    = stdin.STDIN(self.data_base, self.line ).GROUPBY(k, self.loop_list[self.next_line : ],
                                                                                                         index = 'int', _class_ = True)
                                         
-                                        self.db = classes.DB.def_data_base
+                                        self.db = db.DB.def_data_base
                                         self.lexer, _, self.error = main.MAIN(self.value, self.db, self.line).MAIN( _type_ = 'class' )
                                         
                                         if self.error is None:
-                                            self.key_init, self.error = EXTERNAL_DEF_STATEMENT(self.master, self.data_base,
+                                            self.key_init, self.error = EXTERNAL_CLASS_STATEMENT(self.master, self.data_base,
                                                     self.line, self.extra_class_data).UPDATE_FUNCTION_BEFORE( self.lexer )
                                             if self.error is None:
                                                 if self.NewLIST:
@@ -394,7 +393,7 @@ class INTERNAL_DEF_STATTEMENT:
                                                                                     self.NewLIST, loop = True )
                                                     if self.error is None:
                                                         
-                                                        self.error = EXTERNAL_DEF_STATEMENT(self.master, self.data_base,
+                                                        self.error = EXTERNAL_CLASS_STATEMENT(self.master, self.data_base,
                                                             self.line, self.extra_class_data).UPDATE_FUNCTION_AFTER(
                                                             ( self.normal_string, True ), self.db )
                                                    
@@ -409,11 +408,11 @@ class INTERNAL_DEF_STATTEMENT:
                                                         else: break
                                                     else: break
                                                 else: 
-                                                    self.error = if_inter.ERRORS( self.line ).ERROR4()
+                                                    self.error = Ie.ERRORS( self.line ).ERROR4()
                                                     break  
                                             else: break
                                         else: break
-                                    elif self.get_block == 'class:' :
+                                    elif self.get_block == 'class:'         :
                                         try:
                                             self.val, self.error =  self.analyze.DELETE_SPACE( self.value[5:-1] )
                                             if self.error is None: 
@@ -425,18 +424,20 @@ class INTERNAL_DEF_STATTEMENT:
                                         except IndexError: 
                                             self.error =  classes.ERRORS( self.line ).ERROR4( self.value )
                                             break
-                                    elif self.get_block == 'empty'  :
+                                    elif self.get_block == 'empty'          :
                                             if self.space <= 2:
                                                 self.space += 1
                                                 self.class_starage.append( ( self.normal_string, True ) )
                                             else:
                                                 self.error =  classes.ERRORS(self.line).ERROR10()
                                                 break
-                                    
+                                    elif self.get_block == 'comment_line'   :
+                                        self.comments.append(self.normal_string)
+                                        self.space = 0
                                     #################################################
                                     #################################################
                                     
-                                    elif self.get_block   == 'end:'   :
+                                    elif self.get_block   == 'end:'         :
                                         if self.store_value:
                                             del self.store_value[ : ]
                                             del self.history[ : ]
@@ -447,10 +448,10 @@ class INTERNAL_DEF_STATTEMENT:
                                             break
                                 else: break
                         else:
-                            self.get_block, self.value, self.error = end_class.EXTERNAL_BLOCKS(self.string,
-                                            self.normal_string, self.data_base, self.line).BLOCKS( self.tabulation )
+                            self.get_block, self.value, self.error = externalRest.EXTERNAL_BLOCKS(normal_string=self.normal_string, 
+                                                                data_base=self.data_base, line=self.line).BLOCKS(tabulation=self.tabulation)
                             if self.error is None:
-                                if self.get_block   == 'end:'   :
+                                if self.get_block   == 'end:'               :
                                     if self.store_value:
                                         del self.store_value[ : ]
                                         del self.history[ : ]
@@ -459,7 +460,7 @@ class INTERNAL_DEF_STATTEMENT:
                                     else:
                                         self.error =  classes.ERRORS( self.line ).ERROR17( self.history[ -1 ] )
                                         break
-                                elif self.get_block == 'empty'  :
+                                elif self.get_block == 'empty'              :
                                     if self.space <= 2:
                                         self.space += 1
                                         self.class_starage.append( ( self.normal_string, False ) )
@@ -473,11 +474,11 @@ class INTERNAL_DEF_STATTEMENT:
                     else: pass
                 else: pass
             else:
-                self.error = if_inter.ERRORS( self.line ).ERROR4()
+                self.error = Ie.ERRORS( self.line ).ERROR4()
                 break
 
         if self.error is None:
-            EXTERNAL_DEF_STATEMENT( self.master, self.data_base, self.line, {} ).UPDATE_CLASS( self.class_starage )
+            EXTERNAL_CLASS_STATEMENT( self.master, self.data_base, self.line, {} ).UPDATE_CLASS( self.class_starage )
         else:
             self.data_base[ 'classes' ]     = self.classes_before
             self.data_base[ 'class_names' ] = self.names_before

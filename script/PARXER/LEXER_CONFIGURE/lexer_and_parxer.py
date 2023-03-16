@@ -11,8 +11,9 @@ class LEXER_AND_PARXER:
     def ANALYZE(self, _id_:int = 1, _type_:any = None ):
         self.error                  = None
         self.lexer                  = None
-
+        
         self.lexer, self.string, self.error  = self.main.MAIN( self.master, self.data_base, self.line).MAIN(_id_, _type_, True)
+      
         if self.error is None:
             self.error = parxer_assembly.ASSEMBLY( self.lexer, self.data_base, self.line ).ASSEMBLY( self.master, True )
         else: self.error = self.error
@@ -45,12 +46,9 @@ class MAIN:
 
     def MAIN_LEXER(self, _id_:int = 1, _type_:any = None):
         self.error          = None
-        self.lexer, self.string, self.error = self.main.MAIN(self.master, self.data_base, self.line).MAIN( _id_, _type_,
-                                                                                                          True)
-        if self.error is None:
-            pass
-        else:
-            self.error = self.error
+        self.lexer, self.string, self.error = self.main.MAIN(self.master, self.data_base, self.line).MAIN( _id_, _type_, True)
+        if self.error is None:  pass
+        else:  self.error = self.error
 
         return self.lexer, self.error
 

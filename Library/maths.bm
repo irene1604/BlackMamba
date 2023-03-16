@@ -82,6 +82,9 @@ class trigo:
 		__maths__ * "log", master 
 	end:
 	
+	def log1( master: float/int/bool):
+		__math__ * "log1", master
+	
 	def log2( master : int/float/bool):
 		__maths__ * "log2", master 
 	end:
@@ -112,6 +115,37 @@ class trigo:
 	
 	def ceil( master : int/float/bool):
 		__maths__ * "ceil", master
+	end:
+	
+	def csign( master1 : float/int, master2 : float/int):
+		__math__ * "csign", [master1, master2]
+	end:
+	
+	def mod( master1 : float/int, master2 : float/int):
+		__math__ * "mod', [master1, master2]
+	
+	def rexp( master : float):
+		__math__ * "rexp", master
+	end:
+	
+	def abs( master : float/int/bool):
+		__math__ * "abs", master
+	end:
+	
+	def pgcd( master1 : float/int, master2 : float/int):
+		__math__ * "pgcd", [master1, master2]
+	end:
+	
+	def isclose( master1 : float/int/bool, master2: float/int/bool, tol:float=1e-9, abs_tol:float=0.0):
+		__math__ * "isclose", [master1, master2, tol, abs_tol]
+	end:
+	
+	def inv_rexp(master:float/int, power:int):
+		__math__ * "inv_rexp", [master, power]
+	end:
+	
+	def modf( master:float):
+		__math__ * "modf", master
 	end:
 end:
 
@@ -359,7 +393,37 @@ class statistics:
 end:
 
 class math:
-	def sorted( master : list, reverse : bool = False) : 
-		return master.sorted(reverse = reverse)
+	def sorted(master: list/tuple/dict, reverse:bool=False ):
+		if master:
+			if ? master == ? []:
+				return master.sorted(reverse=reverse)
+			elif type(master) == type( tuple()):
+				master = list(master)
+				return tuple( master.sorted( reverse = reverse))
+			end:
+		else:
+			__show__ * "Errror"
+		end:
+	end:
+	
+	def floor( master : float ) -> integer:
+		str= string( master )
+		return integer( str.split(".")[0])
+	end:
+	
+	def sum( a : float, b : float) -> float:
+		return a + b
+	end:
+	
+	def sign( master : float/int/bool) -> string:
+		if master >= 0:
+			return "+"
+		else:
+			return "-"
+		end:
+	end:
+	
+	def div():
+		return 10
 	end:
 end:

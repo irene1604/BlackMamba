@@ -1,3 +1,4 @@
+from os import strerror
 from script.PARXER                          import numerical_value
 from script.PARXER.LEXER_CONFIGURE          import numeric_lexer, partial_lexer
 from script                                 import control_string
@@ -6,10 +7,10 @@ from loop import error as er
 
 class MAIN_FOR          :
     def __init__(self,
-                 master         : dict,             #
-                 data_base      : dict,             #
-                 line           : int               #
-                 ):
+        master         : dict,             #
+        data_base      : dict,             #
+        line           : int               #
+        ):
         self.line           = line
         self.master         = master
         self.data_base      = data_base
@@ -22,7 +23,7 @@ class MAIN_FOR          :
         self.arithmetic_op  = self.all_data['arithmetic_operator']
         self.if_egal        = self.master['if_egal']
 
-    def BOCKS(self, main_string: str):
+    def BOCKS(self, main_string: strerror):
         self.error          = None
         self._return_name_  = None
         self._return_value_ = None
@@ -57,9 +58,10 @@ class MAIN_FOR          :
                                                 'all_data'      : self._values_,
                                                 'if_egal'       : None
                                             }
+                                            
                                             self.get_values, self.error = self.num.NUMERICAL(self.rebuild_value,
                                                         self.data_base, self.line).ANALYSE( main_string, loop=True )
-
+                                            
                                             if self.error is None:
                                                 if type(self.get_values[0]) in [type(tuple()), type(list()),
                                                                                 type(str()), type(range(1))]:
@@ -113,10 +115,10 @@ class VARIABLE_CHECKING :
 
 class FOR_BLOCK         :
     def __init__(self,
-                 data_base      : dict,             #
-                 line           : int ,             #
-                 normal_string  : str               #
-                 ):
+                data_base      : dict,             #
+                line           : int ,             #
+                normal_string  : str               #
+                ):
         self.data_base          = data_base
         self.line               = line
         self.normal_string      = normal_string
@@ -124,7 +126,8 @@ class FOR_BLOCK         :
 
     def FOR(self,
             function            : any   = None,     #
-            interpreter         : bool  = False     #
+            interpreter         : bool  = False,    #
+            locked              : bool  = False
             ):
         self.error          = None
         self._return_       = None
@@ -148,10 +151,12 @@ class FOR_BLOCK         :
                     self.lex, self.error    = partial_lexer.LEXER(self.normal_string, self.data_base,
                                                                self.line).MAIN_LEXER( self.normal_string )
                     if self.error is None:
-                        self._values_, self.var_name, self.operator, self.error = MAIN_FOR(self.lex, self.data_base,
-                                                                self.line).BOCKS( self.new_normal_string )
-                        if self.error is None:  self.value = {'value': self._values_, 'variable': self.var_name}
-                        else:  pass
+                        if locked is False:
+                            self._values_, self.var_name, self.operator, self.error = MAIN_FOR(self.lex, self.data_base,
+                                                                    self.line).BOCKS( self.new_normal_string )
+                            if self.error is None:  self.value = {'value': self._values_, 'variable': self.var_name}
+                            else:  pass
+                        else: self.value = {'value': None, 'variable': None}
                     else: pass
                 else:
                     self.value      = self.control.DELETE_SPACE(self.normal_string)

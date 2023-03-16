@@ -4,9 +4,12 @@ import             re, os, sys
 from   sys         import stdout, stdin
 from   time        import sleep
 from   datetime    import datetime
-from   tkinter     import *
 from script        import control_string
+try:
+    from   tkinter     import *
+except ModuleNotFoundError: pass
 
+    
 class fg:
     black       = u"\u001b[30m"
     red         = u"\u001b[31m"
@@ -24,7 +27,7 @@ class fg:
     blue_L      = u"\u001b[34;1m"
     magenta_M   = u"\u001b[35;1m"
     cyan_L      = u"\u001b[36;1m"
-    white_L     = u"\u001b[37;1m"
+    white_L     = u"\u001b[1m"+f"\u001b[38;2;{255};{255};{255}m"
 
     def rbg(r, g, b): 
         return f"\u001b[38;2;{r};{g};{b}m"
@@ -50,13 +53,33 @@ class bg:
 
     def rgb(r, g, b): 
         return f"\u001b[48;2;{r};{g};{b}m"
-
+    
+class screen:
+    #40 * 25 monochrome
+    s0 = u"\u001b[0h"
+    #40 * 25 color
+    s1 = u"\u001b[1h"
+   
 class init:
     reset       = u"\u001b[0m"
     bold        = u"\u001b[1m"
+    italic      = u"\u001b[3m"
     underline   = u"\u001b[4m"
+    blink       = u"\u001b[5m"
+    rapid_blink = u"\u001b[6m"
     reverse     = u"\u001b[7m"
+    hide        = u"\u001b[8m"
+    double_underline= u"\u001b[21m"
+    link        = u"\u001b[8;;https://github.com/amiehe-essomba ST"
 
+class scrolled:
+    def up(n):
+        s = u"\u001b["+f"{n}"+"S"
+        return s
+    def down(n):
+        s = u"\u001b["+f"{n}"+"T"
+        return s
+    
 class clear:
     clear       = u"\u001b[2J"
     def line( pos : int ):
@@ -69,7 +92,7 @@ class clear:
         # 0 = clears from cursor until end of screen,
         # 1 = clears from cursor to beginning of screen
         # 2 = clears entire screen
-        clearScreen = u"\u001b[ " + f"{pos}" + "J"
+        clearScreen = u"\u001b[" + f"{pos}" + "J"
         return clearScreen 
 
 class get_cursor_pos:
@@ -99,21 +122,25 @@ class move_cursor:
         left        = u"\u001b[" + str( pos ) + "D"
         return left
 
-class cursor_pos:
-    def to(self, x:int, y:int):
+class cursorPos:
+    def to(x:int, y:int):
         return f"\u001b[{y};{x}H"
 
 class line:
     nextline = u"\u001b[1E"
     prevline = u"\u001b[1F"
 
+class save:
+    save    = u"\u001b[s"
+    restore = u"\u001b[u"
+
 class head:
     
-    def head( self, sys : str = 'Linux' ):
+    def head( self, sys : str = 'Linux', term : str = 'pegasus' ):
         block = [
                 '\n',
                 'Black Mamba programming language -version- 1.0.0. MIT License.',
-                f'[ {sys} version ] type help( arg ), License() for more informations.',
+                f'[ {sys} version ] [ {term} terminal ] type help( arg ), License() for more informations.',
                 '>> ',
                 'written by amiehe-essomba',
                 'email: ibamieheessomba@unistra.fr',
@@ -124,20 +151,19 @@ class head:
         wait    = 0.0005
 
         head().tip(block[ 0 ], 0, wait)
-        head().tip(block[ 1 ], 1, wait, sys)
-        head().tip(block[ 2 ], 2, wait, sys)
+        head().tip(block[ 1 ], 1, wait, sys, term )
+        head().tip(block[ 2 ], 2, wait, sys, term)
         #head().tip(block[ 3 ], 3, wait)
         #head().tip(block[ 4 ], 4, wait)
         #head().tip(block[ 5 ], 5, wait)
         head().tip(block[ 6 ], 6, wait)
-
     
-    def tip( self, text : str , n : int, wait : float, sys: str='Linux' ):
+    def tip( self, text : str , n : int, wait : float, sys: str='Linux', term : str = 'centaurus' ):
         string      = ''
         nString1    = f'{fg.rbg(255,255,0)}{init.underline}Black Mamba{init.reset} {fg.rbg(255,255,255)}programming language ' \
                   f'{fg.rbg(255,0,255)}-version- 1.0.0. {fg.rbg(255,255,255)}{chr(169)} 2022 {fg.rbg(0,255,255)}MIT License.{init.reset}'
         nString2    = f'{fg.rbg(255,255,255)}[ {fg.rbg(0,255,0)}{sys} version {fg.rbg(255,255,255)}] ' \
-                      f'{fg.rbg(255,255,255)}type help( {fg.rbg(255,0,0)}arg{fg.rbg(255,255,255)} ), ' \
+                      f'{fg.rbg(255,255,255)} [ {fg.rbg(0,255,255)}{term} terminal {fg.rbg(255,255,255)}] type help( {fg.rbg(255,0,0)}arg{fg.rbg(255,255,255)} ), ' \
                       f'License() for more informations.{init.reset}'
         for i, char in enumerate( text ):
             string += char 
@@ -220,38 +246,50 @@ class words:
     def alphabetic(self):
         return list('abcdefghijklmnopqrstuvwxyzTFN')
 
-    def keywords(self, n:int=0, locked: bool = False):
+    def keywords(self, n:int=0, locked: bool = False, count : dict = {'int' : 0, 'sys' : []}):
         self.newString  = ''
         self.stringKey  = ''
         self.active     = False
         self.ss         = ''
-        self.count      = 0
-        self.k          = []
+        self.count      = count['int']
+        self.k          = count['sys']
 
         if locked is False:
             if      self.string in ['in', 'not']:
-                self.newString  += fg.rbg(255,128,128)+self.string+init.reset
+                if self.count % 2 == 0 :  self.newString  += fg.rbg(255,128,128)+self.string+init.reset
+                else: self.newString  += self.color +self.string+init.reset
             elif      self.string in ['True', 'False', 'None']:
-                self.newString  += fg.rbg(204,153,255)+self.string+init.reset
-            elif    self.string in ['pass', 'break', 'continue', 'exit', 'next']:
-                self.newString += fg.rbg(153,204,0) + self.string + init.reset
+                if self.count % 2 == 0 :self.newString  += fg.rbg(204,153,255)+self.string+init.reset
+                else: self.newString += self.color + self.string + init.reset
+            elif    self.string in ['pass', 'break', 'continue', 'exit', 'next', 'return', 'global']:
+                if self.count % 2 == 0 :self.newString += fg.rbg(153,204,0) + self.string + init.reset
+                else: self.newString += self.color + self.string + init.reset
             elif    self.string in ['and', 'or', 'only']:
-                self.newString += fg.rbg(255, 102, 0) + self.string + init.reset
+                if self.count % 2 == 0 :self.newString += fg.rbg(255, 102, 0) + self.string + init.reset
+                else:  self.newString += self.color + self.string + init.reset
             elif    self.string in ['if', 'unless', 'else', 'elif', 'for', 'switch', 'case', 'default',
                                        'try', 'except', 'finally', 'while', 'until', 'begin', 'save']:
-                self.newString +=  fg.rbg(51, 102, 255) + self.string + init.reset
+                if self.count % 2 == 0: self.newString +=  fg.rbg(51, 102, 255) + self.string + init.reset
+                else: self.newString += self.color + self.string + init.reset
             elif    self.string == 'end':
-                if n == 0: self.newString +=  fg.rbg(51, 102, 255) + self.string + init.reset
-                else: self.newString +=  fg.rbg(255,165,0) + self.string + init.reset
+                if self.count % 2 == 0:
+                    if n == 0: self.newString +=  fg.rbg(51, 102, 255) + self.string + init.reset
+                    else: self.newString +=  fg.rbg(255,165,0) + self.string + init.reset
+                else:  self.newString += self.color + self.string + init.reset
             elif    self.string in ['int', 'float', 'cplx', 'list', 'tuple', 'none', 'range', 'string',
-                                    'bool', 'dict', 'any', 'self', 'return']:
-                self.newString += fg.rbg(240,128,128) + self.string + init.reset
+                                    'bool', 'dict', 'any', 'self']:
+                if self.count % 2 == 0: self.newString += fg.rbg(240,128,128) + self.string + init.reset
+                else:  self.newString += self.color + self.string + init.reset
             elif    self.string in ['from', 'load', 'module', 'as']:
-                self.newString += fg.rbg(225, 50, 20) + self.string + init.reset
+                if self.count % 2 == 0 : self.newString += fg.rbg(225, 50, 20) + self.string + init.reset
+                else: self.newString += self.color + self.string + init.reset
             elif    self.string in ['def', 'class', 'func']:
-                self.newString += fg.rbg(255,165,0) + self.string + init.reset
-            elif    self.string in ['initialize', 'integer', 'dictionary', 'set', 'get', 'random', 'object']:
-                self.newString += fg.rbg(25,165,200) + self.string + init.reset
+                if self.count % 2 == 0 :self.newString += fg.rbg(255,165,0) + self.string + init.reset
+                else: self.newString += self.color + self.string + init.reset
+            elif    self.string in ['initialize', 'integer', 'dictionary', 'set', 'get',
+                                    'object', 'settings', 'print', 'boolean', 'complex', 'ndarray', 'anonymous']:
+                if self.count % 2 == 0: self.newString += fg.rbg(25,165,200) + self.string + init.reset
+                else: self.newString += self.color + self.string + init.reset
             else:
                 for i, s in enumerate(self.string):
                     if self.count % 2 == 0:
@@ -269,7 +307,6 @@ class words:
                                     if self.string[i - 1] in self.analyse.LOWER_CASE() + self.analyse.UPPER_CASE()+['_']:
                                         self.newString += self.color + s + init.reset
                                     else: self.newString +=fg.rbg(255, 0, 255) + s + init.reset
-
                             elif s in {'(', ')'}:
                                 self.newString += fg.rbg(0, 255, 0) + s + init.reset
                             elif s in {'{', '}'}:
@@ -302,8 +339,10 @@ class words:
                             self.count = 0
                             self.k = []
                         else: pass
-
         else: self.newString = self.color + self.string + init.reset
+
+        count['int'] = self.count
+        count['sys'] = self.k
 
         return self.newString
 
@@ -311,30 +350,35 @@ class words:
         self.newS       = ''
         self.ss         = ''
         self.active     = False
+        self.count      = {'int' : 0, 'sys' : []}
+        self.c          = init.bold+fg.rbg(255, 153, 204)
+        self.cc         = init.bold+fg.rbg(255,255,255)
 
         if locked is False:
             for i, s in enumerate( self.string) :
+                if self.count['int'] % 2 == 0: self.color = self.cc
+                else: self.color = self.c
+
                 if s not in [ ' ' ]:
                     if s in self.analyse.UPPER_CASE()+self.analyse.LOWER_CASE()+[str(x) for x in range(10)]+['_']:
                         self.ss += s
                         if i < len( self.string)-1: pass
                         else:
-                            if self.ss: self.newS   += words(self.ss, self.color).keywords(n=n)
+                            if self.ss: self.newS   += words(self.ss, self.color).keywords(n=n, count=self.count)
                             else: pass
                     else:
                         if s in [ '#' ]:
                             self.ss += s
                             if i < len(self.string) - 1:  pass
                             else:
-                                if self.ss:  self.newS += words(self.ss, self.color).keywords(n=n)
+                                if self.ss:  self.newS += words(self.ss, self.color).keywords(n=n, count=self.count)
                                 else:  pass
                         elif s in ['"', "'"]:
                             self.ss += s
                             if i < len(self.string) - 1:  pass
                             else:
-                                if self.ss:  self.newS += words(self.ss, self.color).keywords(n=n)
+                                if self.ss:  self.newS += words(self.ss, self.color).keywords(n=n, count=self.count)
                                 else:  pass
-
                         else:
                             if self.ss:
                                 if '#' in self.ss:
@@ -342,14 +386,14 @@ class words:
                                     if i < len(self.string) - 1: pass
                                     else:
                                         if self.ss:
-                                            self.newS += words(self.ss, self.color).keywords(n=n)
+                                            self.newS += words(self.ss, self.color).keywords(n=n, count=self.count)
                                         else:  pass
                                 else:
-                                    self.newS   += words(self.ss, self.color).keywords(n=n)
-                                    self.newS   += words(s, self.color).keywords(n=n)
+                                    self.newS   += words(self.ss, self.color).keywords(n=n, count=self.count)
+                                    self.newS   += words(s, self.color).keywords(n=n, count=self.count)
                                     self.ss     = ''
                             else :
-                                self.newS   += words(s, self.color).keywords(n=n)
+                                self.newS   += words(s, self.color).keywords(n=n,count=self.count)
                                 self.ss     = ''
                 else:
                     if self.ss :
@@ -357,23 +401,28 @@ class words:
                             self.ss += ' '
                             if i < len(self.string) - 1:  pass
                             else:
-                                if self.ss:  self.newS += words(self.ss, self.color).keywords(n=n)
+                                if self.ss:  self.newS += words(self.ss, self.color).keywords(n=n,count=self.count)
                                 else:  pass
                         else:
-                            self.newS   += words(self.ss, self.color).keywords(n=n)
+                            if self.count['int'] % 2 == 0: self.color = self.cc
+                            else: self.color = self.c
+
+                            self.newS   += words(self.ss, self.color).keywords(n=n, count=self.count)
                             self.newS   += ' '
                             self.ss     = ''
                     else:
                         self.newS   += ' '
                         self.ss      = ''
-        else:  self.newS = words(self.string, self.color).keywords(n=n, locked=locked)
+        else:  self.newS = words(self.string, self.color).keywords(n=n, locked=locked, count=self.count)
 
         return self.newS
 
 class chars:
+    def __init__(self):
+        pass
     def ansi_remove_chars( self, name : str ):
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        return ansi_escape.sub ('', name)
+        self.ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        return self.ansi_escape.sub ('', name)
 
 class timer:
     def timer():
@@ -386,5 +435,3 @@ class timer:
             stdout.write( move_cursor.LEFT( 1000 ) )
             stdout.write( updateClock() )
             stdout.flush()
-
-    #updateClock()

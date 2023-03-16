@@ -844,33 +844,31 @@ struct __pyx_obj_8loop_for_LOOP;
 struct __pyx_opt_args_8loop_for_4LOOP_LOOP;
 struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP;
 
-/* "loop_for.pyx":30
+/* "loop_for.pyx":31
+ *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]
  *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]
- * 
- *     cpdef LOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):             # <<<<<<<<<<<<<<
+ *     cpdef LOOP( self, list for_values, str var_name, tuple loop_list = () ):             # <<<<<<<<<<<<<<
  *         cdef:
  *             str     error, normal_string, err
  */
 struct __pyx_opt_args_8loop_for_4LOOP_LOOP {
   int __pyx_n;
-  int interpreter;
   PyObject *loop_list;
 };
 
-/* "loop_for.pyx":214
- *         return error
+/* "loop_for.pyx":223
+ *         else: return [None if not error else error ][0]
  * 
- *     cdef SubLOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):             # <<<<<<<<<<<<<<
+ *     cdef SubLOOP( self, list for_values, str var_name, tuple loop_list = () ):             # <<<<<<<<<<<<<<
  *         cdef:
  *             str     error, normal_string, err
  */
 struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP {
   int __pyx_n;
-  int interpreter;
   PyObject *loop_list;
 };
 
-/* "loop_for.pyx":15
+/* "loop_for.pyx":17
  *     base[ 'variables' ][ 'values' ][ idd ] = value
  * 
  * cdef class LOOP:             # <<<<<<<<<<<<<<
@@ -1081,6 +1079,15 @@ static CYTHON_INLINE PyObject *__Pyx_PyCFunction_FastCall(PyObject *func, PyObje
 #define __Pyx_PyCFunction_FastCall(func, args, nargs)  (assert(0), NULL)
 #endif
 
+/* RaiseTooManyValuesToUnpack.proto */
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
+
+/* RaiseNeedMoreValuesToUnpack.proto */
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
+
+/* RaiseNoneIterError.proto */
+static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void);
+
 /* PySequenceContains.proto */
 static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* seq, int eq) {
     int result = PySequence_Contains(seq, item);
@@ -1137,6 +1144,65 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
 #endif
 
+/* SliceTupleAndList.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyList_GetSlice(PyObject* src, Py_ssize_t start, Py_ssize_t stop);
+static CYTHON_INLINE PyObject* __Pyx_PyTuple_GetSlice(PyObject* src, Py_ssize_t start, Py_ssize_t stop);
+#else
+#define __Pyx_PyList_GetSlice(seq, start, stop)   PySequence_GetSlice(seq, start, stop)
+#define __Pyx_PyTuple_GetSlice(seq, start, stop)  PySequence_GetSlice(seq, start, stop)
+#endif
+
+/* GetTopmostException.proto */
+#if CYTHON_USE_EXC_INFO_STACK
+static _PyErr_StackItem * __Pyx_PyErr_GetTopmostException(PyThreadState *tstate);
+#endif
+
+/* PyThreadStateGet.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_PyThreadState_declare  PyThreadState *__pyx_tstate;
+#define __Pyx_PyThreadState_assign  __pyx_tstate = __Pyx_PyThreadState_Current;
+#define __Pyx_PyErr_Occurred()  __pyx_tstate->curexc_type
+#else
+#define __Pyx_PyThreadState_declare
+#define __Pyx_PyThreadState_assign
+#define __Pyx_PyErr_Occurred()  PyErr_Occurred()
+#endif
+
+/* SaveResetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ExceptionSave(type, value, tb)  __Pyx__ExceptionSave(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#define __Pyx_ExceptionReset(type, value, tb)  __Pyx__ExceptionReset(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+#else
+#define __Pyx_ExceptionSave(type, value, tb)   PyErr_GetExcInfo(type, value, tb)
+#define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
+#endif
+
+/* PyErrExceptionMatches.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
+static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
+#else
+#define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
+#endif
+
+/* GetException.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_GetException(type, value, tb)  __Pyx__GetException(__pyx_tstate, type, value, tb)
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
+#endif
+
+/* PyObjectCallNoArg.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
+#else
+#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
+#endif
+
 /* GetModuleGlobalName.proto */
 #if CYTHON_USE_DICT_VERSIONS
 #define __Pyx_GetModuleGlobalName(var, name)  {\
@@ -1158,64 +1224,38 @@ static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_ve
 static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
 #endif
 
-/* RaiseTooManyValuesToUnpack.proto */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected);
-
-/* RaiseNeedMoreValuesToUnpack.proto */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index);
-
 /* IterFinish.proto */
 static CYTHON_INLINE int __Pyx_IterFinish(void);
 
 /* UnpackItemEndCheck.proto */
 static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected);
 
-/* RaiseNoneIterError.proto */
-static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void);
+/* GCCDiagnostics.proto */
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#define __Pyx_HAS_GCC_DIAGNOSTIC
+#endif
+
+/* BuildPyUnicode.proto */
+static PyObject* __Pyx_PyUnicode_BuildFromAscii(Py_ssize_t ulength, char* chars, int clength,
+                                                int prepend_sign, char padding_char);
+
+/* CIntToPyUnicode.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyUnicode_From_int(int value, Py_ssize_t width, char padding_char, char format_char);
 
 /* None.proto */
 static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
 
-/* SliceTupleAndList.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyList_GetSlice(PyObject* src, Py_ssize_t start, Py_ssize_t stop);
-static CYTHON_INLINE PyObject* __Pyx_PyTuple_GetSlice(PyObject* src, Py_ssize_t start, Py_ssize_t stop);
-#else
-#define __Pyx_PyList_GetSlice(seq, start, stop)   PySequence_GetSlice(seq, start, stop)
-#define __Pyx_PyTuple_GetSlice(seq, start, stop)  PySequence_GetSlice(seq, start, stop)
-#endif
-
-/* PyObjectCallNoArg.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
-#else
-#define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
-#endif
+/* SliceObject.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(
+        PyObject* obj, Py_ssize_t cstart, Py_ssize_t cstop,
+        PyObject** py_start, PyObject** py_stop, PyObject** py_slice,
+        int has_cstart, int has_cstop, int wraparound);
 
 /* ArgTypeTest.proto */
 #define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
     ((likely((Py_TYPE(obj) == type) | (none_allowed && (obj == Py_None)))) ? 1 :\
         __Pyx__ArgTypeTest(obj, type, name, exact))
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
-
-/* PyErrExceptionMatches.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
-static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
-#else
-#define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
-#endif
-
-/* PyThreadStateGet.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_PyThreadState_declare  PyThreadState *__pyx_tstate;
-#define __Pyx_PyThreadState_assign  __pyx_tstate = __Pyx_PyThreadState_Current;
-#define __Pyx_PyErr_Occurred()  __pyx_tstate->curexc_type
-#else
-#define __Pyx_PyThreadState_declare
-#define __Pyx_PyThreadState_assign
-#define __Pyx_PyErr_Occurred()  PyErr_Occurred()
-#endif
 
 /* PyErrFetchRestore.proto */
 #if CYTHON_FAST_THREAD_STATE
@@ -1309,11 +1349,6 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
-/* GCCDiagnostics.proto */
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#define __Pyx_HAS_GCC_DIAGNOSTIC
-#endif
-
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
@@ -1359,9 +1394,12 @@ int __pyx_module_is_main_loop_for = 0;
 /* Implementation of 'loop_for' */
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_enumerate;
+static PyObject *__pyx_builtin_KeyError;
 static PyObject *__pyx_builtin_exit;
 static const char __pyx_k_[] = "";
+static const char __pyx_k_j[] = "j";
 static const char __pyx_k_if[] = "if";
+static const char __pyx_k_FOR[] = "FOR";
 static const char __pyx_k_any[] = "any";
 static const char __pyx_k_for[] = "for";
 static const char __pyx_k_lex[] = "lex";
@@ -1385,19 +1423,25 @@ static const char __pyx_k_lexer[] = "_lexer_";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_value[] = "value";
 static const char __pyx_k_import[] = "__import__";
+static const char __pyx_k_locked[] = "locked";
 static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_unless[] = "unless";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_values[] = "values";
+static const char __pyx_k_mainFor[] = "mainFor";
 static const char __pyx_k_DataBase[] = "DataBase";
+static const char __pyx_k_KeyError[] = "KeyError";
 static const char __pyx_k_continue[] = "continue";
+static const char __pyx_k_function[] = "function";
 static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_loop_for[] = "loop_for";
 static const char __pyx_k_pyx_type[] = "__pyx_type";
 static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_var_name[] = "var_name";
 static const char __pyx_k_variable[] = "variable";
+static const char __pyx_k_FOR_BLOCK[] = "FOR_BLOCK";
+static const char __pyx_k_data_base[] = "data_base";
 static const char __pyx_k_enumerate[] = "enumerate";
 static const char __pyx_k_loop_list[] = "loop_list";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
@@ -1409,13 +1453,13 @@ static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_tabulation[] = "tabulation";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_SUB_ANALYZE[] = "SUB_ANALYZE";
+static const char __pyx_k_for_analyze[] = "for_analyze";
 static const char __pyx_k_interpreter[] = "interpreter";
 static const char __pyx_k_IF_STATEMENT[] = "IF_STATEMENT";
 static const char __pyx_k_NEXT_ANALYZE[] = "NEXT_ANALYZE";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
 static const char __pyx_k_stringsource[] = "stringsource";
-static const char __pyx_k_FOR_STATEMENT[] = "FOR_STATEMENT";
-static const char __pyx_k_for_statement[] = "for_statement";
+static const char __pyx_k_normal_string[] = "normal_string";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_SUB_SUB_ANALYZE[] = "SUB_SUB_ANALYZE";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
@@ -1425,21 +1469,21 @@ static const char __pyx_k_loop_if_statement[] = "loop_if_statement";
 static const char __pyx_k_pyx_unpickle_LOOP[] = "__pyx_unpickle_LOOP";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_loop_unless_statement[] = "loop_unless_statement";
-static const char __pyx_k_EXTERNAL_FOR_STATEMENT[] = "EXTERNAL_FOR_STATEMENT";
 static const char __pyx_k_INTERNAL_IF_LOOP_STATEMENT[] = "INTERNAL_IF_LOOP_STATEMENT";
 static const char __pyx_k_INTERNAL_UNLESS_FOR_STATEMENT[] = "INTERNAL_UNLESS_FOR_STATEMENT";
-static const char __pyx_k_script_PARXER_PARXER_FUNCTIONS[] = "script.PARXER.PARXER_FUNCTIONS._FOR_";
+static const char __pyx_k_script_PARXER_PARXER_FUNCTIONS[] = "script.PARXER.PARXER_FUNCTIONS._IF_";
 static const char __pyx_k_Incompatible_checksums_s_vs_0xbd[] = "Incompatible checksums (%s vs 0xbd41ea0 = (DataBase, _values_, line, variables))";
-static const char __pyx_k_script_PARXER_PARXER_FUNCTIONS_2[] = "script.PARXER.PARXER_FUNCTIONS._IF_";
-static const char __pyx_k_script_PARXER_PARXER_FUNCTIONS_3[] = "script.PARXER.PARXER_FUNCTIONS._UNLESS_";
+static const char __pyx_k_script_PARXER_PARXER_FUNCTIONS_2[] = "script.PARXER.PARXER_FUNCTIONS._UNLESS_";
+static const char __pyx_k_script_PARXER_PARXER_FUNCTIONS_3[] = "script.PARXER.PARXER_FUNCTIONS._FOR_.FOR.WIN";
 static PyObject *__pyx_kp_s_;
 static PyObject *__pyx_n_s_DataBase;
-static PyObject *__pyx_n_s_EXTERNAL_FOR_STATEMENT;
-static PyObject *__pyx_n_s_FOR_STATEMENT;
+static PyObject *__pyx_n_s_FOR;
+static PyObject *__pyx_n_s_FOR_BLOCK;
 static PyObject *__pyx_n_s_IF_STATEMENT;
 static PyObject *__pyx_n_s_INTERNAL_IF_LOOP_STATEMENT;
 static PyObject *__pyx_n_s_INTERNAL_UNLESS_FOR_STATEMENT;
 static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xbd;
+static PyObject *__pyx_n_s_KeyError;
 static PyObject *__pyx_n_s_LOOP;
 static PyObject *__pyx_n_s_NEXT_ANALYZE;
 static PyObject *__pyx_n_s_PickleError;
@@ -1450,30 +1494,36 @@ static PyObject *__pyx_n_s_any;
 static PyObject *__pyx_n_s_break;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_continue;
+static PyObject *__pyx_n_s_data_base;
 static PyObject *__pyx_n_s_dict;
 static PyObject *__pyx_n_s_enumerate;
 static PyObject *__pyx_n_s_exit;
 static PyObject *__pyx_n_s_for;
-static PyObject *__pyx_n_s_for_statement;
+static PyObject *__pyx_n_s_for_analyze;
 static PyObject *__pyx_n_s_for_values;
+static PyObject *__pyx_n_s_function;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_n_s_if;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_index;
 static PyObject *__pyx_n_s_interpreter;
+static PyObject *__pyx_n_s_j;
 static PyObject *__pyx_n_s_keys;
 static PyObject *__pyx_n_s_lex;
 static PyObject *__pyx_n_s_lexer;
 static PyObject *__pyx_n_s_line;
+static PyObject *__pyx_n_s_locked;
 static PyObject *__pyx_n_s_loop;
 static PyObject *__pyx_n_s_loop_for;
 static PyObject *__pyx_n_s_loop_if_statement;
 static PyObject *__pyx_n_s_loop_list;
 static PyObject *__pyx_n_s_loop_unless_statement;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_n_s_mainFor;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_new;
 static PyObject *__pyx_n_s_next;
+static PyObject *__pyx_n_s_normal_string;
 static PyObject *__pyx_n_s_pass;
 static PyObject *__pyx_n_s_pickle;
 static PyObject *__pyx_n_s_pyx_PickleError;
@@ -1505,7 +1555,7 @@ static PyObject *__pyx_n_s_variable;
 static PyObject *__pyx_n_s_variables;
 static PyObject *__pyx_n_s_vars;
 static int __pyx_pf_8loop_for_4LOOP___init__(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_DataBase, PyObject *__pyx_v_line); /* proto */
-static PyObject *__pyx_pf_8loop_for_4LOOP_2LOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, int __pyx_v_interpreter, PyObject *__pyx_v_loop_list); /* proto */
+static PyObject *__pyx_pf_8loop_for_4LOOP_2LOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, PyObject *__pyx_v_loop_list); /* proto */
 static PyObject *__pyx_pf_8loop_for_4LOOP_8DataBase___get__(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self); /* proto */
 static int __pyx_pf_8loop_for_4LOOP_8DataBase_2__set__(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
 static int __pyx_pf_8loop_for_4LOOP_8DataBase_4__del__(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self); /* proto */
@@ -1516,14 +1566,13 @@ static PyObject *__pyx_pf_8loop_for_4LOOP_6__setstate_cython__(struct __pyx_obj_
 static PyObject *__pyx_pf_8loop_for___pyx_unpickle_LOOP(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_tp_new_8loop_for_LOOP(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static __Pyx_CachedCFunction __pyx_umethod_PyList_Type_index = {0, &__pyx_n_s_index, 0, 0, 0};
-static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_198450848;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_codeobj__3;
 /* Late includes */
 
-/* "loop_for.pyx":6
- * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
+/* "loop_for.pyx":8
+ * 
  * 
  * cdef dict UPDATING(dict base, str name, value):             # <<<<<<<<<<<<<<
  *     cdef :
@@ -1543,7 +1592,7 @@ static PyObject *__pyx_f_8loop_for_UPDATING(PyObject *__pyx_v_base, PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("UPDATING", 0);
 
-  /* "loop_for.pyx":11
+  /* "loop_for.pyx":13
  *         list var
  * 
  *     var = base[ 'variables' ][ 'vars' ]             # <<<<<<<<<<<<<<
@@ -1552,31 +1601,31 @@ static PyObject *__pyx_f_8loop_for_UPDATING(PyObject *__pyx_v_base, PyObject *__
  */
   if (unlikely(__pyx_v_base == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 11, __pyx_L1_error)
+    __PYX_ERR(0, 13, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_base, __pyx_n_s_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_base, __pyx_n_s_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_vars); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_vars); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 11, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 13, __pyx_L1_error)
   __pyx_v_var = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "loop_for.pyx":12
+  /* "loop_for.pyx":14
  * 
  *     var = base[ 'variables' ][ 'vars' ]
  *     idd = var.index( name )             # <<<<<<<<<<<<<<
  *     base[ 'variables' ][ 'values' ][ idd ] = value
  * 
  */
-  __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyList_Type_index, __pyx_v_var, __pyx_v_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyList_Type_index, __pyx_v_var, __pyx_v_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_As_long(__pyx_t_2); if (unlikely((__pyx_t_3 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_long(__pyx_t_2); if (unlikely((__pyx_t_3 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_idd = __pyx_t_3;
 
-  /* "loop_for.pyx":13
+  /* "loop_for.pyx":15
  *     var = base[ 'variables' ][ 'vars' ]
  *     idd = var.index( name )
  *     base[ 'variables' ][ 'values' ][ idd ] = value             # <<<<<<<<<<<<<<
@@ -1585,18 +1634,18 @@ static PyObject *__pyx_f_8loop_for_UPDATING(PyObject *__pyx_v_base, PyObject *__
  */
   if (unlikely(__pyx_v_base == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 13, __pyx_L1_error)
+    __PYX_ERR(0, 15, __pyx_L1_error)
   }
-  __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_base, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_base, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_s_values); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_2, __pyx_n_s_values); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_idd, __pyx_v_value, long, 1, __Pyx_PyInt_From_long, 0, 1, 1) < 0)) __PYX_ERR(0, 13, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_idd, __pyx_v_value, long, 1, __Pyx_PyInt_From_long, 0, 1, 1) < 0)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "loop_for.pyx":6
- * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
+  /* "loop_for.pyx":8
+ * 
  * 
  * cdef dict UPDATING(dict base, str name, value):             # <<<<<<<<<<<<<<
  *     cdef :
@@ -1618,7 +1667,7 @@ static PyObject *__pyx_f_8loop_for_UPDATING(PyObject *__pyx_v_base, PyObject *__
   return __pyx_r;
 }
 
-/* "loop_for.pyx":24
+/* "loop_for.pyx":26
  *         list    _values_
  * 
  *     def __init__( self, DataBase, line ):             # <<<<<<<<<<<<<<
@@ -1660,11 +1709,11 @@ static int __pyx_pw_8loop_for_4LOOP_1__init__(PyObject *__pyx_v_self, PyObject *
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_line)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); __PYX_ERR(0, 24, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, 1); __PYX_ERR(0, 26, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 24, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 26, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1677,7 +1726,7 @@ static int __pyx_pw_8loop_for_4LOOP_1__init__(PyObject *__pyx_v_self, PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 24, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 26, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("loop_for.LOOP.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1701,14 +1750,14 @@ static int __pyx_pf_8loop_for_4LOOP___init__(struct __pyx_obj_8loop_for_LOOP *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "loop_for.pyx":25
+  /* "loop_for.pyx":27
  * 
  *     def __init__( self, DataBase, line ):
  *             self.DataBase       = DataBase             # <<<<<<<<<<<<<<
  *             self.line           = line
  *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]
  */
-  if (!(likely(PyDict_CheckExact(__pyx_v_DataBase))||((__pyx_v_DataBase) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_v_DataBase)->tp_name), 0))) __PYX_ERR(0, 25, __pyx_L1_error)
+  if (!(likely(PyDict_CheckExact(__pyx_v_DataBase))||((__pyx_v_DataBase) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_v_DataBase)->tp_name), 0))) __PYX_ERR(0, 27, __pyx_L1_error)
   __pyx_t_1 = __pyx_v_DataBase;
   __Pyx_INCREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
@@ -1717,63 +1766,63 @@ static int __pyx_pf_8loop_for_4LOOP___init__(struct __pyx_obj_8loop_for_LOOP *__
   __pyx_v_self->DataBase = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "loop_for.pyx":26
+  /* "loop_for.pyx":28
  *     def __init__( self, DataBase, line ):
  *             self.DataBase       = DataBase
  *             self.line           = line             # <<<<<<<<<<<<<<
  *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]
  *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]
  */
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_line); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_line); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L1_error)
   __pyx_v_self->line = __pyx_t_2;
 
-  /* "loop_for.pyx":27
+  /* "loop_for.pyx":29
  *             self.DataBase       = DataBase
  *             self.line           = line
  *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]             # <<<<<<<<<<<<<<
  *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]
- * 
+ *     cpdef LOOP( self, list for_values, str var_name, tuple loop_list = () ):
  */
   if (unlikely(__pyx_v_self->DataBase == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 27, __pyx_L1_error)
+    __PYX_ERR(0, 29, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_vars); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_t_1, __pyx_n_s_vars); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 27, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_3);
   __Pyx_GOTREF(__pyx_v_self->variables);
   __Pyx_DECREF(__pyx_v_self->variables);
   __pyx_v_self->variables = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "loop_for.pyx":28
+  /* "loop_for.pyx":30
  *             self.line           = line
  *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]
  *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]             # <<<<<<<<<<<<<<
- * 
- *     cpdef LOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):
+ *     cpdef LOOP( self, list for_values, str var_name, tuple loop_list = () ):
+ *         cdef:
  */
   if (unlikely(__pyx_v_self->DataBase == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 28, __pyx_L1_error)
+    __PYX_ERR(0, 30, __pyx_L1_error)
   }
-  __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_3, __pyx_n_s_values); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_t_3, __pyx_n_s_values); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 28, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_values_);
   __Pyx_DECREF(__pyx_v_self->_values_);
   __pyx_v_self->_values_ = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "loop_for.pyx":24
+  /* "loop_for.pyx":26
  *         list    _values_
  * 
  *     def __init__( self, DataBase, line ):             # <<<<<<<<<<<<<<
@@ -1794,17 +1843,2783 @@ static int __pyx_pf_8loop_for_4LOOP___init__(struct __pyx_obj_8loop_for_LOOP *__
   return __pyx_r;
 }
 
-/* "loop_for.pyx":30
+/* "loop_for.pyx":31
+ *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]
  *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]
- * 
- *     cpdef LOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):             # <<<<<<<<<<<<<<
+ *     cpdef LOOP( self, list for_values, str var_name, tuple loop_list = () ):             # <<<<<<<<<<<<<<
  *         cdef:
  *             str     error, normal_string, err
  */
 
 static PyObject *__pyx_pw_8loop_for_4LOOP_3LOOP(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_8loop_for_4LOOP_LOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, int __pyx_skip_dispatch, struct __pyx_opt_args_8loop_for_4LOOP_LOOP *__pyx_optional_args) {
-  int __pyx_v_interpreter = ((int)0);
+  PyObject *__pyx_v_loop_list = ((PyObject*)__pyx_empty_tuple);
+  PyObject *__pyx_v_error = 0;
+  PyObject *__pyx_v_normal_string = 0;
+  PyObject *__pyx_v_loop = 0;
+  PyObject *__pyx_v_lexer = 0;
+  PyObject *__pyx_v_keys = 0;
+  PyObject *__pyx_v_any_values = 0;
+  PyObject *__pyx_v_master = 0;
+  long __pyx_v_counting;
+  long __pyx_v_index;
+  long __pyx_v_for_line;
+  int __pyx_v_i;
+  int __pyx_v_j;
+  int __pyx_v_tabulation;
+  CYTHON_UNUSED int __pyx_v_active_tab;
+  CYTHON_UNUSED int __pyx_v_boolean_value;
+  PyObject *__pyx_v_if_values = 0;
+  int __pyx_v_doubleKey;
+  int __pyx_v_broke;
+  int __pyx_v_locked;
+  PyObject *__pyx_v_unless_values = 0;
+  PyObject *__pyx_v_subfor_value = 0;
+  PyObject *__pyx_v_already = 0;
+  PyObject *__pyx_v_subfor_values = 0;
+  PyObject *__pyx_v_all_for_values = 0;
+  PyObject *__pyx_v__string_ = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_t_7;
+  int __pyx_t_8;
+  long __pyx_t_9;
+  int __pyx_t_10;
+  Py_ssize_t __pyx_t_11;
+  Py_ssize_t __pyx_t_12;
+  int __pyx_t_13;
+  Py_ssize_t __pyx_t_14;
+  PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
+  PyObject *__pyx_t_17 = NULL;
+  int __pyx_t_18;
+  PyObject *__pyx_t_19 = NULL;
+  PyObject *(*__pyx_t_20)(PyObject *);
+  PyObject *__pyx_t_21 = NULL;
+  struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP __pyx_t_22;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("LOOP", 0);
+  if (__pyx_optional_args) {
+    if (__pyx_optional_args->__pyx_n > 0) {
+      __pyx_v_loop_list = __pyx_optional_args->loop_list;
+    }
+  }
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+    static PY_UINT64_T __pyx_tp_dict_version = __PYX_DICT_VERSION_INIT, __pyx_obj_dict_version = __PYX_DICT_VERSION_INIT;
+    if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
+      PY_UINT64_T __pyx_type_dict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_LOOP); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8loop_for_4LOOP_3LOOP)) {
+        __Pyx_XDECREF(__pyx_r);
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
+        __pyx_t_5 = 0;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+          if (likely(__pyx_t_4)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+            __Pyx_INCREF(__pyx_t_4);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_3, function);
+            __pyx_t_5 = 1;
+          }
+        }
+        #if CYTHON_FAST_PYCALL
+        if (PyFunction_Check(__pyx_t_3)) {
+          PyObject *__pyx_temp[4] = {__pyx_t_4, __pyx_v_for_values, __pyx_v_var_name, __pyx_v_loop_list};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 3+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+        } else
+        #endif
+        #if CYTHON_FAST_PYCCALL
+        if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+          PyObject *__pyx_temp[4] = {__pyx_t_4, __pyx_v_for_values, __pyx_v_var_name, __pyx_v_loop_list};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_5, 3+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+        } else
+        #endif
+        {
+          __pyx_t_6 = PyTuple_New(3+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 31, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          if (__pyx_t_4) {
+            __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
+          }
+          __Pyx_INCREF(__pyx_v_for_values);
+          __Pyx_GIVEREF(__pyx_v_for_values);
+          PyTuple_SET_ITEM(__pyx_t_6, 0+__pyx_t_5, __pyx_v_for_values);
+          __Pyx_INCREF(__pyx_v_var_name);
+          __Pyx_GIVEREF(__pyx_v_var_name);
+          PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_v_var_name);
+          __Pyx_INCREF(__pyx_v_loop_list);
+          __Pyx_GIVEREF(__pyx_v_loop_list);
+          PyTuple_SET_ITEM(__pyx_t_6, 2+__pyx_t_5, __pyx_v_loop_list);
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        }
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_r = __pyx_t_2;
+        __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+      __pyx_tp_dict_version = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
+      __pyx_obj_dict_version = __Pyx_get_object_dict_version(((PyObject *)__pyx_v_self));
+      if (unlikely(__pyx_type_dict_guard != __pyx_tp_dict_version)) {
+        __pyx_tp_dict_version = __pyx_obj_dict_version = __PYX_DICT_VERSION_INIT;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+    }
+    #endif
+  }
+
+  /* "loop_for.pyx":34
+ *         cdef:
+ *             str     error, normal_string, err
+ *             dict    before, loop, lexer={}, lr, lex             # <<<<<<<<<<<<<<
+ *             list    print_values, keys, finally_values, any_values, master
+ *             long    counting, index, for_line
+ */
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_lexer = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "loop_for.pyx":45
+ *             bint    locked
+ *             list    unless_values
+ *             dict    subfor_value, already = {}             # <<<<<<<<<<<<<<
+ *             list    subfor_values
+ *             tuple   all_for_values
+ */
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_already = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "loop_for.pyx":50
+ *             unsigned long long int m
+ * 
+ *         counting    = 0             # <<<<<<<<<<<<<<
+ *         doubleKey   = False
+ *         broke       = False
+ */
+  __pyx_v_counting = 0;
+
+  /* "loop_for.pyx":51
+ * 
+ *         counting    = 0
+ *         doubleKey   = False             # <<<<<<<<<<<<<<
+ *         broke       = False
+ * 
+ */
+  __pyx_v_doubleKey = 0;
+
+  /* "loop_for.pyx":52
+ *         counting    = 0
+ *         doubleKey   = False
+ *         broke       = False             # <<<<<<<<<<<<<<
+ * 
+ *         loop, tabulation, error = loop_list
+ */
+  __pyx_v_broke = 0;
+
+  /* "loop_for.pyx":54
+ *         broke       = False
+ * 
+ *         loop, tabulation, error = loop_list             # <<<<<<<<<<<<<<
+ * 
+ *         if not error:
+ */
+  if (likely(__pyx_v_loop_list != Py_None)) {
+    PyObject* sequence = __pyx_v_loop_list;
+    Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+    if (unlikely(size != 3)) {
+      if (size > 3) __Pyx_RaiseTooManyValuesError(3);
+      else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+      __PYX_ERR(0, 54, __pyx_L1_error)
+    }
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 2); 
+    __Pyx_INCREF(__pyx_t_1);
+    __Pyx_INCREF(__pyx_t_2);
+    __Pyx_INCREF(__pyx_t_3);
+    #else
+    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_3 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+  } else {
+    __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 54, __pyx_L1_error)
+  }
+  if (!(likely(PyDict_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 54, __pyx_L1_error)
+  __pyx_v_loop = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_v_tabulation = __pyx_t_5;
+  __pyx_v_error = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
+
+  /* "loop_for.pyx":56
+ *         loop, tabulation, error = loop_list
+ * 
+ *         if not error:             # <<<<<<<<<<<<<<
+ *             master = loop['for']
+ * 
+ */
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_8 = ((!__pyx_t_7) != 0);
+  if (__pyx_t_8) {
+
+    /* "loop_for.pyx":57
+ * 
+ *         if not error:
+ *             master = loop['for']             # <<<<<<<<<<<<<<
+ * 
+ *             if var_name in self.variables:
+ */
+    if (unlikely(__pyx_v_loop == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+      __PYX_ERR(0, 57, __pyx_L1_error)
+    }
+    __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_loop, __pyx_n_s_for); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 57, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_v_master = ((PyObject*)__pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "loop_for.pyx":59
+ *             master = loop['for']
+ * 
+ *             if var_name in self.variables:             # <<<<<<<<<<<<<<
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]
+ */
+    __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_v_var_name, __pyx_v_self->variables, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_7 = (__pyx_t_8 != 0);
+    if (__pyx_t_7) {
+
+      /* "loop_for.pyx":60
+ * 
+ *             if var_name in self.variables:
+ *                 index   = self.variables.index( var_name )             # <<<<<<<<<<<<<<
+ *                 self._values_[ index ] = for_values[ -1 ]
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ */
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->variables, __pyx_n_s_index); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_1 = NULL;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_1)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+          __Pyx_INCREF(__pyx_t_1);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_2, function);
+        }
+      }
+      __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_v_var_name) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_var_name);
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_9 = __Pyx_PyInt_As_long(__pyx_t_3); if (unlikely((__pyx_t_9 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_v_index = __pyx_t_9;
+
+      /* "loop_for.pyx":61
+ *             if var_name in self.variables:
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]             # <<<<<<<<<<<<<<
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ * 
+ */
+      if (unlikely(__pyx_v_for_values == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 61, __pyx_L1_error)
+      }
+      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_for_values, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 61, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->_values_ == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 61, __pyx_L1_error)
+      }
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_self->_values_, __pyx_v_index, __pyx_t_3, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 61, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "loop_for.pyx":62
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
+ * 
+ *             else:
+ */
+      __pyx_t_3 = __pyx_v_self->_values_;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 62, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_values, __pyx_t_3) < 0)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "loop_for.pyx":59
+ *             master = loop['for']
+ * 
+ *             if var_name in self.variables:             # <<<<<<<<<<<<<<
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]
+ */
+      goto __pyx_L4;
+    }
+
+    /* "loop_for.pyx":65
+ * 
+ *             else:
+ *                 self.variables.append( var_name )             # <<<<<<<<<<<<<<
+ *                 self._values_.append( for_values[ 0 ] )
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ */
+    /*else*/ {
+      if (unlikely(__pyx_v_self->variables == Py_None)) {
+        PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
+        __PYX_ERR(0, 65, __pyx_L1_error)
+      }
+      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_self->variables, __pyx_v_var_name); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 65, __pyx_L1_error)
+
+      /* "loop_for.pyx":66
+ *             else:
+ *                 self.variables.append( var_name )
+ *                 self._values_.append( for_values[ 0 ] )             # <<<<<<<<<<<<<<
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables
+ */
+      if (unlikely(__pyx_v_self->_values_ == Py_None)) {
+        PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
+        __PYX_ERR(0, 66, __pyx_L1_error)
+      }
+      if (unlikely(__pyx_v_for_values == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 66, __pyx_L1_error)
+      }
+      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_for_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_10 = __Pyx_PyList_Append(__pyx_v_self->_values_, __pyx_t_3); if (unlikely(__pyx_t_10 == ((int)-1))) __PYX_ERR(0, 66, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "loop_for.pyx":67
+ *                 self.variables.append( var_name )
+ *                 self._values_.append( for_values[ 0 ] )
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables
+ * 
+ */
+      __pyx_t_3 = __pyx_v_self->_values_;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 67, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 67, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_values, __pyx_t_3) < 0)) __PYX_ERR(0, 67, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "loop_for.pyx":68
+ *                 self._values_.append( for_values[ 0 ] )
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables             # <<<<<<<<<<<<<<
+ * 
+ *             for i in range( len( for_values )):
+ */
+      __pyx_t_3 = __pyx_v_self->variables;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 68, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 68, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_vars, __pyx_t_3) < 0)) __PYX_ERR(0, 68, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_L4:;
+
+    /* "loop_for.pyx":70
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables
+ * 
+ *             for i in range( len( for_values )):             # <<<<<<<<<<<<<<
+ *                 for_line    = 0
+ *                 counting   += 1
+ */
+    if (unlikely(__pyx_v_for_values == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+      __PYX_ERR(0, 70, __pyx_L1_error)
+    }
+    __pyx_t_11 = PyList_GET_SIZE(__pyx_v_for_values); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 70, __pyx_L1_error)
+    __pyx_t_12 = __pyx_t_11;
+    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_12; __pyx_t_5+=1) {
+      __pyx_v_i = __pyx_t_5;
+
+      /* "loop_for.pyx":71
+ * 
+ *             for i in range( len( for_values )):
+ *                 for_line    = 0             # <<<<<<<<<<<<<<
+ *                 counting   += 1
+ *                 locked      = False
+ */
+      __pyx_v_for_line = 0;
+
+      /* "loop_for.pyx":72
+ *             for i in range( len( for_values )):
+ *                 for_line    = 0
+ *                 counting   += 1             # <<<<<<<<<<<<<<
+ *                 locked      = False
+ * 
+ */
+      __pyx_v_counting = (__pyx_v_counting + 1);
+
+      /* "loop_for.pyx":73
+ *                 for_line    = 0
+ *                 counting   += 1
+ *                 locked      = False             # <<<<<<<<<<<<<<
+ * 
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )
+ */
+      __pyx_v_locked = 0;
+
+      /* "loop_for.pyx":75
+ *                 locked      = False
+ * 
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )             # <<<<<<<<<<<<<<
+ * 
+ *                 if not error :
+ */
+      __pyx_t_3 = __pyx_v_self->DataBase;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_for_values == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 75, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_for_values, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_1 = __pyx_f_8loop_for_UPDATING(((PyObject*)__pyx_t_3), __pyx_v_var_name, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+      /* "loop_for.pyx":77
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )
+ * 
+ *                 if not error :             # <<<<<<<<<<<<<<
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if i == 0:
+ */
+      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 77, __pyx_L1_error)
+      __pyx_t_8 = ((!__pyx_t_7) != 0);
+      if (__pyx_t_8) {
+
+        /* "loop_for.pyx":78
+ * 
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
+ *                         if i == 0:
+ *                             try: already["j"] = already["j"]
+ */
+        __pyx_t_13 = 0;
+        if (unlikely(__pyx_v_master == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 78, __pyx_L1_error)
+        }
+        __pyx_t_1 = __Pyx_PyList_GetSlice(__pyx_v_master, 0, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_14 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        for (;;) {
+          if (__pyx_t_14 >= PyList_GET_SIZE(__pyx_t_2)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_14); __Pyx_INCREF(__pyx_t_1); __pyx_t_14++; if (unlikely(0 < 0)) __PYX_ERR(0, 78, __pyx_L1_error)
+          #else
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_14); __pyx_t_14++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          #endif
+          __Pyx_XDECREF_SET(__pyx_v__string_, __pyx_t_1);
+          __pyx_t_1 = 0;
+          __pyx_v_j = __pyx_t_13;
+          __pyx_t_13 = (__pyx_t_13 + 1);
+
+          /* "loop_for.pyx":79
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if i == 0:             # <<<<<<<<<<<<<<
+ *                             try: already["j"] = already["j"]
+ *                             except KeyError: already["j"] = False
+ */
+          __pyx_t_8 = ((__pyx_v_i == 0) != 0);
+          if (__pyx_t_8) {
+
+            /* "loop_for.pyx":80
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if i == 0:
+ *                             try: already["j"] = already["j"]             # <<<<<<<<<<<<<<
+ *                             except KeyError: already["j"] = False
+ *                         else: pass
+ */
+            {
+              __Pyx_PyThreadState_declare
+              __Pyx_PyThreadState_assign
+              __Pyx_ExceptionSave(&__pyx_t_15, &__pyx_t_16, &__pyx_t_17);
+              __Pyx_XGOTREF(__pyx_t_15);
+              __Pyx_XGOTREF(__pyx_t_16);
+              __Pyx_XGOTREF(__pyx_t_17);
+              /*try:*/ {
+                __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_already, __pyx_n_s_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L11_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                if (unlikely(PyDict_SetItem(__pyx_v_already, __pyx_n_s_j, __pyx_t_1) < 0)) __PYX_ERR(0, 80, __pyx_L11_error)
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              }
+              __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+              __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
+              __Pyx_XDECREF(__pyx_t_17); __pyx_t_17 = 0;
+              goto __pyx_L18_try_end;
+              __pyx_L11_error:;
+              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+              __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+              __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+              /* "loop_for.pyx":81
+ *                         if i == 0:
+ *                             try: already["j"] = already["j"]
+ *                             except KeyError: already["j"] = False             # <<<<<<<<<<<<<<
+ *                         else: pass
+ * 
+ */
+              __pyx_t_18 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_KeyError);
+              if (__pyx_t_18) {
+                __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
+                if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_3, &__pyx_t_6) < 0) __PYX_ERR(0, 81, __pyx_L13_except_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_GOTREF(__pyx_t_3);
+                __Pyx_GOTREF(__pyx_t_6);
+                if (unlikely(PyDict_SetItem(__pyx_v_already, __pyx_n_s_j, Py_False) < 0)) __PYX_ERR(0, 81, __pyx_L13_except_error)
+                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                goto __pyx_L12_exception_handled;
+              }
+              goto __pyx_L13_except_error;
+              __pyx_L13_except_error:;
+
+              /* "loop_for.pyx":80
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if i == 0:
+ *                             try: already["j"] = already["j"]             # <<<<<<<<<<<<<<
+ *                             except KeyError: already["j"] = False
+ *                         else: pass
+ */
+              __Pyx_XGIVEREF(__pyx_t_15);
+              __Pyx_XGIVEREF(__pyx_t_16);
+              __Pyx_XGIVEREF(__pyx_t_17);
+              __Pyx_ExceptionReset(__pyx_t_15, __pyx_t_16, __pyx_t_17);
+              goto __pyx_L1_error;
+              __pyx_L12_exception_handled:;
+              __Pyx_XGIVEREF(__pyx_t_15);
+              __Pyx_XGIVEREF(__pyx_t_16);
+              __Pyx_XGIVEREF(__pyx_t_17);
+              __Pyx_ExceptionReset(__pyx_t_15, __pyx_t_16, __pyx_t_17);
+              __pyx_L18_try_end:;
+            }
+
+            /* "loop_for.pyx":79
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if i == 0:             # <<<<<<<<<<<<<<
+ *                             try: already["j"] = already["j"]
+ *                             except KeyError: already["j"] = False
+ */
+            goto __pyx_L10;
+          }
+
+          /* "loop_for.pyx":82
+ *                             try: already["j"] = already["j"]
+ *                             except KeyError: already["j"] = False
+ *                         else: pass             # <<<<<<<<<<<<<<
+ * 
+ *                         if locked is False:
+ */
+          /*else*/ {
+          }
+          __pyx_L10:;
+
+          /* "loop_for.pyx":84
+ *                         else: pass
+ * 
+ *                         if locked is False:             # <<<<<<<<<<<<<<
+ *                             for_line    += 1
+ * 
+ */
+          __pyx_t_8 = ((__pyx_v_locked == 0) != 0);
+          if (__pyx_t_8) {
+
+            /* "loop_for.pyx":85
+ * 
+ *                         if locked is False:
+ *                             for_line    += 1             # <<<<<<<<<<<<<<
+ * 
+ *                             if type( _string_ ) == type( dict() ):
+ */
+            __pyx_v_for_line = (__pyx_v_for_line + 1);
+
+            /* "loop_for.pyx":87
+ *                             for_line    += 1
+ * 
+ *                             if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
+ *                                 keys = list( _string_.keys() )
+ *                                 if   'any'    in keys           :
+ */
+            __pyx_t_6 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 87, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_6);
+            __pyx_t_3 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v__string_)), ((PyObject *)Py_TYPE(__pyx_t_6)), Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+            __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 87, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (__pyx_t_8) {
+
+              /* "loop_for.pyx":88
+ * 
+ *                             if type( _string_ ) == type( dict() ):
+ *                                 keys = list( _string_.keys() )             # <<<<<<<<<<<<<<
+ *                                 if   'any'    in keys           :
+ *                                     if i == 0:
+ */
+              __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v__string_, __pyx_n_s_keys); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 88, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_6);
+              __pyx_t_1 = NULL;
+              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+                __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_6);
+                if (likely(__pyx_t_1)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+                  __Pyx_INCREF(__pyx_t_1);
+                  __Pyx_INCREF(function);
+                  __Pyx_DECREF_SET(__pyx_t_6, function);
+                }
+              }
+              __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_1) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
+              __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+              if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_3);
+              __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+              __pyx_t_6 = PySequence_List(__pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 88, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_6);
+              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+              __Pyx_XDECREF_SET(__pyx_v_keys, ((PyObject*)__pyx_t_6));
+              __pyx_t_6 = 0;
+
+              /* "loop_for.pyx":89
+ *                             if type( _string_ ) == type( dict() ):
+ *                                 keys = list( _string_.keys() )
+ *                                 if   'any'    in keys           :             # <<<<<<<<<<<<<<
+ *                                     if i == 0:
+ *                                         any_values      = list( _string_[ 'any' ] )
+ */
+              __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_any, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 89, __pyx_L1_error)
+              __pyx_t_7 = (__pyx_t_8 != 0);
+              if (__pyx_t_7) {
+
+                /* "loop_for.pyx":90
+ *                                 keys = list( _string_.keys() )
+ *                                 if   'any'    in keys           :
+ *                                     if i == 0:             # <<<<<<<<<<<<<<
+ *                                         any_values      = list( _string_[ 'any' ] )
+ *                                         normal_string   = any_values[ 0 ]
+ */
+                __pyx_t_7 = ((__pyx_v_i == 0) != 0);
+                if (__pyx_t_7) {
+
+                  /* "loop_for.pyx":91
+ *                                 if   'any'    in keys           :
+ *                                     if i == 0:
+ *                                         any_values      = list( _string_[ 'any' ] )             # <<<<<<<<<<<<<<
+ *                                         normal_string   = any_values[ 0 ]
+ *                                         active_tab      = any_values[ 1 ]
+ */
+                  __pyx_t_6 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_any); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 91, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  __pyx_t_3 = PySequence_List(__pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  __Pyx_XDECREF_SET(__pyx_v_any_values, ((PyObject*)__pyx_t_3));
+                  __pyx_t_3 = 0;
+
+                  /* "loop_for.pyx":92
+ *                                     if i == 0:
+ *                                         any_values      = list( _string_[ 'any' ] )
+ *                                         normal_string   = any_values[ 0 ]             # <<<<<<<<<<<<<<
+ *                                         active_tab      = any_values[ 1 ]
+ *                                         #lexer           = _string_[ 'lex' ]
+ */
+                  __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_any_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 92, __pyx_L1_error)
+                  __Pyx_XDECREF_SET(__pyx_v_normal_string, ((PyObject*)__pyx_t_3));
+                  __pyx_t_3 = 0;
+
+                  /* "loop_for.pyx":93
+ *                                         any_values      = list( _string_[ 'any' ] )
+ *                                         normal_string   = any_values[ 0 ]
+ *                                         active_tab      = any_values[ 1 ]             # <<<<<<<<<<<<<<
+ *                                         #lexer           = _string_[ 'lex' ]
+ *                                         lexer[f'{j}'], error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ */
+                  __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_any_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 93, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 93, __pyx_L1_error)
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __pyx_v_active_tab = __pyx_t_7;
+
+                  /* "loop_for.pyx":95
+ *                                         active_tab      = any_values[ 1 ]
+ *                                         #lexer           = _string_[ 'lex' ]
+ *                                         lexer[f'{j}'], error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,             # <<<<<<<<<<<<<<
+ *                                                     ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop' )
+ * 
+ */
+                  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_for_analyze); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 95, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_NEXT_ANALYZE); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+                  /* "loop_for.pyx":96
+ *                                         #lexer           = _string_[ 'lex' ]
+ *                                         lexer[f'{j}'], error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ *                                                     ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop' )             # <<<<<<<<<<<<<<
+ * 
+ *                                         #error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ */
+                  __pyx_t_6 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 96, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  __pyx_t_4 = NULL;
+                  __pyx_t_18 = 0;
+                  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+                    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_1);
+                    if (likely(__pyx_t_4)) {
+                      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                      __Pyx_INCREF(__pyx_t_4);
+                      __Pyx_INCREF(function);
+                      __Pyx_DECREF_SET(__pyx_t_1, function);
+                      __pyx_t_18 = 1;
+                    }
+                  }
+                  #if CYTHON_FAST_PYCALL
+                  if (PyFunction_Check(__pyx_t_1)) {
+                    PyObject *__pyx_temp[4] = {__pyx_t_4, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_6};
+                    __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+                    __Pyx_GOTREF(__pyx_t_3);
+                    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  } else
+                  #endif
+                  #if CYTHON_FAST_PYCCALL
+                  if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
+                    PyObject *__pyx_temp[4] = {__pyx_t_4, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_6};
+                    __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+                    __Pyx_GOTREF(__pyx_t_3);
+                    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  } else
+                  #endif
+                  {
+                    __pyx_t_19 = PyTuple_New(3+__pyx_t_18); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_19);
+                    if (__pyx_t_4) {
+                      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_19, 0, __pyx_t_4); __pyx_t_4 = NULL;
+                    }
+                    __Pyx_INCREF(__pyx_v_normal_string);
+                    __Pyx_GIVEREF(__pyx_v_normal_string);
+                    PyTuple_SET_ITEM(__pyx_t_19, 0+__pyx_t_18, __pyx_v_normal_string);
+                    __Pyx_INCREF(__pyx_v_self->DataBase);
+                    __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                    PyTuple_SET_ITEM(__pyx_t_19, 1+__pyx_t_18, __pyx_v_self->DataBase);
+                    __Pyx_GIVEREF(__pyx_t_6);
+                    PyTuple_SET_ITEM(__pyx_t_19, 2+__pyx_t_18, __pyx_t_6);
+                    __pyx_t_6 = 0;
+                    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_19, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_3);
+                    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                  }
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_SUB_ANALYZE); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_type, __pyx_n_s_loop) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
+                  __pyx_t_19 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 96, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  if ((likely(PyTuple_CheckExact(__pyx_t_19))) || (PyList_CheckExact(__pyx_t_19))) {
+                    PyObject* sequence = __pyx_t_19;
+                    Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+                    if (unlikely(size != 2)) {
+                      if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+                      else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+                      __PYX_ERR(0, 95, __pyx_L1_error)
+                    }
+                    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                    if (likely(PyTuple_CheckExact(sequence))) {
+                      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0); 
+                      __pyx_t_1 = PyTuple_GET_ITEM(sequence, 1); 
+                    } else {
+                      __pyx_t_3 = PyList_GET_ITEM(sequence, 0); 
+                      __pyx_t_1 = PyList_GET_ITEM(sequence, 1); 
+                    }
+                    __Pyx_INCREF(__pyx_t_3);
+                    __Pyx_INCREF(__pyx_t_1);
+                    #else
+                    __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_3);
+                    __pyx_t_1 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_1);
+                    #endif
+                    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                  } else {
+                    Py_ssize_t index = -1;
+                    __pyx_t_6 = PyObject_GetIter(__pyx_t_19); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_6);
+                    __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                    __pyx_t_20 = Py_TYPE(__pyx_t_6)->tp_iternext;
+                    index = 0; __pyx_t_3 = __pyx_t_20(__pyx_t_6); if (unlikely(!__pyx_t_3)) goto __pyx_L25_unpacking_failed;
+                    __Pyx_GOTREF(__pyx_t_3);
+                    index = 1; __pyx_t_1 = __pyx_t_20(__pyx_t_6); if (unlikely(!__pyx_t_1)) goto __pyx_L25_unpacking_failed;
+                    __Pyx_GOTREF(__pyx_t_1);
+                    if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_6), 2) < 0) __PYX_ERR(0, 95, __pyx_L1_error)
+                    __pyx_t_20 = NULL;
+                    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    goto __pyx_L26_unpacking_done;
+                    __pyx_L25_unpacking_failed:;
+                    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    __pyx_t_20 = NULL;
+                    if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+                    __PYX_ERR(0, 95, __pyx_L1_error)
+                    __pyx_L26_unpacking_done:;
+                  }
+
+                  /* "loop_for.pyx":95
+ *                                         active_tab      = any_values[ 1 ]
+ *                                         #lexer           = _string_[ 'lex' ]
+ *                                         lexer[f'{j}'], error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,             # <<<<<<<<<<<<<<
+ *                                                     ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop' )
+ * 
+ */
+                  if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 95, __pyx_L1_error)
+                  __pyx_t_6 = __Pyx_PyUnicode_From_int(__pyx_v_j, 0, ' ', 'd'); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 95, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  if (unlikely(PyDict_SetItem(__pyx_v_lexer, __pyx_t_6, __pyx_t_3) < 0)) __PYX_ERR(0, 95, __pyx_L1_error)
+                  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_1));
+                  __pyx_t_1 = 0;
+
+                  /* "loop_for.pyx":90
+ *                                 keys = list( _string_.keys() )
+ *                                 if   'any'    in keys           :
+ *                                     if i == 0:             # <<<<<<<<<<<<<<
+ *                                         any_values      = list( _string_[ 'any' ] )
+ *                                         normal_string   = any_values[ 0 ]
+ */
+                  goto __pyx_L24;
+                }
+
+                /* "loop_for.pyx":105
+ *                                     else:
+ *                                         error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ *                                             ( self.line+for_line ) ).SUB_SUB_ANALYZE( _lexer_ = lexer[f'{j}'] )             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+                /*else*/ {
+
+                  /* "loop_for.pyx":104
+ *                                         #            ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop' )
+ *                                     else:
+ *                                         error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,             # <<<<<<<<<<<<<<
+ *                                             ( self.line+for_line ) ).SUB_SUB_ANALYZE( _lexer_ = lexer[f'{j}'] )
+ * 
+ */
+                  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_for_analyze); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_NEXT_ANALYZE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  if (unlikely(!__pyx_v_normal_string)) { __Pyx_RaiseUnboundLocalError("normal_string"); __PYX_ERR(0, 104, __pyx_L1_error) }
+
+                  /* "loop_for.pyx":105
+ *                                     else:
+ *                                         error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ *                                             ( self.line+for_line ) ).SUB_SUB_ANALYZE( _lexer_ = lexer[f'{j}'] )             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+                  __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_6 = NULL;
+                  __pyx_t_18 = 0;
+                  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+                    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
+                    if (likely(__pyx_t_6)) {
+                      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                      __Pyx_INCREF(__pyx_t_6);
+                      __Pyx_INCREF(function);
+                      __Pyx_DECREF_SET(__pyx_t_3, function);
+                      __pyx_t_18 = 1;
+                    }
+                  }
+                  #if CYTHON_FAST_PYCALL
+                  if (PyFunction_Check(__pyx_t_3)) {
+                    PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_1};
+                    __pyx_t_19 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 104, __pyx_L1_error)
+                    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    __Pyx_GOTREF(__pyx_t_19);
+                    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  } else
+                  #endif
+                  #if CYTHON_FAST_PYCCALL
+                  if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+                    PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_1};
+                    __pyx_t_19 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 104, __pyx_L1_error)
+                    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    __Pyx_GOTREF(__pyx_t_19);
+                    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  } else
+                  #endif
+                  {
+                    __pyx_t_4 = PyTuple_New(3+__pyx_t_18); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 104, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_4);
+                    if (__pyx_t_6) {
+                      __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_6); __pyx_t_6 = NULL;
+                    }
+                    __Pyx_INCREF(__pyx_v_normal_string);
+                    __Pyx_GIVEREF(__pyx_v_normal_string);
+                    PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_18, __pyx_v_normal_string);
+                    __Pyx_INCREF(__pyx_v_self->DataBase);
+                    __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                    PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_18, __pyx_v_self->DataBase);
+                    __Pyx_GIVEREF(__pyx_t_1);
+                    PyTuple_SET_ITEM(__pyx_t_4, 2+__pyx_t_18, __pyx_t_1);
+                    __pyx_t_1 = 0;
+                    __pyx_t_19 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 104, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_19);
+                    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                  }
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_n_s_SUB_SUB_ANALYZE); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                  __pyx_t_19 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  __pyx_t_4 = __Pyx_PyUnicode_From_int(__pyx_v_j, 0, ' ', 'd'); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_4);
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_lexer, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                  if (PyDict_SetItem(__pyx_t_19, __pyx_n_s_lexer, __pyx_t_1) < 0) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_19); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                  if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 105, __pyx_L1_error)
+                  __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_1));
+                  __pyx_t_1 = 0;
+                }
+                __pyx_L24:;
+
+                /* "loop_for.pyx":108
+ * 
+ * 
+ *                                     if not error:             # <<<<<<<<<<<<<<
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ */
+                __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 108, __pyx_L1_error)
+                __pyx_t_8 = ((!__pyx_t_7) != 0);
+                if (__pyx_t_8) {
+
+                  /* "loop_for.pyx":109
+ * 
+ *                                     if not error:
+ *                                         if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 109, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_8 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_7 = (__pyx_t_8 != 0);
+                  if (__pyx_t_7) {
+                    goto __pyx_L28;
+                  }
+
+                  /* "loop_for.pyx":111
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                             doubleKey = True
+ *                                             break
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 111, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 111, __pyx_L1_error)
+
+                    /* "loop_for.pyx":112
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None
+ *                                             doubleKey = True             # <<<<<<<<<<<<<<
+ *                                             break
+ * 
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":113
+ *                                             self.DataBase[ 'break' ] = None
+ *                                             doubleKey = True
+ *                                             break             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'exit' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L28:;
+
+                  /* "loop_for.pyx":115
+ *                                             break
+ * 
+ *                                         if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else:
+ *                                             self.DataBase['exit'] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 115, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_7 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_8 = (__pyx_t_7 != 0);
+                  if (__pyx_t_8) {
+                    goto __pyx_L29;
+                  }
+
+                  /* "loop_for.pyx":117
+ *                                         if self.DataBase[ 'exit' ] is None: pass
+ *                                         else:
+ *                                             self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                             doubleKey = True
+ *                                             broke     = True
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 117, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 117, __pyx_L1_error)
+
+                    /* "loop_for.pyx":118
+ *                                         else:
+ *                                             self.DataBase['exit'] = None
+ *                                             doubleKey = True             # <<<<<<<<<<<<<<
+ *                                             broke     = True
+ *                                             break
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":119
+ *                                             self.DataBase['exit'] = None
+ *                                             doubleKey = True
+ *                                             broke     = True             # <<<<<<<<<<<<<<
+ *                                             break
+ * 
+ */
+                    __pyx_v_broke = 1;
+
+                    /* "loop_for.pyx":120
+ *                                             doubleKey = True
+ *                                             broke     = True
+ *                                             break             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'pass' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L29:;
+
+                  /* "loop_for.pyx":122
+ *                                             break
+ * 
+ *                                         if self.DataBase[ 'pass' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else: locked      = True
+ * 
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 122, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_pass); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_8 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_7 = (__pyx_t_8 != 0);
+                  if (__pyx_t_7) {
+                    goto __pyx_L30;
+                  }
+
+                  /* "loop_for.pyx":123
+ * 
+ *                                         if self.DataBase[ 'pass' ] is None: pass
+ *                                         else: locked      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'continue' ] is None: pass
+ */
+                  /*else*/ {
+                    __pyx_v_locked = 1;
+                  }
+                  __pyx_L30:;
+
+                  /* "loop_for.pyx":125
+ *                                         else: locked      = True
+ * 
+ *                                         if self.DataBase[ 'continue' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else: locked      = True
+ * 
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 125, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_continue); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_7 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_8 = (__pyx_t_7 != 0);
+                  if (__pyx_t_8) {
+                    goto __pyx_L31;
+                  }
+
+                  /* "loop_for.pyx":126
+ * 
+ *                                         if self.DataBase[ 'continue' ] is None: pass
+ *                                         else: locked      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'next' ] is None: pass
+ */
+                  /*else*/ {
+                    __pyx_v_locked = 1;
+                  }
+                  __pyx_L31:;
+
+                  /* "loop_for.pyx":128
+ *                                         else: locked      = True
+ * 
+ *                                         if self.DataBase[ 'next' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else: locked      = True
+ * 
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 128, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_next); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_8 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_7 = (__pyx_t_8 != 0);
+                  if (__pyx_t_7) {
+                    goto __pyx_L32;
+                  }
+
+                  /* "loop_for.pyx":129
+ * 
+ *                                         if self.DataBase[ 'next' ] is None: pass
+ *                                         else: locked      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                         already['j']      = True
+ */
+                  /*else*/ {
+                    __pyx_v_locked = 1;
+                  }
+                  __pyx_L32:;
+
+                  /* "loop_for.pyx":131
+ *                                         else: locked      = True
+ * 
+ *                                         already['j']      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                     else : break
+ */
+                  if (unlikely(PyDict_SetItem(__pyx_v_already, __pyx_n_s_j, Py_True) < 0)) __PYX_ERR(0, 131, __pyx_L1_error)
+
+                  /* "loop_for.pyx":108
+ * 
+ * 
+ *                                     if not error:             # <<<<<<<<<<<<<<
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ */
+                  goto __pyx_L27;
+                }
+
+                /* "loop_for.pyx":133
+ *                                         already['j']      = True
+ * 
+ *                                     else : break             # <<<<<<<<<<<<<<
+ * 
+ *                                 elif 'if'     in keys           :
+ */
+                /*else*/ {
+                  goto __pyx_L9_break;
+                }
+                __pyx_L27:;
+
+                /* "loop_for.pyx":89
+ *                             if type( _string_ ) == type( dict() ):
+ *                                 keys = list( _string_.keys() )
+ *                                 if   'any'    in keys           :             # <<<<<<<<<<<<<<
+ *                                     if i == 0:
+ *                                         any_values      = list( _string_[ 'any' ] )
+ */
+                goto __pyx_L23;
+              }
+
+              /* "loop_for.pyx":135
+ *                                     else : break
+ * 
+ *                                 elif 'if'     in keys           :             # <<<<<<<<<<<<<<
+ *                                         if_values      = _string_[ 'if' ]
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ */
+              __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_if, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 135, __pyx_L1_error)
+              __pyx_t_8 = (__pyx_t_7 != 0);
+              if (__pyx_t_8) {
+
+                /* "loop_for.pyx":136
+ * 
+ *                                 elif 'if'     in keys           :
+ *                                         if_values      = _string_[ 'if' ]             # <<<<<<<<<<<<<<
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ *                                         boolean_value  = _string_[ 'value' ]
+ */
+                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_if); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 136, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_if_values, ((PyObject*)__pyx_t_1));
+                __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":138
+ *                                         if_values      = _string_[ 'if' ]
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ *                                         boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
+ * 
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ */
+                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __pyx_v_boolean_value = __pyx_t_8;
+
+                /* "loop_for.pyx":140
+ *                                         boolean_value  = _string_[ 'value' ]
+ * 
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
+ *                                                 (self.line+for_line) ).IF_STATEMENT( True, tabulation , if_values, 'loop' )
+ *                                         if error is None:
+ */
+                __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_loop_if_statement); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 140, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_INTERNAL_IF_LOOP_STATEMENT); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_4);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+                /* "loop_for.pyx":141
+ * 
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ *                                                 (self.line+for_line) ).IF_STATEMENT( True, tabulation , if_values, 'loop' )             # <<<<<<<<<<<<<<
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ */
+                __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_6 = NULL;
+                __pyx_t_18 = 0;
+                if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
+                  __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_4);
+                  if (likely(__pyx_t_6)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+                    __Pyx_INCREF(__pyx_t_6);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_4, function);
+                    __pyx_t_18 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_4)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_6, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
+                  __pyx_t_19 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 140, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  __Pyx_GOTREF(__pyx_t_19);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_6, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
+                  __pyx_t_19 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 140, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  __Pyx_GOTREF(__pyx_t_19);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_21 = PyTuple_New(3+__pyx_t_18); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 140, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_21);
+                  if (__pyx_t_6) {
+                    __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_21, 0, __pyx_t_6); __pyx_t_6 = NULL;
+                  }
+                  __Pyx_INCREF(Py_None);
+                  __Pyx_GIVEREF(Py_None);
+                  PyTuple_SET_ITEM(__pyx_t_21, 0+__pyx_t_18, Py_None);
+                  __Pyx_INCREF(__pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                  PyTuple_SET_ITEM(__pyx_t_21, 1+__pyx_t_18, __pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_t_3);
+                  PyTuple_SET_ITEM(__pyx_t_21, 2+__pyx_t_18, __pyx_t_3);
+                  __pyx_t_3 = 0;
+                  __pyx_t_19 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_21, NULL); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 140, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_19, __pyx_n_s_IF_STATEMENT); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_4);
+                __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                __pyx_t_19 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 141, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_19);
+                __pyx_t_21 = NULL;
+                __pyx_t_18 = 0;
+                if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+                  __pyx_t_21 = PyMethod_GET_SELF(__pyx_t_4);
+                  if (likely(__pyx_t_21)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+                    __Pyx_INCREF(__pyx_t_21);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_4, function);
+                    __pyx_t_18 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_4)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_21, Py_True, __pyx_t_19, __pyx_v_if_values, __pyx_n_s_loop};
+                  __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_18, 4+__pyx_t_18); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_21); __pyx_t_21 = 0;
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_21, Py_True, __pyx_t_19, __pyx_v_if_values, __pyx_n_s_loop};
+                  __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_18, 4+__pyx_t_18); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_21); __pyx_t_21 = 0;
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_3 = PyTuple_New(4+__pyx_t_18); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  if (__pyx_t_21) {
+                    __Pyx_GIVEREF(__pyx_t_21); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_21); __pyx_t_21 = NULL;
+                  }
+                  __Pyx_INCREF(Py_True);
+                  __Pyx_GIVEREF(Py_True);
+                  PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_18, Py_True);
+                  __Pyx_GIVEREF(__pyx_t_19);
+                  PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_18, __pyx_t_19);
+                  __Pyx_INCREF(__pyx_v_if_values);
+                  __Pyx_GIVEREF(__pyx_v_if_values);
+                  PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_18, __pyx_v_if_values);
+                  __Pyx_INCREF(__pyx_n_s_loop);
+                  __Pyx_GIVEREF(__pyx_n_s_loop);
+                  PyTuple_SET_ITEM(__pyx_t_3, 3+__pyx_t_18, __pyx_n_s_loop);
+                  __pyx_t_19 = 0;
+                  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 141, __pyx_L1_error)
+                __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_1));
+                __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":142
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ *                                                 (self.line+for_line) ).IF_STATEMENT( True, tabulation , if_values, 'loop' )
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                __pyx_t_8 = (__pyx_v_error == ((PyObject*)Py_None));
+                __pyx_t_7 = (__pyx_t_8 != 0);
+                if (__pyx_t_7) {
+
+                  /* "loop_for.pyx":143
+ *                                                 (self.line+for_line) ).IF_STATEMENT( True, tabulation , if_values, 'loop' )
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 143, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_7 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_8 = (__pyx_t_7 != 0);
+                  if (__pyx_t_8) {
+                    goto __pyx_L34;
+                  }
+
+                  /* "loop_for.pyx":145
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 break
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 145, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 145, __pyx_L1_error)
+
+                    /* "loop_for.pyx":146
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ * 
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":147
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L34:;
+
+                  /* "loop_for.pyx":149
+ *                                                 break
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 149, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_8 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_7 = (__pyx_t_8 != 0);
+                  if (__pyx_t_7) {
+                    goto __pyx_L35;
+                  }
+
+                  /* "loop_for.pyx":151
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 151, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 151, __pyx_L1_error)
+
+                    /* "loop_for.pyx":152
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 broke     = True
+ *                                                 break
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":153
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True
+ *                                                 broke     = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ *                                         else: break
+ */
+                    __pyx_v_broke = 1;
+
+                    /* "loop_for.pyx":154
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ *                                         else: break
+ *                                 elif 'unless' in keys           :
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L35:;
+
+                  /* "loop_for.pyx":142
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ *                                                 (self.line+for_line) ).IF_STATEMENT( True, tabulation , if_values, 'loop' )
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                  goto __pyx_L33;
+                }
+
+                /* "loop_for.pyx":155
+ *                                                 broke     = True
+ *                                                 break
+ *                                         else: break             # <<<<<<<<<<<<<<
+ *                                 elif 'unless' in keys           :
+ *                                     unless_values  = _string_[ 'unless' ]
+ */
+                /*else*/ {
+                  goto __pyx_L9_break;
+                }
+                __pyx_L33:;
+
+                /* "loop_for.pyx":135
+ *                                     else : break
+ * 
+ *                                 elif 'if'     in keys           :             # <<<<<<<<<<<<<<
+ *                                         if_values      = _string_[ 'if' ]
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ */
+                goto __pyx_L23;
+              }
+
+              /* "loop_for.pyx":156
+ *                                                 break
+ *                                         else: break
+ *                                 elif 'unless' in keys           :             # <<<<<<<<<<<<<<
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ */
+              __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_unless, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 156, __pyx_L1_error)
+              __pyx_t_8 = (__pyx_t_7 != 0);
+              if (__pyx_t_8) {
+
+                /* "loop_for.pyx":157
+ *                                         else: break
+ *                                 elif 'unless' in keys           :
+ *                                     unless_values  = _string_[ 'unless' ]             # <<<<<<<<<<<<<<
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     boolean_value  = _string_[ 'value' ]
+ */
+                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_unless); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 157, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_unless_values, ((PyObject*)__pyx_t_1));
+                __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":159
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( True, tabulation, unless_values, 'loop' )
+ */
+                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 159, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 159, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __pyx_v_boolean_value = __pyx_t_8;
+
+                /* "loop_for.pyx":160
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     boolean_value  = _string_[ 'value' ]
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( True, tabulation, unless_values, 'loop' )
+ * 
+ */
+                __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_loop_unless_statement); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 160, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_INTERNAL_UNLESS_FOR_STATEMENT); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 160, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_19);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+                /* "loop_for.pyx":161
+ *                                     boolean_value  = _string_[ 'value' ]
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( True, tabulation, unless_values, 'loop' )             # <<<<<<<<<<<<<<
+ * 
+ *                                     if error is None:
+ */
+                __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_21 = NULL;
+                __pyx_t_18 = 0;
+                if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_19))) {
+                  __pyx_t_21 = PyMethod_GET_SELF(__pyx_t_19);
+                  if (likely(__pyx_t_21)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_19);
+                    __Pyx_INCREF(__pyx_t_21);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_19, function);
+                    __pyx_t_18 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_19)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_21, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
+                  __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_19, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_21); __pyx_t_21 = 0;
+                  __Pyx_GOTREF(__pyx_t_4);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_19)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_21, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
+                  __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_19, __pyx_temp+1-__pyx_t_18, 3+__pyx_t_18); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_21); __pyx_t_21 = 0;
+                  __Pyx_GOTREF(__pyx_t_4);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_6 = PyTuple_New(3+__pyx_t_18); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 160, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  if (__pyx_t_21) {
+                    __Pyx_GIVEREF(__pyx_t_21); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_21); __pyx_t_21 = NULL;
+                  }
+                  __Pyx_INCREF(Py_None);
+                  __Pyx_GIVEREF(Py_None);
+                  PyTuple_SET_ITEM(__pyx_t_6, 0+__pyx_t_18, Py_None);
+                  __Pyx_INCREF(__pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                  PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_18, __pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_t_3);
+                  PyTuple_SET_ITEM(__pyx_t_6, 2+__pyx_t_18, __pyx_t_3);
+                  __pyx_t_3 = 0;
+                  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_19, __pyx_t_6, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 160, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_4);
+                  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_UNLESS_STATEMENT); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 161, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_19);
+                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 161, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_4);
+                __pyx_t_6 = NULL;
+                __pyx_t_18 = 0;
+                if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_19))) {
+                  __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_19);
+                  if (likely(__pyx_t_6)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_19);
+                    __Pyx_INCREF(__pyx_t_6);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_19, function);
+                    __pyx_t_18 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_19)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_6, Py_True, __pyx_t_4, __pyx_v_unless_values, __pyx_n_s_loop};
+                  __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_19, __pyx_temp+1-__pyx_t_18, 4+__pyx_t_18); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_19)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_6, Py_True, __pyx_t_4, __pyx_v_unless_values, __pyx_n_s_loop};
+                  __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_19, __pyx_temp+1-__pyx_t_18, 4+__pyx_t_18); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_3 = PyTuple_New(4+__pyx_t_18); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 161, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  if (__pyx_t_6) {
+                    __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_6); __pyx_t_6 = NULL;
+                  }
+                  __Pyx_INCREF(Py_True);
+                  __Pyx_GIVEREF(Py_True);
+                  PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_18, Py_True);
+                  __Pyx_GIVEREF(__pyx_t_4);
+                  PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_18, __pyx_t_4);
+                  __Pyx_INCREF(__pyx_v_unless_values);
+                  __Pyx_GIVEREF(__pyx_v_unless_values);
+                  PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_18, __pyx_v_unless_values);
+                  __Pyx_INCREF(__pyx_n_s_loop);
+                  __Pyx_GIVEREF(__pyx_n_s_loop);
+                  PyTuple_SET_ITEM(__pyx_t_3, 3+__pyx_t_18, __pyx_n_s_loop);
+                  __pyx_t_4 = 0;
+                  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_19, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 161, __pyx_L1_error)
+                __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_1));
+                __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":163
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( True, tabulation, unless_values, 'loop' )
+ * 
+ *                                     if error is None:             # <<<<<<<<<<<<<<
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ */
+                __pyx_t_8 = (__pyx_v_error == ((PyObject*)Py_None));
+                __pyx_t_7 = (__pyx_t_8 != 0);
+                if (__pyx_t_7) {
+
+                  /* "loop_for.pyx":164
+ * 
+ *                                     if error is None:
+ *                                         if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 164, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 164, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_7 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_8 = (__pyx_t_7 != 0);
+                  if (__pyx_t_8) {
+                    goto __pyx_L37;
+                  }
+
+                  /* "loop_for.pyx":166
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                             doubleKey = True
+ *                                             break
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 166, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 166, __pyx_L1_error)
+
+                    /* "loop_for.pyx":167
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None
+ *                                             doubleKey = True             # <<<<<<<<<<<<<<
+ *                                             break
+ * 
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":168
+ *                                             self.DataBase[ 'break' ] = None
+ *                                             doubleKey = True
+ *                                             break             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'exit' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L37:;
+
+                  /* "loop_for.pyx":170
+ *                                             break
+ * 
+ *                                         if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else:
+ *                                             self.DataBase['exit'] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 170, __pyx_L1_error)
+                  }
+                  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_8 = (__pyx_t_1 == Py_None);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_7 = (__pyx_t_8 != 0);
+                  if (__pyx_t_7) {
+                    goto __pyx_L38;
+                  }
+
+                  /* "loop_for.pyx":172
+ *                                         if self.DataBase[ 'exit' ] is None: pass
+ *                                         else:
+ *                                             self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                             doubleKey = True
+ *                                             broke     = True
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 172, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
+
+                    /* "loop_for.pyx":173
+ *                                         else:
+ *                                             self.DataBase['exit'] = None
+ *                                             doubleKey = True             # <<<<<<<<<<<<<<
+ *                                             broke     = True
+ *                                             break
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":174
+ *                                             self.DataBase['exit'] = None
+ *                                             doubleKey = True
+ *                                             broke     = True             # <<<<<<<<<<<<<<
+ *                                             break
+ *                                     else: break
+ */
+                    __pyx_v_broke = 1;
+
+                    /* "loop_for.pyx":175
+ *                                             doubleKey = True
+ *                                             broke     = True
+ *                                             break             # <<<<<<<<<<<<<<
+ *                                     else: break
+ *                                 elif 'for'    in keys           :
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L38:;
+
+                  /* "loop_for.pyx":163
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( True, tabulation, unless_values, 'loop' )
+ * 
+ *                                     if error is None:             # <<<<<<<<<<<<<<
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ */
+                  goto __pyx_L36;
+                }
+
+                /* "loop_for.pyx":176
+ *                                             broke     = True
+ *                                             break
+ *                                     else: break             # <<<<<<<<<<<<<<
+ *                                 elif 'for'    in keys           :
+ *                                     subfor_values  = _string_[ 'for' ]
+ */
+                /*else*/ {
+                  goto __pyx_L9_break;
+                }
+                __pyx_L36:;
+
+                /* "loop_for.pyx":156
+ *                                                 break
+ *                                         else: break
+ *                                 elif 'unless' in keys           :             # <<<<<<<<<<<<<<
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ */
+                goto __pyx_L23;
+              }
+
+              /* "loop_for.pyx":177
+ *                                             break
+ *                                     else: break
+ *                                 elif 'for'    in keys           :             # <<<<<<<<<<<<<<
+ *                                     subfor_values  = _string_[ 'for' ]
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ */
+              __pyx_t_7 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_for, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 177, __pyx_L1_error)
+              __pyx_t_8 = (__pyx_t_7 != 0);
+              if (__pyx_t_8) {
+
+                /* "loop_for.pyx":178
+ *                                     else: break
+ *                                 elif 'for'    in keys           :
+ *                                     subfor_values  = _string_[ 'for' ]             # <<<<<<<<<<<<<<
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     #subfor_value   = _string_[ 'value' ]
+ */
+                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_for); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 178, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 178, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_subfor_values, ((PyObject*)__pyx_t_1));
+                __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":183
+ *                                     #self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
+ * 
+ *                                     all_for_values = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][tabulation : ],             # <<<<<<<<<<<<<<
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ */
+                __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_mainFor); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_FOR_BLOCK); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_19);
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                if (unlikely(__pyx_v_subfor_values == Py_None)) {
+                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                  __PYX_ERR(0, 183, __pyx_L1_error)
+                }
+                __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_subfor_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_4);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_t_4, __pyx_v_tabulation, 0, NULL, NULL, NULL, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+                if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_normal_string, __pyx_t_3) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+                /* "loop_for.pyx":184
+ * 
+ *                                     all_for_values = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][tabulation : ],
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)             # <<<<<<<<<<<<<<
+ * 
+ *                                     if not all_for_values[ 2 ]:
+ */
+                if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_data_base, __pyx_v_self->DataBase) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+                __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_line, __pyx_t_3) < 0) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+                /* "loop_for.pyx":183
+ *                                     #self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
+ * 
+ *                                     all_for_values = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][tabulation : ],             # <<<<<<<<<<<<<<
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ */
+                __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_19, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 183, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":184
+ * 
+ *                                     all_for_values = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][tabulation : ],
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)             # <<<<<<<<<<<<<<
+ * 
+ *                                     if not all_for_values[ 2 ]:
+ */
+                __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_FOR); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 184, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __pyx_t_3 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_function, __pyx_n_s_loop) < 0) __PYX_ERR(0, 184, __pyx_L1_error)
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_interpreter, Py_False) < 0) __PYX_ERR(0, 184, __pyx_L1_error)
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_locked, Py_False) < 0) __PYX_ERR(0, 184, __pyx_L1_error)
+                __pyx_t_19 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 184, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_19);
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                if (!(likely(PyTuple_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "tuple", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 184, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_all_for_values, ((PyObject*)__pyx_t_19));
+                __pyx_t_19 = 0;
+
+                /* "loop_for.pyx":186
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ *                                     if not all_for_values[ 2 ]:             # <<<<<<<<<<<<<<
+ *                                         subfor_value = all_for_values[ 1 ]
+ * 
+ */
+                if (unlikely(__pyx_v_all_for_values == Py_None)) {
+                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                  __PYX_ERR(0, 186, __pyx_L1_error)
+                }
+                __pyx_t_19 = __Pyx_GetItemInt_Tuple(__pyx_v_all_for_values, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 186, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_19);
+                __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_19); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 186, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                __pyx_t_7 = ((!__pyx_t_8) != 0);
+                if (__pyx_t_7) {
+
+                  /* "loop_for.pyx":187
+ * 
+ *                                     if not all_for_values[ 2 ]:
+ *                                         subfor_value = all_for_values[ 1 ]             # <<<<<<<<<<<<<<
+ * 
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ */
+                  if (unlikely(__pyx_v_all_for_values == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 187, __pyx_L1_error)
+                  }
+                  __pyx_t_19 = __Pyx_GetItemInt_Tuple(__pyx_v_all_for_values, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 187, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  if (!(likely(PyDict_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 187, __pyx_L1_error)
+                  __Pyx_XDECREF_SET(__pyx_v_subfor_value, ((PyObject*)__pyx_t_19));
+                  __pyx_t_19 = 0;
+
+                  /* "loop_for.pyx":189
+ *                                         subfor_value = all_for_values[ 1 ]
+ * 
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
+ *                                                         var_name=subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, ''))
+ * 
+ */
+                  __pyx_t_19 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  if (PyDict_SetItem(__pyx_t_19, __pyx_n_s_DataBase, __pyx_v_self->DataBase) < 0) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  if (PyDict_SetItem(__pyx_t_19, __pyx_n_s_line, __pyx_t_3) < 0) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8loop_for_LOOP), __pyx_empty_tuple, __pyx_t_19); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                  if (unlikely(__pyx_v_subfor_value == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 189, __pyx_L1_error)
+                  }
+                  __pyx_t_19 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_value); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  __pyx_t_1 = PySequence_List(__pyx_t_19); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+
+                  /* "loop_for.pyx":190
+ * 
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ *                                                         var_name=subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, ''))             # <<<<<<<<<<<<<<
+ * 
+ *                                         if error is None:
+ */
+                  if (unlikely(__pyx_v_subfor_value == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 190, __pyx_L1_error)
+                  }
+                  __pyx_t_19 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_variable); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 190, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_19);
+                  if (!(likely(PyString_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 190, __pyx_L1_error)
+                  if (unlikely(__pyx_v_subfor_values == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 190, __pyx_L1_error)
+                  }
+                  __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_subfor_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 190, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_4);
+                  __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 190, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  __pyx_t_21 = PyTuple_New(3); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 190, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_21);
+                  __Pyx_GIVEREF(__pyx_t_4);
+                  PyTuple_SET_ITEM(__pyx_t_21, 0, __pyx_t_4);
+                  __Pyx_GIVEREF(__pyx_t_6);
+                  PyTuple_SET_ITEM(__pyx_t_21, 1, __pyx_t_6);
+                  __Pyx_INCREF(__pyx_kp_s_);
+                  __Pyx_GIVEREF(__pyx_kp_s_);
+                  PyTuple_SET_ITEM(__pyx_t_21, 2, __pyx_kp_s_);
+                  __pyx_t_4 = 0;
+                  __pyx_t_6 = 0;
+
+                  /* "loop_for.pyx":189
+ *                                         subfor_value = all_for_values[ 1 ]
+ * 
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
+ *                                                         var_name=subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, ''))
+ * 
+ */
+                  __pyx_t_22.__pyx_n = 1;
+                  __pyx_t_22.loop_list = ((PyObject*)__pyx_t_21);
+                  __pyx_t_6 = ((struct __pyx_vtabstruct_8loop_for_LOOP *)((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_3)->__pyx_vtab)->SubLOOP(((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_3), ((PyObject*)__pyx_t_1), ((PyObject*)__pyx_t_19), &__pyx_t_22); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
+                  __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
+                  if (!(likely(PyString_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(0, 189, __pyx_L1_error)
+                  __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_6));
+                  __pyx_t_6 = 0;
+
+                  /* "loop_for.pyx":192
+ *                                                         var_name=subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, ''))
+ * 
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                  __pyx_t_7 = (__pyx_v_error == ((PyObject*)Py_None));
+                  __pyx_t_8 = (__pyx_t_7 != 0);
+                  if (__pyx_t_8) {
+
+                    /* "loop_for.pyx":193
+ * 
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ */
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 193, __pyx_L1_error)
+                    }
+                    __pyx_t_6 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 193, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_6);
+                    __pyx_t_8 = (__pyx_t_6 == Py_None);
+                    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    __pyx_t_7 = (__pyx_t_8 != 0);
+                    if (__pyx_t_7) {
+                      goto __pyx_L41;
+                    }
+
+                    /* "loop_for.pyx":195
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 break
+ */
+                    /*else*/ {
+                      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                        __PYX_ERR(0, 195, __pyx_L1_error)
+                      }
+                      if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 195, __pyx_L1_error)
+
+                      /* "loop_for.pyx":196
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ * 
+ */
+                      __pyx_v_doubleKey = 1;
+
+                      /* "loop_for.pyx":197
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ */
+                      goto __pyx_L9_break;
+                    }
+                    __pyx_L41:;
+
+                    /* "loop_for.pyx":199
+ *                                                 break
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ */
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 199, __pyx_L1_error)
+                    }
+                    __pyx_t_6 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 199, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_6);
+                    __pyx_t_7 = (__pyx_t_6 == Py_None);
+                    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+                    __pyx_t_8 = (__pyx_t_7 != 0);
+                    if (__pyx_t_8) {
+                      goto __pyx_L42;
+                    }
+
+                    /* "loop_for.pyx":201
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ */
+                    /*else*/ {
+                      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                        __PYX_ERR(0, 201, __pyx_L1_error)
+                      }
+                      if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 201, __pyx_L1_error)
+
+                      /* "loop_for.pyx":202
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 broke     = True
+ *                                                 break
+ */
+                      __pyx_v_doubleKey = 1;
+
+                      /* "loop_for.pyx":203
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True
+ *                                                 broke     = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ *                                         else: break
+ */
+                      __pyx_v_broke = 1;
+
+                      /* "loop_for.pyx":204
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ *                                         else: break
+ *                                     else:
+ */
+                      goto __pyx_L9_break;
+                    }
+                    __pyx_L42:;
+
+                    /* "loop_for.pyx":192
+ *                                                         var_name=subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, ''))
+ * 
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                    goto __pyx_L40;
+                  }
+
+                  /* "loop_for.pyx":205
+ *                                                 broke     = True
+ *                                                 break
+ *                                         else: break             # <<<<<<<<<<<<<<
+ *                                     else:
+ *                                         error = all_for_values[ 2 ]
+ */
+                  /*else*/ {
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L40:;
+
+                  /* "loop_for.pyx":186
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ *                                     if not all_for_values[ 2 ]:             # <<<<<<<<<<<<<<
+ *                                         subfor_value = all_for_values[ 1 ]
+ * 
+ */
+                  goto __pyx_L39;
+                }
+
+                /* "loop_for.pyx":207
+ *                                         else: break
+ *                                     else:
+ *                                         error = all_for_values[ 2 ]             # <<<<<<<<<<<<<<
+ *                                         break
+ *                                 else: pass
+ */
+                /*else*/ {
+                  if (unlikely(__pyx_v_all_for_values == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 207, __pyx_L1_error)
+                  }
+                  __pyx_t_6 = __Pyx_GetItemInt_Tuple(__pyx_v_all_for_values, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 207, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_6);
+                  if (!(likely(PyString_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(0, 207, __pyx_L1_error)
+                  __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_6));
+                  __pyx_t_6 = 0;
+
+                  /* "loop_for.pyx":208
+ *                                     else:
+ *                                         error = all_for_values[ 2 ]
+ *                                         break             # <<<<<<<<<<<<<<
+ *                                 else: pass
+ *                             else: pass
+ */
+                  goto __pyx_L9_break;
+                }
+                __pyx_L39:;
+
+                /* "loop_for.pyx":177
+ *                                             break
+ *                                     else: break
+ *                                 elif 'for'    in keys           :             # <<<<<<<<<<<<<<
+ *                                     subfor_values  = _string_[ 'for' ]
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ */
+                goto __pyx_L23;
+              }
+
+              /* "loop_for.pyx":209
+ *                                         error = all_for_values[ 2 ]
+ *                                         break
+ *                                 else: pass             # <<<<<<<<<<<<<<
+ *                             else: pass
+ *                         else: pass
+ */
+              /*else*/ {
+              }
+              __pyx_L23:;
+
+              /* "loop_for.pyx":87
+ *                             for_line    += 1
+ * 
+ *                             if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
+ *                                 keys = list( _string_.keys() )
+ *                                 if   'any'    in keys           :
+ */
+              goto __pyx_L22;
+            }
+
+            /* "loop_for.pyx":210
+ *                                         break
+ *                                 else: pass
+ *                             else: pass             # <<<<<<<<<<<<<<
+ *                         else: pass
+ *                     if not error:
+ */
+            /*else*/ {
+            }
+            __pyx_L22:;
+
+            /* "loop_for.pyx":84
+ *                         else: pass
+ * 
+ *                         if locked is False:             # <<<<<<<<<<<<<<
+ *                             for_line    += 1
+ * 
+ */
+            goto __pyx_L21;
+          }
+
+          /* "loop_for.pyx":211
+ *                                 else: pass
+ *                             else: pass
+ *                         else: pass             # <<<<<<<<<<<<<<
+ *                     if not error:
+ *                         if doubleKey is False:
+ */
+          /*else*/ {
+          }
+          __pyx_L21:;
+
+          /* "loop_for.pyx":78
+ * 
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
+ *                         if i == 0:
+ *                             try: already["j"] = already["j"]
+ */
+        }
+        __pyx_L9_break:;
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+        /* "loop_for.pyx":212
+ *                             else: pass
+ *                         else: pass
+ *                     if not error:             # <<<<<<<<<<<<<<
+ *                         if doubleKey is False:
+ *                             if broke is True: exit()
+ */
+        __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 212, __pyx_L1_error)
+        __pyx_t_7 = ((!__pyx_t_8) != 0);
+        if (__pyx_t_7) {
+
+          /* "loop_for.pyx":213
+ *                         else: pass
+ *                     if not error:
+ *                         if doubleKey is False:             # <<<<<<<<<<<<<<
+ *                             if broke is True: exit()
+ *                             else: pass
+ */
+          __pyx_t_7 = ((__pyx_v_doubleKey == 0) != 0);
+          if (__pyx_t_7) {
+
+            /* "loop_for.pyx":214
+ *                     if not error:
+ *                         if doubleKey is False:
+ *                             if broke is True: exit()             # <<<<<<<<<<<<<<
+ *                             else: pass
+ *                         else: break
+ */
+            __pyx_t_7 = ((__pyx_v_broke == 1) != 0);
+            if (__pyx_t_7) {
+              __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_builtin_exit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 214, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              goto __pyx_L45;
+            }
+
+            /* "loop_for.pyx":215
+ *                         if doubleKey is False:
+ *                             if broke is True: exit()
+ *                             else: pass             # <<<<<<<<<<<<<<
+ *                         else: break
+ * 
+ */
+            /*else*/ {
+            }
+            __pyx_L45:;
+
+            /* "loop_for.pyx":213
+ *                         else: pass
+ *                     if not error:
+ *                         if doubleKey is False:             # <<<<<<<<<<<<<<
+ *                             if broke is True: exit()
+ *                             else: pass
+ */
+            goto __pyx_L44;
+          }
+
+          /* "loop_for.pyx":216
+ *                             if broke is True: exit()
+ *                             else: pass
+ *                         else: break             # <<<<<<<<<<<<<<
+ * 
+ *                     else: break
+ */
+          /*else*/ {
+            goto __pyx_L6_break;
+          }
+          __pyx_L44:;
+
+          /* "loop_for.pyx":212
+ *                             else: pass
+ *                         else: pass
+ *                     if not error:             # <<<<<<<<<<<<<<
+ *                         if doubleKey is False:
+ *                             if broke is True: exit()
+ */
+          goto __pyx_L43;
+        }
+
+        /* "loop_for.pyx":218
+ *                         else: break
+ * 
+ *                     else: break             # <<<<<<<<<<<<<<
+ *                 else : break
+ *             return [None if not error else error ][0]
+ */
+        /*else*/ {
+          goto __pyx_L6_break;
+        }
+        __pyx_L43:;
+
+        /* "loop_for.pyx":77
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )
+ * 
+ *                 if not error :             # <<<<<<<<<<<<<<
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if i == 0:
+ */
+        goto __pyx_L7;
+      }
+
+      /* "loop_for.pyx":219
+ * 
+ *                     else: break
+ *                 else : break             # <<<<<<<<<<<<<<
+ *             return [None if not error else error ][0]
+ *         else: return [None if not error else error ][0]
+ */
+      /*else*/ {
+        goto __pyx_L6_break;
+      }
+      __pyx_L7:;
+    }
+    __pyx_L6_break:;
+
+    /* "loop_for.pyx":220
+ *                     else: break
+ *                 else : break
+ *             return [None if not error else error ][0]             # <<<<<<<<<<<<<<
+ *         else: return [None if not error else error ][0]
+ * 
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 220, __pyx_L1_error)
+    if (((!__pyx_t_7) != 0)) {
+      __Pyx_INCREF(Py_None);
+      __pyx_t_2 = Py_None;
+    } else {
+      __Pyx_INCREF(__pyx_v_error);
+      __pyx_t_2 = __pyx_v_error;
+    }
+    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyList_SET_ITEM(__pyx_t_6, 0, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_t_6, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 220, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+
+    /* "loop_for.pyx":56
+ *         loop, tabulation, error = loop_list
+ * 
+ *         if not error:             # <<<<<<<<<<<<<<
+ *             master = loop['for']
+ * 
+ */
+  }
+
+  /* "loop_for.pyx":221
+ *                 else : break
+ *             return [None if not error else error ][0]
+ *         else: return [None if not error else error ][0]             # <<<<<<<<<<<<<<
+ * 
+ *     cdef SubLOOP( self, list for_values, str var_name, tuple loop_list = () ):
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 221, __pyx_L1_error)
+    if (((!__pyx_t_7) != 0)) {
+      __Pyx_INCREF(Py_None);
+      __pyx_t_2 = Py_None;
+    } else {
+      __Pyx_INCREF(__pyx_v_error);
+      __pyx_t_2 = __pyx_v_error;
+    }
+    __pyx_t_6 = PyList_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 221, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyList_SET_ITEM(__pyx_t_6, 0, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_t_6, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 221, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+  }
+
+  /* "loop_for.pyx":31
+ *             self.variables      = self.DataBase[ 'variables' ][ 'vars' ]
+ *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]
+ *     cpdef LOOP( self, list for_values, str var_name, tuple loop_list = () ):             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             str     error, normal_string, err
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_19);
+  __Pyx_XDECREF(__pyx_t_21);
+  __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_error);
+  __Pyx_XDECREF(__pyx_v_normal_string);
+  __Pyx_XDECREF(__pyx_v_loop);
+  __Pyx_XDECREF(__pyx_v_lexer);
+  __Pyx_XDECREF(__pyx_v_keys);
+  __Pyx_XDECREF(__pyx_v_any_values);
+  __Pyx_XDECREF(__pyx_v_master);
+  __Pyx_XDECREF(__pyx_v_if_values);
+  __Pyx_XDECREF(__pyx_v_unless_values);
+  __Pyx_XDECREF(__pyx_v_subfor_value);
+  __Pyx_XDECREF(__pyx_v_already);
+  __Pyx_XDECREF(__pyx_v_subfor_values);
+  __Pyx_XDECREF(__pyx_v_all_for_values);
+  __Pyx_XDECREF(__pyx_v__string_);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8loop_for_4LOOP_3LOOP(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8loop_for_4LOOP_3LOOP(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_for_values = 0;
+  PyObject *__pyx_v_var_name = 0;
+  PyObject *__pyx_v_loop_list = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("LOOP (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_for_values,&__pyx_n_s_var_name,&__pyx_n_s_loop_list,0};
+    PyObject* values[3] = {0,0,0};
+    values[2] = ((PyObject*)__pyx_empty_tuple);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_for_values)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_var_name)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("LOOP", 0, 2, 3, 1); __PYX_ERR(0, 31, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_loop_list);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "LOOP") < 0)) __PYX_ERR(0, 31, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_for_values = ((PyObject*)values[0]);
+    __pyx_v_var_name = ((PyObject*)values[1]);
+    __pyx_v_loop_list = ((PyObject*)values[2]);
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("LOOP", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 31, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_for_values), (&PyList_Type), 1, "for_values", 1))) __PYX_ERR(0, 31, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_var_name), (&PyString_Type), 1, "var_name", 1))) __PYX_ERR(0, 31, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_loop_list), (&PyTuple_Type), 1, "loop_list", 1))) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_r = __pyx_pf_8loop_for_4LOOP_2LOOP(((struct __pyx_obj_8loop_for_LOOP *)__pyx_v_self), __pyx_v_for_values, __pyx_v_var_name, __pyx_v_loop_list);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8loop_for_4LOOP_2LOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, PyObject *__pyx_v_loop_list) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  struct __pyx_opt_args_8loop_for_4LOOP_LOOP __pyx_t_2;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("LOOP", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_2.__pyx_n = 1;
+  __pyx_t_2.loop_list = __pyx_v_loop_list;
+  __pyx_t_1 = __pyx_vtabptr_8loop_for_LOOP->LOOP(__pyx_v_self, __pyx_v_for_values, __pyx_v_var_name, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "loop_for.pyx":223
+ *         else: return [None if not error else error ][0]
+ * 
+ *     cdef SubLOOP( self, list for_values, str var_name, tuple loop_list = () ):             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             str     error, normal_string, err
+ */
+
+static PyObject *__pyx_f_8loop_for_4LOOP_SubLOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP *__pyx_optional_args) {
   PyObject *__pyx_v_loop_list = ((PyObject*)__pyx_empty_tuple);
   PyObject *__pyx_v_error = 0;
   PyObject *__pyx_v_normal_string = 0;
@@ -1829,147 +4644,49 @@ static PyObject *__pyx_f_8loop_for_4LOOP_LOOP(struct __pyx_obj_8loop_for_LOOP *_
   PyObject *__pyx_v_subfor_value = 0;
   PyObject *__pyx_v_subfor_values = 0;
   PyObject *__pyx_v__string_ = NULL;
+  CYTHON_UNUSED PyObject *__pyx_v_s = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_4;
+  int __pyx_t_5;
   int __pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
+  long __pyx_t_7;
   int __pyx_t_8;
-  int __pyx_t_9;
-  long __pyx_t_10;
+  Py_ssize_t __pyx_t_9;
+  Py_ssize_t __pyx_t_10;
   int __pyx_t_11;
   Py_ssize_t __pyx_t_12;
-  Py_ssize_t __pyx_t_13;
-  int __pyx_t_14;
-  PyObject *(*__pyx_t_15)(PyObject *);
-  Py_ssize_t __pyx_t_16;
-  int __pyx_t_17;
-  PyObject *__pyx_t_18 = NULL;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
+  int __pyx_t_15;
+  PyObject *__pyx_t_16 = NULL;
+  PyObject *__pyx_t_17 = NULL;
+  PyObject *(*__pyx_t_18)(PyObject *);
   struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP __pyx_t_19;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("LOOP", 0);
+  __Pyx_RefNannySetupContext("SubLOOP", 0);
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
-      __pyx_v_interpreter = __pyx_optional_args->interpreter;
-      if (__pyx_optional_args->__pyx_n > 1) {
-        __pyx_v_loop_list = __pyx_optional_args->loop_list;
-      }
+      __pyx_v_loop_list = __pyx_optional_args->loop_list;
     }
-  }
-  /* Check if called by wrapper */
-  if (unlikely(__pyx_skip_dispatch)) ;
-  /* Check if overridden in Python */
-  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
-    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
-    static PY_UINT64_T __pyx_tp_dict_version = __PYX_DICT_VERSION_INIT, __pyx_obj_dict_version = __PYX_DICT_VERSION_INIT;
-    if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
-      PY_UINT64_T __pyx_type_dict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
-      #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_LOOP); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8loop_for_4LOOP_3LOOP)) {
-        __Pyx_XDECREF(__pyx_r);
-        __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_interpreter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_INCREF(__pyx_t_1);
-        __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
-        __pyx_t_6 = 0;
-        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-          __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
-          if (likely(__pyx_t_5)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-            __Pyx_INCREF(__pyx_t_5);
-            __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_4, function);
-            __pyx_t_6 = 1;
-          }
-        }
-        #if CYTHON_FAST_PYCALL
-        if (PyFunction_Check(__pyx_t_4)) {
-          PyObject *__pyx_temp[5] = {__pyx_t_5, __pyx_v_for_values, __pyx_v_var_name, __pyx_t_3, __pyx_v_loop_list};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_6, 4+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        } else
-        #endif
-        #if CYTHON_FAST_PYCCALL
-        if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-          PyObject *__pyx_temp[5] = {__pyx_t_5, __pyx_v_for_values, __pyx_v_var_name, __pyx_t_3, __pyx_v_loop_list};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_6, 4+__pyx_t_6); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
-          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        } else
-        #endif
-        {
-          __pyx_t_7 = PyTuple_New(4+__pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 30, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          if (__pyx_t_5) {
-            __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5); __pyx_t_5 = NULL;
-          }
-          __Pyx_INCREF(__pyx_v_for_values);
-          __Pyx_GIVEREF(__pyx_v_for_values);
-          PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_6, __pyx_v_for_values);
-          __Pyx_INCREF(__pyx_v_var_name);
-          __Pyx_GIVEREF(__pyx_v_var_name);
-          PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_v_var_name);
-          __Pyx_GIVEREF(__pyx_t_3);
-          PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_6, __pyx_t_3);
-          __Pyx_INCREF(__pyx_v_loop_list);
-          __Pyx_GIVEREF(__pyx_v_loop_list);
-          PyTuple_SET_ITEM(__pyx_t_7, 3+__pyx_t_6, __pyx_v_loop_list);
-          __pyx_t_3 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        }
-        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_r = __pyx_t_2;
-        __pyx_t_2 = 0;
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        goto __pyx_L0;
-      }
-      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
-      __pyx_tp_dict_version = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
-      __pyx_obj_dict_version = __Pyx_get_object_dict_version(((PyObject *)__pyx_v_self));
-      if (unlikely(__pyx_type_dict_guard != __pyx_tp_dict_version)) {
-        __pyx_tp_dict_version = __pyx_obj_dict_version = __PYX_DICT_VERSION_INIT;
-      }
-      #endif
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
-    }
-    #endif
   }
 
-  /* "loop_for.pyx":56
+  /* "loop_for.pyx":249
  *             list    subfor_values
  * 
- *         error       = ''             # <<<<<<<<<<<<<<
- *         counting    = 0
- *         doubleKey   = False
- */
-  __Pyx_INCREF(__pyx_kp_s_);
-  __pyx_v_error = __pyx_kp_s_;
-
-  /* "loop_for.pyx":57
- * 
- *         error       = ''
  *         counting    = 0             # <<<<<<<<<<<<<<
  *         doubleKey   = False
  *         broke       = False
  */
   __pyx_v_counting = 0;
 
-  /* "loop_for.pyx":58
- *         error       = ''
+  /* "loop_for.pyx":250
+ * 
  *         counting    = 0
  *         doubleKey   = False             # <<<<<<<<<<<<<<
  *         broke       = False
@@ -1977,2252 +4694,2192 @@ static PyObject *__pyx_f_8loop_for_4LOOP_LOOP(struct __pyx_obj_8loop_for_LOOP *_
  */
   __pyx_v_doubleKey = 0;
 
-  /* "loop_for.pyx":59
+  /* "loop_for.pyx":251
  *         counting    = 0
  *         doubleKey   = False
  *         broke       = False             # <<<<<<<<<<<<<<
  * 
- *         if var_name in self.variables:
+ *         loop, tabulation, error = loop_list
  */
   __pyx_v_broke = 0;
 
-  /* "loop_for.pyx":61
+  /* "loop_for.pyx":253
  *         broke       = False
  * 
- *         if var_name in self.variables:             # <<<<<<<<<<<<<<
- *             index   = self.variables.index( var_name )
- *             self._values_[ index ] = for_values[ -1 ]
- */
-  __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_v_var_name, __pyx_v_self->variables, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 61, __pyx_L1_error)
-  __pyx_t_9 = (__pyx_t_8 != 0);
-  if (__pyx_t_9) {
-
-    /* "loop_for.pyx":62
+ *         loop, tabulation, error = loop_list             # <<<<<<<<<<<<<<
  * 
- *         if var_name in self.variables:
- *             index   = self.variables.index( var_name )             # <<<<<<<<<<<<<<
- *             self._values_[ index ] = for_values[ -1 ]
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ *         if not error :
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->variables, __pyx_n_s_index); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = NULL;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
-      if (likely(__pyx_t_4)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-        __Pyx_INCREF(__pyx_t_4);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
-      }
+  if (likely(__pyx_v_loop_list != Py_None)) {
+    PyObject* sequence = __pyx_v_loop_list;
+    Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+    if (unlikely(size != 3)) {
+      if (size > 3) __Pyx_RaiseTooManyValuesError(3);
+      else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+      __PYX_ERR(0, 253, __pyx_L1_error)
     }
-    __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_v_var_name) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_var_name);
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_1 = PyTuple_GET_ITEM(sequence, 0); 
+    __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1); 
+    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 2); 
+    __Pyx_INCREF(__pyx_t_1);
+    __Pyx_INCREF(__pyx_t_2);
+    __Pyx_INCREF(__pyx_t_3);
+    #else
+    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_10 = __Pyx_PyInt_As_long(__pyx_t_1); if (unlikely((__pyx_t_10 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 62, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_v_index = __pyx_t_10;
-
-    /* "loop_for.pyx":63
- *         if var_name in self.variables:
- *             index   = self.variables.index( var_name )
- *             self._values_[ index ] = for_values[ -1 ]             # <<<<<<<<<<<<<<
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- * 
- */
-    if (unlikely(__pyx_v_for_values == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 63, __pyx_L1_error)
-    }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_for_values, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__pyx_v_self->_values_ == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 63, __pyx_L1_error)
-    }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_self->_values_, __pyx_v_index, __pyx_t_1, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 63, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-    /* "loop_for.pyx":64
- *             index   = self.variables.index( var_name )
- *             self._values_[ index ] = for_values[ -1 ]
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
- * 
- *         else:
- */
-    __pyx_t_1 = __pyx_v_self->_values_;
-    __Pyx_INCREF(__pyx_t_1);
-    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 64, __pyx_L1_error)
-    }
-    __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L1_error)
+    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 253, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_values, __pyx_t_1) < 0)) __PYX_ERR(0, 64, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-    /* "loop_for.pyx":61
- *         broke       = False
- * 
- *         if var_name in self.variables:             # <<<<<<<<<<<<<<
- *             index   = self.variables.index( var_name )
- *             self._values_[ index ] = for_values[ -1 ]
- */
-    goto __pyx_L3;
+    __pyx_t_3 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 253, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+  } else {
+    __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 253, __pyx_L1_error)
   }
+  if (!(likely(PyDict_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 253, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_v_loop = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_v_tabulation = __pyx_t_4;
+  __pyx_v_error = ((PyObject*)__pyx_t_3);
+  __pyx_t_3 = 0;
 
-  /* "loop_for.pyx":67
+  /* "loop_for.pyx":255
+ *         loop, tabulation, error = loop_list
  * 
- *         else:
- *             self.variables.append( var_name )             # <<<<<<<<<<<<<<
- *             self._values_.append( for_values[ 0 ] )
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ *         if not error :             # <<<<<<<<<<<<<<
+ *             master = loop['for']
+ * 
  */
-  /*else*/ {
-    if (unlikely(__pyx_v_self->variables == Py_None)) {
-      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
-      __PYX_ERR(0, 67, __pyx_L1_error)
-    }
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_self->variables, __pyx_v_var_name); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 255, __pyx_L1_error)
+  __pyx_t_6 = ((!__pyx_t_5) != 0);
+  if (__pyx_t_6) {
 
-    /* "loop_for.pyx":68
- *         else:
- *             self.variables.append( var_name )
- *             self._values_.append( for_values[ 0 ] )             # <<<<<<<<<<<<<<
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- *             self.DataBase[ 'variables' ][ 'vars' ] = self.variables
+    /* "loop_for.pyx":256
+ * 
+ *         if not error :
+ *             master = loop['for']             # <<<<<<<<<<<<<<
+ * 
+ *             if var_name in self.variables:
  */
-    if (unlikely(__pyx_v_self->_values_ == Py_None)) {
-      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
-      __PYX_ERR(0, 68, __pyx_L1_error)
-    }
-    if (unlikely(__pyx_v_for_values == Py_None)) {
+    if (unlikely(__pyx_v_loop == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 68, __pyx_L1_error)
+      __PYX_ERR(0, 256, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_for_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_PyList_Append(__pyx_v_self->_values_, __pyx_t_1); if (unlikely(__pyx_t_11 == ((int)-1))) __PYX_ERR(0, 68, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_loop, __pyx_n_s_for); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 256, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 256, __pyx_L1_error)
+    __pyx_v_master = ((PyObject*)__pyx_t_3);
+    __pyx_t_3 = 0;
 
-    /* "loop_for.pyx":69
- *             self.variables.append( var_name )
- *             self._values_.append( for_values[ 0 ] )
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
- *             self.DataBase[ 'variables' ][ 'vars' ] = self.variables
+    /* "loop_for.pyx":258
+ *             master = loop['for']
  * 
+ *             if var_name in self.variables:             # <<<<<<<<<<<<<<
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]
  */
-    __pyx_t_1 = __pyx_v_self->_values_;
-    __Pyx_INCREF(__pyx_t_1);
-    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 69, __pyx_L1_error)
-    }
-    __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_values, __pyx_t_1) < 0)) __PYX_ERR(0, 69, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_v_var_name, __pyx_v_self->variables, Py_EQ)); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 258, __pyx_L1_error)
+    __pyx_t_5 = (__pyx_t_6 != 0);
+    if (__pyx_t_5) {
 
-    /* "loop_for.pyx":70
- *             self._values_.append( for_values[ 0 ] )
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- *             self.DataBase[ 'variables' ][ 'vars' ] = self.variables             # <<<<<<<<<<<<<<
+      /* "loop_for.pyx":259
  * 
- * 
+ *             if var_name in self.variables:
+ *                 index   = self.variables.index( var_name )             # <<<<<<<<<<<<<<
+ *                 self._values_[ index ] = for_values[ -1 ]
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
  */
-    __pyx_t_1 = __pyx_v_self->variables;
-    __Pyx_INCREF(__pyx_t_1);
-    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 70, __pyx_L1_error)
-    }
-    __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_vars, __pyx_t_1) < 0)) __PYX_ERR(0, 70, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  }
-  __pyx_L3:;
-
-  /* "loop_for.pyx":73
- * 
- * 
- *         for i in range( len( for_values ) ):             # <<<<<<<<<<<<<<
- *             for_line    = 0
- *             counting    += 1
- */
-  if (unlikely(__pyx_v_for_values == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 73, __pyx_L1_error)
-  }
-  __pyx_t_12 = PyList_GET_SIZE(__pyx_v_for_values); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(0, 73, __pyx_L1_error)
-  __pyx_t_13 = __pyx_t_12;
-  for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_13; __pyx_t_6+=1) {
-    __pyx_v_i = __pyx_t_6;
-
-    /* "loop_for.pyx":74
- * 
- *         for i in range( len( for_values ) ):
- *             for_line    = 0             # <<<<<<<<<<<<<<
- *             counting    += 1
- *             locked      = False
- */
-    __pyx_v_for_line = 0;
-
-    /* "loop_for.pyx":75
- *         for i in range( len( for_values ) ):
- *             for_line    = 0
- *             counting    += 1             # <<<<<<<<<<<<<<
- *             locked      = False
- * 
- */
-    __pyx_v_counting = (__pyx_v_counting + 1);
-
-    /* "loop_for.pyx":76
- *             for_line    = 0
- *             counting    += 1
- *             locked      = False             # <<<<<<<<<<<<<<
- * 
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )
- */
-    __pyx_v_locked = 0;
-
-    /* "loop_for.pyx":78
- *             locked      = False
- * 
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )             # <<<<<<<<<<<<<<
- * 
- *             if not error :
- */
-    __pyx_t_1 = __pyx_v_self->DataBase;
-    __Pyx_INCREF(__pyx_t_1);
-    if (unlikely(__pyx_v_for_values == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 78, __pyx_L1_error)
-    }
-    __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_for_values, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __pyx_f_8loop_for_UPDATING(((PyObject*)__pyx_t_1), __pyx_v_var_name, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 78, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-    /* "loop_for.pyx":80
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )
- * 
- *             if not error :             # <<<<<<<<<<<<<<
- *                 if i == 0   :
- *                     if interpreter is False:
- */
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 80, __pyx_L1_error)
-    __pyx_t_8 = ((!__pyx_t_9) != 0);
-    if (__pyx_t_8) {
-
-      /* "loop_for.pyx":81
- * 
- *             if not error :
- *                 if i == 0   :             # <<<<<<<<<<<<<<
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- */
-      __pyx_t_8 = ((__pyx_v_i == 0) != 0);
-      if (__pyx_t_8) {
-
-        /* "loop_for.pyx":82
- *             if not error :
- *                 if i == 0   :
- *                     if interpreter is False:             # <<<<<<<<<<<<<<
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- */
-        __pyx_t_8 = ((__pyx_v_interpreter == 0) != 0);
-        if (__pyx_t_8) {
-
-          /* "loop_for.pyx":83
- *                 if i == 0   :
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,             # <<<<<<<<<<<<<<
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                         if not error: master = loop['for']
- */
-          __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_for_statement); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_EXTERNAL_FOR_STATEMENT); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 83, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-          /* "loop_for.pyx":84
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )             # <<<<<<<<<<<<<<
- *                         if not error: master = loop['for']
- *                         else: break
- */
-          __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_3 = NULL;
-          __pyx_t_14 = 0;
-          if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
-            __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_7);
-            if (likely(__pyx_t_3)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-              __Pyx_INCREF(__pyx_t_3);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_7, function);
-              __pyx_t_14 = 1;
-            }
-          }
-          #if CYTHON_FAST_PYCALL
-          if (PyFunction_Check(__pyx_t_7)) {
-            PyObject *__pyx_temp[4] = {__pyx_t_3, Py_None, __pyx_v_self->DataBase, __pyx_t_1};
-            __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_14, 3+__pyx_t_14); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          } else
-          #endif
-          #if CYTHON_FAST_PYCCALL
-          if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
-            PyObject *__pyx_temp[4] = {__pyx_t_3, Py_None, __pyx_v_self->DataBase, __pyx_t_1};
-            __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_14, 3+__pyx_t_14); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          } else
-          #endif
-          {
-            __pyx_t_5 = PyTuple_New(3+__pyx_t_14); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            if (__pyx_t_3) {
-              __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
-            }
-            __Pyx_INCREF(Py_None);
-            __Pyx_GIVEREF(Py_None);
-            PyTuple_SET_ITEM(__pyx_t_5, 0+__pyx_t_14, Py_None);
-            __Pyx_INCREF(__pyx_v_self->DataBase);
-            __Pyx_GIVEREF(__pyx_v_self->DataBase);
-            PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_14, __pyx_v_self->DataBase);
-            __Pyx_GIVEREF(__pyx_t_1);
-            PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_14, __pyx_t_1);
-            __pyx_t_1 = 0;
-            __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          }
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_FOR_STATEMENT); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 84, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_7);
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_2 = NULL;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_7);
-            if (likely(__pyx_t_2)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-              __Pyx_INCREF(__pyx_t_2);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_7, function);
-            }
-          }
-          __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_7, __pyx_t_2, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_int_1);
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 84, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
-            PyObject* sequence = __pyx_t_4;
-            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-            if (unlikely(size != 3)) {
-              if (size > 3) __Pyx_RaiseTooManyValuesError(3);
-              else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 83, __pyx_L1_error)
-            }
-            #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_7 = PyTuple_GET_ITEM(sequence, 0); 
-              __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1); 
-              __pyx_t_5 = PyTuple_GET_ITEM(sequence, 2); 
-            } else {
-              __pyx_t_7 = PyList_GET_ITEM(sequence, 0); 
-              __pyx_t_2 = PyList_GET_ITEM(sequence, 1); 
-              __pyx_t_5 = PyList_GET_ITEM(sequence, 2); 
-            }
-            __Pyx_INCREF(__pyx_t_7);
-            __Pyx_INCREF(__pyx_t_2);
-            __Pyx_INCREF(__pyx_t_5);
-            #else
-            __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            #endif
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          } else {
-            Py_ssize_t index = -1;
-            __pyx_t_1 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_1);
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __pyx_t_15 = Py_TYPE(__pyx_t_1)->tp_iternext;
-            index = 0; __pyx_t_7 = __pyx_t_15(__pyx_t_1); if (unlikely(!__pyx_t_7)) goto __pyx_L9_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_7);
-            index = 1; __pyx_t_2 = __pyx_t_15(__pyx_t_1); if (unlikely(!__pyx_t_2)) goto __pyx_L9_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_2);
-            index = 2; __pyx_t_5 = __pyx_t_15(__pyx_t_1); if (unlikely(!__pyx_t_5)) goto __pyx_L9_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_5);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_1), 3) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
-            __pyx_t_15 = NULL;
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            goto __pyx_L10_unpacking_done;
-            __pyx_L9_unpacking_failed:;
-            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-            __pyx_t_15 = NULL;
-            if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 83, __pyx_L1_error)
-            __pyx_L10_unpacking_done:;
-          }
-
-          /* "loop_for.pyx":83
- *                 if i == 0   :
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,             # <<<<<<<<<<<<<<
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                         if not error: master = loop['for']
- */
-          if (!(likely(PyDict_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 83, __pyx_L1_error)
-          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (!(likely(PyString_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 83, __pyx_L1_error)
-          __Pyx_XDECREF_SET(__pyx_v_loop, ((PyObject*)__pyx_t_7));
-          __pyx_t_7 = 0;
-          __pyx_v_tabulation = __pyx_t_14;
-          __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_5));
-          __pyx_t_5 = 0;
-
-          /* "loop_for.pyx":85
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                         if not error: master = loop['for']             # <<<<<<<<<<<<<<
- *                         else: break
- *                     else:
- */
-          __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 85, __pyx_L1_error)
-          __pyx_t_9 = ((!__pyx_t_8) != 0);
-          if (__pyx_t_9) {
-            if (unlikely(__pyx_v_loop == Py_None)) {
-              PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-              __PYX_ERR(0, 85, __pyx_L1_error)
-            }
-            __pyx_t_4 = __Pyx_PyDict_GetItem(__pyx_v_loop, __pyx_n_s_for); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 85, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            if (!(likely(PyList_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 85, __pyx_L1_error)
-            __Pyx_XDECREF_SET(__pyx_v_master, ((PyObject*)__pyx_t_4));
-            __pyx_t_4 = 0;
-            goto __pyx_L11;
-          }
-
-          /* "loop_for.pyx":86
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                         if not error: master = loop['for']
- *                         else: break             # <<<<<<<<<<<<<<
- *                     else:
- *                         loop, tabulation, error = loop_list
- */
-          /*else*/ {
-            goto __pyx_L5_break;
-          }
-          __pyx_L11:;
-
-          /* "loop_for.pyx":82
- *             if not error :
- *                 if i == 0   :
- *                     if interpreter is False:             # <<<<<<<<<<<<<<
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- */
-          goto __pyx_L8;
-        }
-
-        /* "loop_for.pyx":88
- *                         else: break
- *                     else:
- *                         loop, tabulation, error = loop_list             # <<<<<<<<<<<<<<
- *                         if not error: master = loop['for']
- *                         else: break
- */
-        /*else*/ {
-          if (likely(__pyx_v_loop_list != Py_None)) {
-            PyObject* sequence = __pyx_v_loop_list;
-            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-            if (unlikely(size != 3)) {
-              if (size > 3) __Pyx_RaiseTooManyValuesError(3);
-              else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 88, __pyx_L1_error)
-            }
-            #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_4 = PyTuple_GET_ITEM(sequence, 0); 
-            __pyx_t_5 = PyTuple_GET_ITEM(sequence, 1); 
-            __pyx_t_2 = PyTuple_GET_ITEM(sequence, 2); 
-            __Pyx_INCREF(__pyx_t_4);
-            __Pyx_INCREF(__pyx_t_5);
-            __Pyx_INCREF(__pyx_t_2);
-            #else
-            __pyx_t_4 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 88, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __pyx_t_5 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 88, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_2 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            #endif
-          } else {
-            __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 88, __pyx_L1_error)
-          }
-          if (!(likely(PyDict_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 88, __pyx_L1_error)
-          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_5); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 88, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (!(likely(PyString_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 88, __pyx_L1_error)
-          __Pyx_XDECREF_SET(__pyx_v_loop, ((PyObject*)__pyx_t_4));
-          __pyx_t_4 = 0;
-          __pyx_v_tabulation = __pyx_t_14;
-          __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_2));
-          __pyx_t_2 = 0;
-
-          /* "loop_for.pyx":89
- *                     else:
- *                         loop, tabulation, error = loop_list
- *                         if not error: master = loop['for']             # <<<<<<<<<<<<<<
- *                         else: break
- *                 else :  pass
- */
-          __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 89, __pyx_L1_error)
-          __pyx_t_8 = ((!__pyx_t_9) != 0);
-          if (__pyx_t_8) {
-            if (unlikely(__pyx_v_loop == Py_None)) {
-              PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-              __PYX_ERR(0, 89, __pyx_L1_error)
-            }
-            __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_loop, __pyx_n_s_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            if (!(likely(PyList_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 89, __pyx_L1_error)
-            __Pyx_XDECREF_SET(__pyx_v_master, ((PyObject*)__pyx_t_2));
-            __pyx_t_2 = 0;
-            goto __pyx_L12;
-          }
-
-          /* "loop_for.pyx":90
- *                         loop, tabulation, error = loop_list
- *                         if not error: master = loop['for']
- *                         else: break             # <<<<<<<<<<<<<<
- *                 else :  pass
- * 
- */
-          /*else*/ {
-            goto __pyx_L5_break;
-          }
-          __pyx_L12:;
-        }
-        __pyx_L8:;
-
-        /* "loop_for.pyx":81
- * 
- *             if not error :
- *                 if i == 0   :             # <<<<<<<<<<<<<<
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- */
-        goto __pyx_L7;
-      }
-
-      /* "loop_for.pyx":91
- *                         if not error: master = loop['for']
- *                         else: break
- *                 else :  pass             # <<<<<<<<<<<<<<
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):
- */
-      /*else*/ {
-      }
-      __pyx_L7:;
-
-      /* "loop_for.pyx":93
- *                 else :  pass
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
- *                     if locked is False:
- *                         for_line    += 1
- */
-      __pyx_t_14 = 0;
-      if (unlikely(!__pyx_v_master)) { __Pyx_RaiseUnboundLocalError("master"); __PYX_ERR(0, 93, __pyx_L1_error) }
-      if (unlikely(__pyx_v_master == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 93, __pyx_L1_error)
-      }
-      __pyx_t_2 = __Pyx_PyList_GetSlice(__pyx_v_master, 0, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->variables, __pyx_n_s_index); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 259, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = __pyx_t_2; __Pyx_INCREF(__pyx_t_5); __pyx_t_16 = 0;
+      __pyx_t_1 = NULL;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+        __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_1)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+          __Pyx_INCREF(__pyx_t_1);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_2, function);
+        }
+      }
+      __pyx_t_3 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_1, __pyx_v_var_name) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_var_name);
+      __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 259, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      for (;;) {
-        if (__pyx_t_16 >= PyList_GET_SIZE(__pyx_t_5)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_16); __Pyx_INCREF(__pyx_t_2); __pyx_t_16++; if (unlikely(0 < 0)) __PYX_ERR(0, 93, __pyx_L1_error)
-        #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_5, __pyx_t_16); __pyx_t_16++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 93, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        #endif
-        __Pyx_XDECREF_SET(__pyx_v__string_, __pyx_t_2);
-        __pyx_t_2 = 0;
-        __pyx_v_j = __pyx_t_14;
-        __pyx_t_14 = (__pyx_t_14 + 1);
+      __pyx_t_7 = __Pyx_PyInt_As_long(__pyx_t_3); if (unlikely((__pyx_t_7 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 259, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_v_index = __pyx_t_7;
 
-        /* "loop_for.pyx":94
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):
- *                     if locked is False:             # <<<<<<<<<<<<<<
- *                         for_line    += 1
+      /* "loop_for.pyx":260
+ *             if var_name in self.variables:
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]             # <<<<<<<<<<<<<<
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
  * 
  */
-        __pyx_t_8 = ((__pyx_v_locked == 0) != 0);
-        if (__pyx_t_8) {
+      if (unlikely(__pyx_v_for_values == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 260, __pyx_L1_error)
+      }
+      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_for_values, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 260, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->_values_ == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 260, __pyx_L1_error)
+      }
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_self->_values_, __pyx_v_index, __pyx_t_3, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 260, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "loop_for.pyx":95
- *                 for j, _string_ in enumerate( master[ : ] ):
- *                     if locked is False:
- *                         for_line    += 1             # <<<<<<<<<<<<<<
+      /* "loop_for.pyx":261
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
  * 
- *                         if type( _string_ ) == type( dict() ):
+ *             else:
  */
-          __pyx_v_for_line = (__pyx_v_for_line + 1);
+      __pyx_t_3 = __pyx_v_self->_values_;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 261, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 261, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_values, __pyx_t_3) < 0)) __PYX_ERR(0, 261, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "loop_for.pyx":97
- *                         for_line    += 1
+      /* "loop_for.pyx":258
+ *             master = loop['for']
  * 
- *                         if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
- *                             keys = list( _string_.keys() )
- *                             if   'any'    in keys           :
+ *             if var_name in self.variables:             # <<<<<<<<<<<<<<
+ *                 index   = self.variables.index( var_name )
+ *                 self._values_[ index ] = for_values[ -1 ]
  */
-          __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_4 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v__string_)), ((PyObject *)Py_TYPE(__pyx_t_2)), Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (__pyx_t_8) {
+      goto __pyx_L4;
+    }
 
-            /* "loop_for.pyx":98
+    /* "loop_for.pyx":264
  * 
- *                         if type( _string_ ) == type( dict() ):
- *                             keys = list( _string_.keys() )             # <<<<<<<<<<<<<<
- *                             if   'any'    in keys           :
- *                                 any_values      = list( _string_[ 'any' ] )
+ *             else:
+ *                 self.variables.append( var_name )             # <<<<<<<<<<<<<<
+ *                 self._values_.append( for_values[ 0 ] )
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
  */
-            __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v__string_, __pyx_n_s_keys); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_7 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-              __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_2);
-              if (likely(__pyx_t_7)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                __Pyx_INCREF(__pyx_t_7);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_2, function);
-              }
-            }
-            __pyx_t_4 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
-            __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-            if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-            __pyx_t_2 = PySequence_List(__pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_keys, ((PyObject*)__pyx_t_2));
-            __pyx_t_2 = 0;
+    /*else*/ {
+      if (unlikely(__pyx_v_self->variables == Py_None)) {
+        PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
+        __PYX_ERR(0, 264, __pyx_L1_error)
+      }
+      __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_self->variables, __pyx_v_var_name); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 264, __pyx_L1_error)
 
-            /* "loop_for.pyx":99
- *                         if type( _string_ ) == type( dict() ):
- *                             keys = list( _string_.keys() )
- *                             if   'any'    in keys           :             # <<<<<<<<<<<<<<
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]
+      /* "loop_for.pyx":265
+ *             else:
+ *                 self.variables.append( var_name )
+ *                 self._values_.append( for_values[ 0 ] )             # <<<<<<<<<<<<<<
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables
  */
-            __pyx_t_8 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_any, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 99, __pyx_L1_error)
-            __pyx_t_9 = (__pyx_t_8 != 0);
-            if (__pyx_t_9) {
+      if (unlikely(__pyx_v_self->_values_ == Py_None)) {
+        PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
+        __PYX_ERR(0, 265, __pyx_L1_error)
+      }
+      if (unlikely(__pyx_v_for_values == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 265, __pyx_L1_error)
+      }
+      __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_for_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 265, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_self->_values_, __pyx_t_3); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 265, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-              /* "loop_for.pyx":100
- *                             keys = list( _string_.keys() )
- *                             if   'any'    in keys           :
- *                                 any_values      = list( _string_[ 'any' ] )             # <<<<<<<<<<<<<<
- *                                 normal_string   = any_values[ 0 ]
- *                                 active_tab      = any_values[ 1 ]
- */
-              __pyx_t_2 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_any); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __pyx_t_4 = PySequence_List(__pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 100, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-              __Pyx_XDECREF_SET(__pyx_v_any_values, ((PyObject*)__pyx_t_4));
-              __pyx_t_4 = 0;
-
-              /* "loop_for.pyx":101
- *                             if   'any'    in keys           :
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]             # <<<<<<<<<<<<<<
- *                                 active_tab      = any_values[ 1 ]
- *                                 lexer           = _string_[ 'lex' ]
- */
-              __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_any_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 101, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 101, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_normal_string, ((PyObject*)__pyx_t_4));
-              __pyx_t_4 = 0;
-
-              /* "loop_for.pyx":102
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]
- *                                 active_tab      = any_values[ 1 ]             # <<<<<<<<<<<<<<
- *                                 lexer           = _string_[ 'lex' ]
+      /* "loop_for.pyx":266
+ *                 self.variables.append( var_name )
+ *                 self._values_.append( for_values[ 0 ] )
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables
  * 
  */
-              __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_any_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_9 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 102, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __pyx_v_active_tab = __pyx_t_9;
+      __pyx_t_3 = __pyx_v_self->_values_;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 266, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 266, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_values, __pyx_t_3) < 0)) __PYX_ERR(0, 266, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-              /* "loop_for.pyx":103
- *                                 normal_string   = any_values[ 0 ]
- *                                 active_tab      = any_values[ 1 ]
- *                                 lexer           = _string_[ 'lex' ]             # <<<<<<<<<<<<<<
+      /* "loop_for.pyx":267
+ *                 self._values_.append( for_values[ 0 ] )
+ *                 self.DataBase[ 'variables' ][ 'values' ] = self._values_
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables             # <<<<<<<<<<<<<<
  * 
- *                                 error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,
+ *             for i in range( len( for_values ) ):
  */
-              __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_lex); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 103, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              if (!(likely(PyDict_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 103, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_lexer, ((PyObject*)__pyx_t_4));
-              __pyx_t_4 = 0;
+      __pyx_t_3 = __pyx_v_self->variables;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 267, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_n_s_vars, __pyx_t_3) < 0)) __PYX_ERR(0, 267, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_L4:;
 
-              /* "loop_for.pyx":105
- *                                 lexer           = _string_[ 'lex' ]
+    /* "loop_for.pyx":269
+ *                 self.DataBase[ 'variables' ][ 'vars' ] = self.variables
  * 
- *                                 error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,             # <<<<<<<<<<<<<<
- *                                         ( self.line+for_line ) ).SUB_SUB_ANALYZE( _lexer_ = lexer )
- * 
+ *             for i in range( len( for_values ) ):             # <<<<<<<<<<<<<<
+ *                 for_line    = 0
+ *                 counting    += 1
  */
-              __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_for_statement); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_NEXT_ANALYZE); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 105, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(__pyx_v_for_values == Py_None)) {
+      PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+      __PYX_ERR(0, 269, __pyx_L1_error)
+    }
+    __pyx_t_9 = PyList_GET_SIZE(__pyx_v_for_values); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 269, __pyx_L1_error)
+    __pyx_t_10 = __pyx_t_9;
+    for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_10; __pyx_t_4+=1) {
+      __pyx_v_i = __pyx_t_4;
 
-              /* "loop_for.pyx":106
+      /* "loop_for.pyx":270
  * 
- *                                 error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,
- *                                         ( self.line+for_line ) ).SUB_SUB_ANALYZE( _lexer_ = lexer )             # <<<<<<<<<<<<<<
- * 
- *                                 #error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,
+ *             for i in range( len( for_values ) ):
+ *                 for_line    = 0             # <<<<<<<<<<<<<<
+ *                 counting    += 1
+ *                 locked      = False
  */
-              __pyx_t_2 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __pyx_t_1 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
-                __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_7);
-                if (likely(__pyx_t_1)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-                  __Pyx_INCREF(__pyx_t_1);
+      __pyx_v_for_line = 0;
+
+      /* "loop_for.pyx":271
+ *             for i in range( len( for_values ) ):
+ *                 for_line    = 0
+ *                 counting    += 1             # <<<<<<<<<<<<<<
+ *                 locked      = False
+ * 
+ */
+      __pyx_v_counting = (__pyx_v_counting + 1);
+
+      /* "loop_for.pyx":272
+ *                 for_line    = 0
+ *                 counting    += 1
+ *                 locked      = False             # <<<<<<<<<<<<<<
+ * 
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )
+ */
+      __pyx_v_locked = 0;
+
+      /* "loop_for.pyx":274
+ *                 locked      = False
+ * 
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )             # <<<<<<<<<<<<<<
+ * 
+ *                 if not error :
+ */
+      __pyx_t_3 = __pyx_v_self->DataBase;
+      __Pyx_INCREF(__pyx_t_3);
+      if (unlikely(__pyx_v_for_values == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+        __PYX_ERR(0, 274, __pyx_L1_error)
+      }
+      __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_for_values, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 274, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_1 = __pyx_f_8loop_for_UPDATING(((PyObject*)__pyx_t_3), __pyx_v_var_name, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 274, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+      /* "loop_for.pyx":276
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )
+ * 
+ *                 if not error :             # <<<<<<<<<<<<<<
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if locked is False:
+ */
+      __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 276, __pyx_L1_error)
+      __pyx_t_6 = ((!__pyx_t_5) != 0);
+      if (__pyx_t_6) {
+
+        /* "loop_for.pyx":277
+ * 
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
+ *                         if locked is False:
+ *                             for_line    += 1
+ */
+        __pyx_t_11 = 0;
+        if (unlikely(__pyx_v_master == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 277, __pyx_L1_error)
+        }
+        __pyx_t_1 = __Pyx_PyList_GetSlice(__pyx_v_master, 0, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_12 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        for (;;) {
+          if (__pyx_t_12 >= PyList_GET_SIZE(__pyx_t_2)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_12); __Pyx_INCREF(__pyx_t_1); __pyx_t_12++; if (unlikely(0 < 0)) __PYX_ERR(0, 277, __pyx_L1_error)
+          #else
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_12); __pyx_t_12++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          #endif
+          __Pyx_XDECREF_SET(__pyx_v__string_, __pyx_t_1);
+          __pyx_t_1 = 0;
+          __pyx_v_j = __pyx_t_11;
+          __pyx_t_11 = (__pyx_t_11 + 1);
+
+          /* "loop_for.pyx":278
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if locked is False:             # <<<<<<<<<<<<<<
+ *                             for_line    += 1
+ * 
+ */
+          __pyx_t_6 = ((__pyx_v_locked == 0) != 0);
+          if (__pyx_t_6) {
+
+            /* "loop_for.pyx":279
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if locked is False:
+ *                             for_line    += 1             # <<<<<<<<<<<<<<
+ * 
+ *                             if type( _string_ ) == type( dict() ):
+ */
+            __pyx_v_for_line = (__pyx_v_for_line + 1);
+
+            /* "loop_for.pyx":281
+ *                             for_line    += 1
+ * 
+ *                             if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
+ *                                 keys = list( _string_.keys() )
+ *                                 if  'any'     in keys           :
+ */
+            __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 281, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_1);
+            __pyx_t_3 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v__string_)), ((PyObject *)Py_TYPE(__pyx_t_1)), Py_EQ); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 281, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+            __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 281, __pyx_L1_error)
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            if (__pyx_t_6) {
+
+              /* "loop_for.pyx":282
+ * 
+ *                             if type( _string_ ) == type( dict() ):
+ *                                 keys = list( _string_.keys() )             # <<<<<<<<<<<<<<
+ *                                 if  'any'     in keys           :
+ *                                     any_values      = list( _string_[ 'any' ] )
+ */
+              __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v__string_, __pyx_n_s_keys); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_1);
+              __pyx_t_13 = NULL;
+              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+                __pyx_t_13 = PyMethod_GET_SELF(__pyx_t_1);
+                if (likely(__pyx_t_13)) {
+                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                  __Pyx_INCREF(__pyx_t_13);
                   __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_7, function);
-                  __pyx_t_17 = 1;
+                  __Pyx_DECREF_SET(__pyx_t_1, function);
                 }
               }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_7)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_2};
-                __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_2};
-                __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_3 = PyTuple_New(3+__pyx_t_17); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                if (__pyx_t_1) {
-                  __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1); __pyx_t_1 = NULL;
-                }
-                __Pyx_INCREF(__pyx_v_normal_string);
-                __Pyx_GIVEREF(__pyx_v_normal_string);
-                PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_17, __pyx_v_normal_string);
-                __Pyx_INCREF(__pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_v_self->DataBase);
-                PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_17, __pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_t_2);
-                PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_17, __pyx_t_2);
-                __pyx_t_2 = 0;
-                __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_SUB_SUB_ANALYZE); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 106, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_lexer, __pyx_v_lexer) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
-              __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
+              __pyx_t_3 = (__pyx_t_13) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_13) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
+              __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+              if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 282, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_3);
-              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 106, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":111
- *                                 #        ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
- * 
- *                                 if not error:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-              __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 111, __pyx_L1_error)
-              __pyx_t_8 = ((!__pyx_t_9) != 0);
-              if (__pyx_t_8) {
-
-                /* "loop_for.pyx":112
- * 
- *                                 if not error:
- *                                     if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 112, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_8 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_9 = (__pyx_t_8 != 0);
-                if (__pyx_t_9) {
-                  goto __pyx_L19;
-                }
-
-                /* "loop_for.pyx":114
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 114, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 114, __pyx_L1_error)
-
-                  /* "loop_for.pyx":115
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":116
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L19:;
-
-                /* "loop_for.pyx":118
- *                                         break
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 118, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 118, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_9 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_8 = (__pyx_t_9 != 0);
-                if (__pyx_t_8) {
-                  goto __pyx_L20;
-                }
-
-                /* "loop_for.pyx":120
- *                                     if self.DataBase[ 'exit' ] is None: pass
- *                                     else:
- *                                         self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 120, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 120, __pyx_L1_error)
-
-                  /* "loop_for.pyx":121
- *                                     else:
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         broke     = True
- *                                         break
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":122
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True
- *                                         broke     = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":123
- *                                         doubleKey = True
- *                                         broke     = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'pass' ] is None: pass
- */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L20:;
-
-                /* "loop_for.pyx":125
- *                                         break
- * 
- *                                     if self.DataBase[ 'pass' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else: locked      = True
- * 
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 125, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_pass); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_8 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_9 = (__pyx_t_8 != 0);
-                if (__pyx_t_9) {
-                  goto __pyx_L21;
-                }
-
-                /* "loop_for.pyx":126
- * 
- *                                     if self.DataBase[ 'pass' ] is None: pass
- *                                     else: locked      = True             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'continue' ] is None: pass
- */
-                /*else*/ {
-                  __pyx_v_locked = 1;
-                }
-                __pyx_L21:;
-
-                /* "loop_for.pyx":128
- *                                     else: locked      = True
- * 
- *                                     if self.DataBase[ 'continue' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else: locked      = True
- * 
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 128, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_continue); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_9 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_8 = (__pyx_t_9 != 0);
-                if (__pyx_t_8) {
-                  goto __pyx_L22;
-                }
-
-                /* "loop_for.pyx":129
- * 
- *                                     if self.DataBase[ 'continue' ] is None: pass
- *                                     else: locked      = True             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'next' ] is None: pass
- */
-                /*else*/ {
-                  __pyx_v_locked = 1;
-                }
-                __pyx_L22:;
-
-                /* "loop_for.pyx":131
- *                                     else: locked      = True
- * 
- *                                     if self.DataBase[ 'next' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else: locked      = True
- * 
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 131, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_next); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_8 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_9 = (__pyx_t_8 != 0);
-                if (__pyx_t_9) {
-                  goto __pyx_L23;
-                }
-
-                /* "loop_for.pyx":132
- * 
- *                                     if self.DataBase[ 'next' ] is None: pass
- *                                     else: locked      = True             # <<<<<<<<<<<<<<
- * 
- *                                 else : break
- */
-                /*else*/ {
-                  __pyx_v_locked = 1;
-                }
-                __pyx_L23:;
-
-                /* "loop_for.pyx":111
- *                                 #        ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
- * 
- *                                 if not error:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-                goto __pyx_L18;
-              }
-
-              /* "loop_for.pyx":134
- *                                     else: locked      = True
- * 
- *                                 else : break             # <<<<<<<<<<<<<<
- * 
- *                             elif 'if'     in keys           :
- */
-              /*else*/ {
-                goto __pyx_L14_break;
-              }
-              __pyx_L18:;
-
-              /* "loop_for.pyx":99
- *                         if type( _string_ ) == type( dict() ):
- *                             keys = list( _string_.keys() )
- *                             if   'any'    in keys           :             # <<<<<<<<<<<<<<
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]
- */
-              goto __pyx_L17;
-            }
-
-            /* "loop_for.pyx":136
- *                                 else : break
- * 
- *                             elif 'if'     in keys           :             # <<<<<<<<<<<<<<
- *                                     if_values      = _string_[ 'if' ]
- *                                     #tabulation     = _string_[ 'tabulation' ]
- */
-            __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_if, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 136, __pyx_L1_error)
-            __pyx_t_8 = (__pyx_t_9 != 0);
-            if (__pyx_t_8) {
-
-              /* "loop_for.pyx":137
- * 
- *                             elif 'if'     in keys           :
- *                                     if_values      = _string_[ 'if' ]             # <<<<<<<<<<<<<<
- *                                     #tabulation     = _string_[ 'tabulation' ]
- *                                     boolean_value  = _string_[ 'value' ]
- */
-              __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_if); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 137, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_if_values, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":139
- *                                     if_values      = _string_[ 'if' ]
- *                                     #tabulation     = _string_[ 'tabulation' ]
- *                                     boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
- * 
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- */
-              __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 139, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 139, __pyx_L1_error)
+              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+              __pyx_t_1 = PySequence_List(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_1);
               __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              __pyx_v_boolean_value = __pyx_t_8;
+              __Pyx_XDECREF_SET(__pyx_v_keys, ((PyObject*)__pyx_t_1));
+              __pyx_t_1 = 0;
 
-              /* "loop_for.pyx":141
- *                                     boolean_value  = _string_[ 'value' ]
- * 
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:
+              /* "loop_for.pyx":283
+ *                             if type( _string_ ) == type( dict() ):
+ *                                 keys = list( _string_.keys() )
+ *                                 if  'any'     in keys           :             # <<<<<<<<<<<<<<
+ *                                     any_values      = list( _string_[ 'any' ] )
+ *                                     normal_string   = any_values[ 0 ]
  */
-              __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_loop_if_statement); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 141, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_INTERNAL_IF_LOOP_STATEMENT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+              __pyx_t_6 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_any, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 283, __pyx_L1_error)
+              __pyx_t_5 = (__pyx_t_6 != 0);
+              if (__pyx_t_5) {
 
-              /* "loop_for.pyx":142
- * 
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )             # <<<<<<<<<<<<<<
- *                                     if error is None:
- *                                         if   self.DataBase[ 'break' ] is None: pass
+                /* "loop_for.pyx":284
+ *                                 keys = list( _string_.keys() )
+ *                                 if  'any'     in keys           :
+ *                                     any_values      = list( _string_[ 'any' ] )             # <<<<<<<<<<<<<<
+ *                                     normal_string   = any_values[ 0 ]
+ *                                     active_tab      = any_values[ 1 ]
  */
-              __pyx_t_7 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 142, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __pyx_t_1 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-                __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_2);
-                if (likely(__pyx_t_1)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                  __Pyx_INCREF(__pyx_t_1);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_2, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_2)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_1, Py_None, __pyx_v_self->DataBase, __pyx_t_7};
-                __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_1, Py_None, __pyx_v_self->DataBase, __pyx_t_7};
-                __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_18 = PyTuple_New(3+__pyx_t_17); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 141, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_18);
-                if (__pyx_t_1) {
-                  __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_t_1); __pyx_t_1 = NULL;
-                }
-                __Pyx_INCREF(Py_None);
-                __Pyx_GIVEREF(Py_None);
-                PyTuple_SET_ITEM(__pyx_t_18, 0+__pyx_t_17, Py_None);
-                __Pyx_INCREF(__pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_v_self->DataBase);
-                PyTuple_SET_ITEM(__pyx_t_18, 1+__pyx_t_17, __pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_t_7);
-                PyTuple_SET_ITEM(__pyx_t_18, 2+__pyx_t_17, __pyx_t_7);
-                __pyx_t_7 = 0;
-                __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_18, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-              __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_IF_STATEMENT); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __pyx_t_4 = __Pyx_PyBool_FromLong(__pyx_v_boolean_value); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 142, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 142, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __pyx_t_7 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-                __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_2);
-                if (likely(__pyx_t_7)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-                  __Pyx_INCREF(__pyx_t_7);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_2, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_2)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_7, __pyx_t_4, __pyx_t_18, __pyx_v_if_values, __pyx_n_s_loop};
-                __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-                __Pyx_GOTREF(__pyx_t_3);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-                __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_7, __pyx_t_4, __pyx_t_18, __pyx_v_if_values, __pyx_n_s_loop};
-                __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-                __Pyx_GOTREF(__pyx_t_3);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-                __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_1 = PyTuple_New(4+__pyx_t_17); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+                __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_any); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
                 __Pyx_GOTREF(__pyx_t_1);
-                if (__pyx_t_7) {
-                  __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7); __pyx_t_7 = NULL;
-                }
-                __Pyx_GIVEREF(__pyx_t_4);
-                PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_17, __pyx_t_4);
-                __Pyx_GIVEREF(__pyx_t_18);
-                PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_17, __pyx_t_18);
-                __Pyx_INCREF(__pyx_v_if_values);
-                __Pyx_GIVEREF(__pyx_v_if_values);
-                PyTuple_SET_ITEM(__pyx_t_1, 2+__pyx_t_17, __pyx_v_if_values);
-                __Pyx_INCREF(__pyx_n_s_loop);
-                __Pyx_GIVEREF(__pyx_n_s_loop);
-                PyTuple_SET_ITEM(__pyx_t_1, 3+__pyx_t_17, __pyx_n_s_loop);
-                __pyx_t_4 = 0;
-                __pyx_t_18 = 0;
-                __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
+                __pyx_t_3 = PySequence_List(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 284, __pyx_L1_error)
                 __Pyx_GOTREF(__pyx_t_3);
                 __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 142, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
+                __Pyx_XDECREF_SET(__pyx_v_any_values, ((PyObject*)__pyx_t_3));
+                __pyx_t_3 = 0;
 
-              /* "loop_for.pyx":143
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:             # <<<<<<<<<<<<<<
+                /* "loop_for.pyx":285
+ *                                 if  'any'     in keys           :
+ *                                     any_values      = list( _string_[ 'any' ] )
+ *                                     normal_string   = any_values[ 0 ]             # <<<<<<<<<<<<<<
+ *                                     active_tab      = any_values[ 1 ]
+ *                                     lexer           = _string_[ 'lex' ]
+ */
+                __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_any_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 285, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 285, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_normal_string, ((PyObject*)__pyx_t_3));
+                __pyx_t_3 = 0;
+
+                /* "loop_for.pyx":286
+ *                                     any_values      = list( _string_[ 'any' ] )
+ *                                     normal_string   = any_values[ 0 ]
+ *                                     active_tab      = any_values[ 1 ]             # <<<<<<<<<<<<<<
+ *                                     lexer           = _string_[ 'lex' ]
+ * 
+ */
+                __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_any_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 286, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 286, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __pyx_v_active_tab = __pyx_t_5;
+
+                /* "loop_for.pyx":287
+ *                                     normal_string   = any_values[ 0 ]
+ *                                     active_tab      = any_values[ 1 ]
+ *                                     lexer           = _string_[ 'lex' ]             # <<<<<<<<<<<<<<
+ * 
+ *                                     error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ */
+                __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_lex); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 287, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (!(likely(PyDict_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 287, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_lexer, ((PyObject*)__pyx_t_3));
+                __pyx_t_3 = 0;
+
+                /* "loop_for.pyx":289
+ *                                     lexer           = _string_[ 'lex' ]
+ * 
+ *                                     error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,             # <<<<<<<<<<<<<<
+ *                                             ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
+ * 
+ */
+                __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_for_analyze); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_NEXT_ANALYZE); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 289, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_13);
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+                /* "loop_for.pyx":290
+ * 
+ *                                     error    = for_analyze.NEXT_ANALYZE( normal_string, self.DataBase,
+ *                                             ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )             # <<<<<<<<<<<<<<
+ * 
+ *                                     if not error:
+ */
+                __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_14 = NULL;
+                __pyx_t_15 = 0;
+                if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_13))) {
+                  __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_13);
+                  if (likely(__pyx_t_14)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_13);
+                    __Pyx_INCREF(__pyx_t_14);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_13, function);
+                    __pyx_t_15 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_13)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_14, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_1};
+                  __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_13, __pyx_temp+1-__pyx_t_15, 3+__pyx_t_15); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 289, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_13)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_14, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_1};
+                  __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_13, __pyx_temp+1-__pyx_t_15, 3+__pyx_t_15); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 289, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_16 = PyTuple_New(3+__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 289, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  if (__pyx_t_14) {
+                    __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_t_14); __pyx_t_14 = NULL;
+                  }
+                  __Pyx_INCREF(__pyx_v_normal_string);
+                  __Pyx_GIVEREF(__pyx_v_normal_string);
+                  PyTuple_SET_ITEM(__pyx_t_16, 0+__pyx_t_15, __pyx_v_normal_string);
+                  __Pyx_INCREF(__pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                  PyTuple_SET_ITEM(__pyx_t_16, 1+__pyx_t_15, __pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_t_1);
+                  PyTuple_SET_ITEM(__pyx_t_16, 2+__pyx_t_15, __pyx_t_1);
+                  __pyx_t_1 = 0;
+                  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_t_16, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 289, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_SUB_ANALYZE); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 290, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_13);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __pyx_t_3 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 290, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_type, __pyx_n_s_loop) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_lexer, __pyx_v_lexer) < 0) __PYX_ERR(0, 290, __pyx_L1_error)
+                __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_13, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 290, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                if (!(likely(PyString_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 290, __pyx_L1_error)
+                __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
+
+                /* "loop_for.pyx":292
+ *                                             ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
+ * 
+ *                                     if not error:             # <<<<<<<<<<<<<<
  *                                         if   self.DataBase[ 'break' ] is None: pass
  *                                         else:
  */
-              __pyx_t_8 = (__pyx_v_error == ((PyObject*)Py_None));
-              __pyx_t_9 = (__pyx_t_8 != 0);
-              if (__pyx_t_9) {
+                __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 292, __pyx_L1_error)
+                __pyx_t_6 = ((!__pyx_t_5) != 0);
+                if (__pyx_t_6) {
 
-                /* "loop_for.pyx":144
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:
+                  /* "loop_for.pyx":293
+ * 
+ *                                     if not error:
  *                                         if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
  *                                         else:
  *                                             self.DataBase[ 'break' ] = None
  */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 144, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_9 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_8 = (__pyx_t_9 != 0);
-                if (__pyx_t_8) {
-                  goto __pyx_L25;
-                }
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 293, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 293, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_6 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_5 = (__pyx_t_6 != 0);
+                  if (__pyx_t_5) {
+                    goto __pyx_L14;
+                  }
 
-                /* "loop_for.pyx":146
+                  /* "loop_for.pyx":295
  *                                         if   self.DataBase[ 'break' ] is None: pass
  *                                         else:
  *                                             self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
  *                                             doubleKey = True
  *                                             break
  */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 146, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 146, __pyx_L1_error)
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 295, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 295, __pyx_L1_error)
 
-                  /* "loop_for.pyx":147
+                    /* "loop_for.pyx":296
  *                                         else:
  *                                             self.DataBase[ 'break' ] = None
  *                                             doubleKey = True             # <<<<<<<<<<<<<<
  *                                             break
  * 
  */
-                  __pyx_v_doubleKey = 1;
+                    __pyx_v_doubleKey = 1;
 
-                  /* "loop_for.pyx":148
+                    /* "loop_for.pyx":297
  *                                             self.DataBase[ 'break' ] = None
  *                                             doubleKey = True
  *                                             break             # <<<<<<<<<<<<<<
  * 
  *                                         if self.DataBase[ 'exit' ] is None: pass
  */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L25:;
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L14:;
 
-                /* "loop_for.pyx":150
+                  /* "loop_for.pyx":299
  *                                             break
  * 
  *                                         if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
  *                                         else:
  *                                             self.DataBase['exit'] = None
  */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 150, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_8 = (__pyx_t_3 == Py_None);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_9 = (__pyx_t_8 != 0);
-                if (__pyx_t_9) {
-                  goto __pyx_L26;
-                }
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 299, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 299, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_5 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_6 = (__pyx_t_5 != 0);
+                  if (__pyx_t_6) {
+                    goto __pyx_L15;
+                  }
 
-                /* "loop_for.pyx":152
+                  /* "loop_for.pyx":301
  *                                         if self.DataBase[ 'exit' ] is None: pass
  *                                         else:
  *                                             self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
  *                                             doubleKey = True
  *                                             broke     = True
  */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 152, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 152, __pyx_L1_error)
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 301, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 301, __pyx_L1_error)
 
-                  /* "loop_for.pyx":153
+                    /* "loop_for.pyx":302
  *                                         else:
  *                                             self.DataBase['exit'] = None
  *                                             doubleKey = True             # <<<<<<<<<<<<<<
  *                                             broke     = True
  *                                             break
  */
-                  __pyx_v_doubleKey = 1;
+                    __pyx_v_doubleKey = 1;
 
-                  /* "loop_for.pyx":154
+                    /* "loop_for.pyx":303
+ *                                             self.DataBase['exit'] = None
+ *                                             doubleKey = True
+ *                                             broke     = True             # <<<<<<<<<<<<<<
+ *                                             break
+ * 
+ */
+                    __pyx_v_broke = 1;
+
+                    /* "loop_for.pyx":304
+ *                                             doubleKey = True
+ *                                             broke     = True
+ *                                             break             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'pass' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L15:;
+
+                  /* "loop_for.pyx":306
+ *                                             break
+ * 
+ *                                         if self.DataBase[ 'pass' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else: locked      = True
+ * 
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 306, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_pass); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 306, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_6 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_5 = (__pyx_t_6 != 0);
+                  if (__pyx_t_5) {
+                    goto __pyx_L16;
+                  }
+
+                  /* "loop_for.pyx":307
+ * 
+ *                                         if self.DataBase[ 'pass' ] is None: pass
+ *                                         else: locked      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'continue' ] is None: pass
+ */
+                  /*else*/ {
+                    __pyx_v_locked = 1;
+                  }
+                  __pyx_L16:;
+
+                  /* "loop_for.pyx":309
+ *                                         else: locked      = True
+ * 
+ *                                         if self.DataBase[ 'continue' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else: locked      = True
+ * 
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 309, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_continue); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 309, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_5 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_6 = (__pyx_t_5 != 0);
+                  if (__pyx_t_6) {
+                    goto __pyx_L17;
+                  }
+
+                  /* "loop_for.pyx":310
+ * 
+ *                                         if self.DataBase[ 'continue' ] is None: pass
+ *                                         else: locked      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'next' ] is None: pass
+ */
+                  /*else*/ {
+                    __pyx_v_locked = 1;
+                  }
+                  __pyx_L17:;
+
+                  /* "loop_for.pyx":312
+ *                                         else: locked      = True
+ * 
+ *                                         if self.DataBase[ 'next' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else: locked      = True
+ * 
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 312, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_next); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 312, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_6 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_5 = (__pyx_t_6 != 0);
+                  if (__pyx_t_5) {
+                    goto __pyx_L18;
+                  }
+
+                  /* "loop_for.pyx":313
+ * 
+ *                                         if self.DataBase[ 'next' ] is None: pass
+ *                                         else: locked      = True             # <<<<<<<<<<<<<<
+ * 
+ *                                     else : break
+ */
+                  /*else*/ {
+                    __pyx_v_locked = 1;
+                  }
+                  __pyx_L18:;
+
+                  /* "loop_for.pyx":292
+ *                                             ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
+ * 
+ *                                     if not error:             # <<<<<<<<<<<<<<
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ */
+                  goto __pyx_L13;
+                }
+
+                /* "loop_for.pyx":315
+ *                                         else: locked      = True
+ * 
+ *                                     else : break             # <<<<<<<<<<<<<<
+ * 
+ *                                 elif 'if'     in keys           :
+ */
+                /*else*/ {
+                  goto __pyx_L9_break;
+                }
+                __pyx_L13:;
+
+                /* "loop_for.pyx":283
+ *                             if type( _string_ ) == type( dict() ):
+ *                                 keys = list( _string_.keys() )
+ *                                 if  'any'     in keys           :             # <<<<<<<<<<<<<<
+ *                                     any_values      = list( _string_[ 'any' ] )
+ *                                     normal_string   = any_values[ 0 ]
+ */
+                goto __pyx_L12;
+              }
+
+              /* "loop_for.pyx":317
+ *                                     else : break
+ * 
+ *                                 elif 'if'     in keys           :             # <<<<<<<<<<<<<<
+ *                                         if_values      = _string_[ 'if' ]
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ */
+              __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_if, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 317, __pyx_L1_error)
+              __pyx_t_6 = (__pyx_t_5 != 0);
+              if (__pyx_t_6) {
+
+                /* "loop_for.pyx":318
+ * 
+ *                                 elif 'if'     in keys           :
+ *                                         if_values      = _string_[ 'if' ]             # <<<<<<<<<<<<<<
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ *                                         boolean_value  = _string_[ 'value' ]
+ */
+                __pyx_t_16 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_if); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 318, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                if (!(likely(PyList_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 318, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_if_values, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
+
+                /* "loop_for.pyx":320
+ *                                         if_values      = _string_[ 'if' ]
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ *                                         boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
+ * 
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ */
+                __pyx_t_16 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 320, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_16); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 320, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                __pyx_v_boolean_value = __pyx_t_6;
+
+                /* "loop_for.pyx":322
+ *                                         boolean_value  = _string_[ 'value' ]
+ * 
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
+ *                                                 (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation+1 , if_values, 'loop' )
+ *                                         if error is None:
+ */
+                __Pyx_GetModuleGlobalName(__pyx_t_13, __pyx_n_s_loop_if_statement); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 322, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_13);
+                __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_13, __pyx_n_s_INTERNAL_IF_LOOP_STATEMENT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 322, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+
+                /* "loop_for.pyx":323
+ * 
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ *                                                 (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation+1 , if_values, 'loop' )             # <<<<<<<<<<<<<<
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ */
+                __pyx_t_13 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 323, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_13);
+                __pyx_t_14 = NULL;
+                __pyx_t_15 = 0;
+                if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+                  __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_1);
+                  if (likely(__pyx_t_14)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                    __Pyx_INCREF(__pyx_t_14);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_1, function);
+                    __pyx_t_15 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_1)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_14, Py_None, __pyx_v_self->DataBase, __pyx_t_13};
+                  __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_15, 3+__pyx_t_15); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 322, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_14, Py_None, __pyx_v_self->DataBase, __pyx_t_13};
+                  __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_15, 3+__pyx_t_15); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 322, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_17 = PyTuple_New(3+__pyx_t_15); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 322, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_17);
+                  if (__pyx_t_14) {
+                    __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_14); __pyx_t_14 = NULL;
+                  }
+                  __Pyx_INCREF(Py_None);
+                  __Pyx_GIVEREF(Py_None);
+                  PyTuple_SET_ITEM(__pyx_t_17, 0+__pyx_t_15, Py_None);
+                  __Pyx_INCREF(__pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                  PyTuple_SET_ITEM(__pyx_t_17, 1+__pyx_t_15, __pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_t_13);
+                  PyTuple_SET_ITEM(__pyx_t_17, 2+__pyx_t_15, __pyx_t_13);
+                  __pyx_t_13 = 0;
+                  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_17, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 322, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_IF_STATEMENT); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 323, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_v_boolean_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 323, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __pyx_t_17 = __Pyx_PyInt_From_long((__pyx_v_tabulation + 1)); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 323, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_17);
+                __pyx_t_13 = NULL;
+                __pyx_t_15 = 0;
+                if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+                  __pyx_t_13 = PyMethod_GET_SELF(__pyx_t_1);
+                  if (likely(__pyx_t_13)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+                    __Pyx_INCREF(__pyx_t_13);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_1, function);
+                    __pyx_t_15 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_1)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_13, __pyx_t_3, __pyx_t_17, __pyx_v_if_values, __pyx_n_s_loop};
+                  __pyx_t_16 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_15, 4+__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 323, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_13, __pyx_t_3, __pyx_t_17, __pyx_v_if_values, __pyx_n_s_loop};
+                  __pyx_t_16 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-__pyx_t_15, 4+__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 323, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_14 = PyTuple_New(4+__pyx_t_15); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 323, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_14);
+                  if (__pyx_t_13) {
+                    __Pyx_GIVEREF(__pyx_t_13); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_13); __pyx_t_13 = NULL;
+                  }
+                  __Pyx_GIVEREF(__pyx_t_3);
+                  PyTuple_SET_ITEM(__pyx_t_14, 0+__pyx_t_15, __pyx_t_3);
+                  __Pyx_GIVEREF(__pyx_t_17);
+                  PyTuple_SET_ITEM(__pyx_t_14, 1+__pyx_t_15, __pyx_t_17);
+                  __Pyx_INCREF(__pyx_v_if_values);
+                  __Pyx_GIVEREF(__pyx_v_if_values);
+                  PyTuple_SET_ITEM(__pyx_t_14, 2+__pyx_t_15, __pyx_v_if_values);
+                  __Pyx_INCREF(__pyx_n_s_loop);
+                  __Pyx_GIVEREF(__pyx_n_s_loop);
+                  PyTuple_SET_ITEM(__pyx_t_14, 3+__pyx_t_15, __pyx_n_s_loop);
+                  __pyx_t_3 = 0;
+                  __pyx_t_17 = 0;
+                  __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_14, NULL); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 323, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                if (!(likely(PyString_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 323, __pyx_L1_error)
+                __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
+
+                /* "loop_for.pyx":324
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ *                                                 (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation+1 , if_values, 'loop' )
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                __pyx_t_6 = (__pyx_v_error == ((PyObject*)Py_None));
+                __pyx_t_5 = (__pyx_t_6 != 0);
+                if (__pyx_t_5) {
+
+                  /* "loop_for.pyx":325
+ *                                                 (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation+1 , if_values, 'loop' )
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 325, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 325, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_5 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_6 = (__pyx_t_5 != 0);
+                  if (__pyx_t_6) {
+                    goto __pyx_L20;
+                  }
+
+                  /* "loop_for.pyx":327
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 break
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 327, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 327, __pyx_L1_error)
+
+                    /* "loop_for.pyx":328
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ * 
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":329
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L20:;
+
+                  /* "loop_for.pyx":331
+ *                                                 break
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 331, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 331, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_6 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_5 = (__pyx_t_6 != 0);
+                  if (__pyx_t_5) {
+                    goto __pyx_L21;
+                  }
+
+                  /* "loop_for.pyx":333
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 333, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 333, __pyx_L1_error)
+
+                    /* "loop_for.pyx":334
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 broke     = True
+ *                                                 break
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":335
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True
+ *                                                 broke     = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ *                                         else: break
+ */
+                    __pyx_v_broke = 1;
+
+                    /* "loop_for.pyx":336
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ *                                         else: break
+ *                                 elif 'unless' in keys           :
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L21:;
+
+                  /* "loop_for.pyx":324
+ *                                         error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
+ *                                                 (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation+1 , if_values, 'loop' )
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                  goto __pyx_L19;
+                }
+
+                /* "loop_for.pyx":337
+ *                                                 broke     = True
+ *                                                 break
+ *                                         else: break             # <<<<<<<<<<<<<<
+ *                                 elif 'unless' in keys           :
+ *                                     unless_values  = _string_[ 'unless' ]
+ */
+                /*else*/ {
+                  goto __pyx_L9_break;
+                }
+                __pyx_L19:;
+
+                /* "loop_for.pyx":317
+ *                                     else : break
+ * 
+ *                                 elif 'if'     in keys           :             # <<<<<<<<<<<<<<
+ *                                         if_values      = _string_[ 'if' ]
+ *                                         #tabulation     = _string_[ 'tabulation' ]
+ */
+                goto __pyx_L12;
+              }
+
+              /* "loop_for.pyx":338
+ *                                                 break
+ *                                         else: break
+ *                                 elif 'unless' in keys           :             # <<<<<<<<<<<<<<
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     tabulation     = _string_[ 'tabulation' ]
+ */
+              __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_unless, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 338, __pyx_L1_error)
+              __pyx_t_6 = (__pyx_t_5 != 0);
+              if (__pyx_t_6) {
+
+                /* "loop_for.pyx":339
+ *                                         else: break
+ *                                 elif 'unless' in keys           :
+ *                                     unless_values  = _string_[ 'unless' ]             # <<<<<<<<<<<<<<
+ *                                     tabulation     = _string_[ 'tabulation' ]
+ *                                     boolean_value  = _string_[ 'value' ]
+ */
+                __pyx_t_16 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_unless); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 339, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                if (!(likely(PyList_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 339, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_unless_values, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
+
+                /* "loop_for.pyx":340
+ *                                 elif 'unless' in keys           :
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     tabulation     = _string_[ 'tabulation' ]             # <<<<<<<<<<<<<<
+ *                                     boolean_value  = _string_[ 'value' ]
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
+ */
+                __pyx_t_16 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_tabulation); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 340, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_16); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 340, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                __pyx_v_tabulation = __pyx_t_15;
+
+                /* "loop_for.pyx":341
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     tabulation     = _string_[ 'tabulation' ]
+ *                                     boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
+ */
+                __pyx_t_16 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 341, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_16); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 341, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                __pyx_v_boolean_value = __pyx_t_6;
+
+                /* "loop_for.pyx":342
+ *                                     tabulation     = _string_[ 'tabulation' ]
+ *                                     boolean_value  = _string_[ 'value' ]
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
+ * 
+ */
+                __Pyx_GetModuleGlobalName(__pyx_t_14, __pyx_n_s_loop_unless_statement); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 342, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_14);
+                __pyx_t_17 = __Pyx_PyObject_GetAttrStr(__pyx_t_14, __pyx_n_s_INTERNAL_UNLESS_FOR_STATEMENT); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 342, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_17);
+                __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+
+                /* "loop_for.pyx":343
+ *                                     boolean_value  = _string_[ 'value' ]
+ *                                     error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )             # <<<<<<<<<<<<<<
+ * 
+ *                                     if error is None:
+ */
+                __pyx_t_14 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 343, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_14);
+                __pyx_t_3 = NULL;
+                __pyx_t_15 = 0;
+                if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_17))) {
+                  __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_17);
+                  if (likely(__pyx_t_3)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_17);
+                    __Pyx_INCREF(__pyx_t_3);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_17, function);
+                    __pyx_t_15 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_17)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_3, Py_None, __pyx_v_self->DataBase, __pyx_t_14};
+                  __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_17, __pyx_temp+1-__pyx_t_15, 3+__pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_17)) {
+                  PyObject *__pyx_temp[4] = {__pyx_t_3, Py_None, __pyx_v_self->DataBase, __pyx_t_14};
+                  __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_17, __pyx_temp+1-__pyx_t_15, 3+__pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_13 = PyTuple_New(3+__pyx_t_15); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 342, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_13);
+                  if (__pyx_t_3) {
+                    __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_3); __pyx_t_3 = NULL;
+                  }
+                  __Pyx_INCREF(Py_None);
+                  __Pyx_GIVEREF(Py_None);
+                  PyTuple_SET_ITEM(__pyx_t_13, 0+__pyx_t_15, Py_None);
+                  __Pyx_INCREF(__pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_v_self->DataBase);
+                  PyTuple_SET_ITEM(__pyx_t_13, 1+__pyx_t_15, __pyx_v_self->DataBase);
+                  __Pyx_GIVEREF(__pyx_t_14);
+                  PyTuple_SET_ITEM(__pyx_t_13, 2+__pyx_t_15, __pyx_t_14);
+                  __pyx_t_14 = 0;
+                  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_t_13, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                __pyx_t_17 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_UNLESS_STATEMENT); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 343, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_17);
+                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_boolean_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __pyx_t_13 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 343, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_13);
+                __pyx_t_14 = NULL;
+                __pyx_t_15 = 0;
+                if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_17))) {
+                  __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_17);
+                  if (likely(__pyx_t_14)) {
+                    PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_17);
+                    __Pyx_INCREF(__pyx_t_14);
+                    __Pyx_INCREF(function);
+                    __Pyx_DECREF_SET(__pyx_t_17, function);
+                    __pyx_t_15 = 1;
+                  }
+                }
+                #if CYTHON_FAST_PYCALL
+                if (PyFunction_Check(__pyx_t_17)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_14, __pyx_t_1, __pyx_t_13, __pyx_v_unless_values, __pyx_n_s_loop};
+                  __pyx_t_16 = __Pyx_PyFunction_FastCall(__pyx_t_17, __pyx_temp+1-__pyx_t_15, 4+__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 343, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                } else
+                #endif
+                #if CYTHON_FAST_PYCCALL
+                if (__Pyx_PyFastCFunction_Check(__pyx_t_17)) {
+                  PyObject *__pyx_temp[5] = {__pyx_t_14, __pyx_t_1, __pyx_t_13, __pyx_v_unless_values, __pyx_n_s_loop};
+                  __pyx_t_16 = __Pyx_PyCFunction_FastCall(__pyx_t_17, __pyx_temp+1-__pyx_t_15, 4+__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 343, __pyx_L1_error)
+                  __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                } else
+                #endif
+                {
+                  __pyx_t_3 = PyTuple_New(4+__pyx_t_15); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 343, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  if (__pyx_t_14) {
+                    __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_14); __pyx_t_14 = NULL;
+                  }
+                  __Pyx_GIVEREF(__pyx_t_1);
+                  PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_15, __pyx_t_1);
+                  __Pyx_GIVEREF(__pyx_t_13);
+                  PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_15, __pyx_t_13);
+                  __Pyx_INCREF(__pyx_v_unless_values);
+                  __Pyx_GIVEREF(__pyx_v_unless_values);
+                  PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_15, __pyx_v_unless_values);
+                  __Pyx_INCREF(__pyx_n_s_loop);
+                  __Pyx_GIVEREF(__pyx_n_s_loop);
+                  PyTuple_SET_ITEM(__pyx_t_3, 3+__pyx_t_15, __pyx_n_s_loop);
+                  __pyx_t_1 = 0;
+                  __pyx_t_13 = 0;
+                  __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_t_3, NULL); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 343, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                }
+                __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                if (!(likely(PyString_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 343, __pyx_L1_error)
+                __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
+
+                /* "loop_for.pyx":345
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
+ * 
+ *                                     if error is None:             # <<<<<<<<<<<<<<
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ */
+                __pyx_t_6 = (__pyx_v_error == ((PyObject*)Py_None));
+                __pyx_t_5 = (__pyx_t_6 != 0);
+                if (__pyx_t_5) {
+
+                  /* "loop_for.pyx":346
+ * 
+ *                                     if error is None:
+ *                                         if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 346, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 346, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_5 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_6 = (__pyx_t_5 != 0);
+                  if (__pyx_t_6) {
+                    goto __pyx_L23;
+                  }
+
+                  /* "loop_for.pyx":348
+ *                                         if   self.DataBase[ 'break' ] is None: pass
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                             doubleKey = True
+ *                                             break
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 348, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 348, __pyx_L1_error)
+
+                    /* "loop_for.pyx":349
+ *                                         else:
+ *                                             self.DataBase[ 'break' ] = None
+ *                                             doubleKey = True             # <<<<<<<<<<<<<<
+ *                                             break
+ * 
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":350
+ *                                             self.DataBase[ 'break' ] = None
+ *                                             doubleKey = True
+ *                                             break             # <<<<<<<<<<<<<<
+ * 
+ *                                         if self.DataBase[ 'exit' ] is None: pass
+ */
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L23:;
+
+                  /* "loop_for.pyx":352
+ *                                             break
+ * 
+ *                                         if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                         else:
+ *                                             self.DataBase['exit'] = None
+ */
+                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 352, __pyx_L1_error)
+                  }
+                  __pyx_t_16 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 352, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_6 = (__pyx_t_16 == Py_None);
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __pyx_t_5 = (__pyx_t_6 != 0);
+                  if (__pyx_t_5) {
+                    goto __pyx_L24;
+                  }
+
+                  /* "loop_for.pyx":354
+ *                                         if self.DataBase[ 'exit' ] is None: pass
+ *                                         else:
+ *                                             self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                             doubleKey = True
+ *                                             broke     = True
+ */
+                  /*else*/ {
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 354, __pyx_L1_error)
+                    }
+                    if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 354, __pyx_L1_error)
+
+                    /* "loop_for.pyx":355
+ *                                         else:
+ *                                             self.DataBase['exit'] = None
+ *                                             doubleKey = True             # <<<<<<<<<<<<<<
+ *                                             broke     = True
+ *                                             break
+ */
+                    __pyx_v_doubleKey = 1;
+
+                    /* "loop_for.pyx":356
  *                                             self.DataBase['exit'] = None
  *                                             doubleKey = True
  *                                             broke     = True             # <<<<<<<<<<<<<<
  *                                             break
  *                                     else: break
  */
-                  __pyx_v_broke = 1;
+                    __pyx_v_broke = 1;
 
-                  /* "loop_for.pyx":155
+                    /* "loop_for.pyx":357
  *                                             doubleKey = True
  *                                             broke     = True
  *                                             break             # <<<<<<<<<<<<<<
  *                                     else: break
- *                             elif 'unless' in keys           :
+ *                                 elif 'for'    in keys           :
  */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L26:;
+                    goto __pyx_L9_break;
+                  }
+                  __pyx_L24:;
 
-                /* "loop_for.pyx":143
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
+                  /* "loop_for.pyx":345
+ *                                             (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
+ * 
  *                                     if error is None:             # <<<<<<<<<<<<<<
  *                                         if   self.DataBase[ 'break' ] is None: pass
  *                                         else:
  */
-                goto __pyx_L24;
-              }
+                  goto __pyx_L22;
+                }
 
-              /* "loop_for.pyx":156
+                /* "loop_for.pyx":358
  *                                             broke     = True
  *                                             break
  *                                     else: break             # <<<<<<<<<<<<<<
- *                             elif 'unless' in keys           :
- *                                 unless_values  = _string_[ 'unless' ]
+ *                                 elif 'for'    in keys           :
+ *                                     subfor_values  = _string_[ 'for' ]
  */
-              /*else*/ {
-                goto __pyx_L14_break;
-              }
-              __pyx_L24:;
+                /*else*/ {
+                  goto __pyx_L9_break;
+                }
+                __pyx_L22:;
 
-              /* "loop_for.pyx":136
- *                                 else : break
- * 
- *                             elif 'if'     in keys           :             # <<<<<<<<<<<<<<
- *                                     if_values      = _string_[ 'if' ]
+                /* "loop_for.pyx":338
+ *                                                 break
+ *                                         else: break
+ *                                 elif 'unless' in keys           :             # <<<<<<<<<<<<<<
+ *                                     unless_values  = _string_[ 'unless' ]
+ *                                     tabulation     = _string_[ 'tabulation' ]
+ */
+                goto __pyx_L12;
+              }
+
+              /* "loop_for.pyx":359
+ *                                             break
+ *                                     else: break
+ *                                 elif 'for'    in keys           :             # <<<<<<<<<<<<<<
+ *                                     subfor_values  = _string_[ 'for' ]
  *                                     #tabulation     = _string_[ 'tabulation' ]
  */
-              goto __pyx_L17;
-            }
+              __pyx_t_5 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_for, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 359, __pyx_L1_error)
+              __pyx_t_6 = (__pyx_t_5 != 0);
+              if (__pyx_t_6) {
 
-            /* "loop_for.pyx":157
- *                                             break
+                /* "loop_for.pyx":360
  *                                     else: break
- *                             elif 'unless' in keys           :             # <<<<<<<<<<<<<<
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 #tabulation     = _string_[ 'tabulation' ]
+ *                                 elif 'for'    in keys           :
+ *                                     subfor_values  = _string_[ 'for' ]             # <<<<<<<<<<<<<<
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     #subfor_value   = _string_[ 'value' ]
  */
-            __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_unless, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 157, __pyx_L1_error)
-            __pyx_t_8 = (__pyx_t_9 != 0);
-            if (__pyx_t_8) {
+                __pyx_t_16 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_for); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 360, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                if (!(likely(PyList_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 360, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_subfor_values, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
 
-              /* "loop_for.pyx":158
- *                                     else: break
- *                             elif 'unless' in keys           :
- *                                 unless_values  = _string_[ 'unless' ]             # <<<<<<<<<<<<<<
- *                                 #tabulation     = _string_[ 'tabulation' ]
- *                                 boolean_value  = _string_[ 'value' ]
- */
-              __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_unless); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 158, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 158, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_unless_values, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":160
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 #tabulation     = _string_[ 'tabulation' ]
- *                                 boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
- */
-              __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 160, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_8 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 160, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              __pyx_v_boolean_value = __pyx_t_8;
-
-              /* "loop_for.pyx":161
- *                                 #tabulation     = _string_[ 'tabulation' ]
- *                                 boolean_value  = _string_[ 'value' ]
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
+                /* "loop_for.pyx":363
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     #subfor_value   = _string_[ 'value' ]
+ *                                     s, subfor_value, error = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][ tabulation : ],             # <<<<<<<<<<<<<<
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
  * 
  */
-              __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_loop_unless_statement); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_INTERNAL_UNLESS_FOR_STATEMENT); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 161, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-              /* "loop_for.pyx":162
- *                                 boolean_value  = _string_[ 'value' ]
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )             # <<<<<<<<<<<<<<
- * 
- *                                 if error is None:
- */
-              __pyx_t_1 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              __pyx_t_4 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_18))) {
-                __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_18);
-                if (likely(__pyx_t_4)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_18);
-                  __Pyx_INCREF(__pyx_t_4);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_18, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_4, Py_None, __pyx_v_self->DataBase, __pyx_t_1};
-                __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-                __Pyx_GOTREF(__pyx_t_2);
-                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_4, Py_None, __pyx_v_self->DataBase, __pyx_t_1};
-                __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-                __Pyx_GOTREF(__pyx_t_2);
-                __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_7 = PyTuple_New(3+__pyx_t_17); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 161, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_7);
-                if (__pyx_t_4) {
-                  __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_4); __pyx_t_4 = NULL;
-                }
-                __Pyx_INCREF(Py_None);
-                __Pyx_GIVEREF(Py_None);
-                PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_17, Py_None);
-                __Pyx_INCREF(__pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_v_self->DataBase);
-                PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_17, __pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_t_1);
-                PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_17, __pyx_t_1);
-                __pyx_t_1 = 0;
-                __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_2);
-                __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_UNLESS_STATEMENT); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 162, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-              __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_boolean_value); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 162, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __pyx_t_1 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_18))) {
-                __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_18);
-                if (likely(__pyx_t_1)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_18);
-                  __Pyx_INCREF(__pyx_t_1);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_18, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_1, __pyx_t_2, __pyx_t_7, __pyx_v_unless_values, __pyx_n_s_loop};
-                __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_GOTREF(__pyx_t_3);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-                __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_1, __pyx_t_2, __pyx_t_7, __pyx_v_unless_values, __pyx_n_s_loop};
-                __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                __Pyx_GOTREF(__pyx_t_3);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-                __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_4 = PyTuple_New(4+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 162, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_4);
-                if (__pyx_t_1) {
-                  __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1); __pyx_t_1 = NULL;
-                }
-                __Pyx_GIVEREF(__pyx_t_2);
-                PyTuple_SET_ITEM(__pyx_t_4, 0+__pyx_t_17, __pyx_t_2);
-                __Pyx_GIVEREF(__pyx_t_7);
-                PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_17, __pyx_t_7);
-                __Pyx_INCREF(__pyx_v_unless_values);
-                __Pyx_GIVEREF(__pyx_v_unless_values);
-                PyTuple_SET_ITEM(__pyx_t_4, 2+__pyx_t_17, __pyx_v_unless_values);
-                __Pyx_INCREF(__pyx_n_s_loop);
-                __Pyx_GIVEREF(__pyx_n_s_loop);
-                PyTuple_SET_ITEM(__pyx_t_4, 3+__pyx_t_17, __pyx_n_s_loop);
-                __pyx_t_2 = 0;
-                __pyx_t_7 = 0;
-                __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 162, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 162, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":164
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
- * 
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-              __pyx_t_8 = (__pyx_v_error == ((PyObject*)Py_None));
-              __pyx_t_9 = (__pyx_t_8 != 0);
-              if (__pyx_t_9) {
-
-                /* "loop_for.pyx":165
- * 
- *                                 if error is None:
- *                                     if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                __Pyx_GetModuleGlobalName(__pyx_t_16, __pyx_n_s_mainFor); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                __pyx_t_17 = __Pyx_PyObject_GetAttrStr(__pyx_t_16, __pyx_n_s_FOR_BLOCK); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_17);
+                __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                __pyx_t_16 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                if (unlikely(__pyx_v_subfor_values == Py_None)) {
                   PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 165, __pyx_L1_error)
+                  __PYX_ERR(0, 363, __pyx_L1_error)
                 }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 165, __pyx_L1_error)
+                __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_subfor_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L1_error)
                 __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_9 = (__pyx_t_3 == Py_None);
+                __pyx_t_13 = __Pyx_GetItemInt(__pyx_t_3, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_13);
                 __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_8 = (__pyx_t_9 != 0);
-                if (__pyx_t_8) {
-                  goto __pyx_L28;
-                }
-
-                /* "loop_for.pyx":167
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 167, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 167, __pyx_L1_error)
-
-                  /* "loop_for.pyx":168
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":169
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L28:;
-
-                /* "loop_for.pyx":171
- *                                         break
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 171, __pyx_L1_error)
-                }
-                __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 171, __pyx_L1_error)
+                __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_t_13, __pyx_v_tabulation, 0, NULL, NULL, NULL, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L1_error)
                 __Pyx_GOTREF(__pyx_t_3);
-                __pyx_t_8 = (__pyx_t_3 == Py_None);
+                __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                if (PyDict_SetItem(__pyx_t_16, __pyx_n_s_normal_string, __pyx_t_3) < 0) __PYX_ERR(0, 363, __pyx_L1_error)
                 __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __pyx_t_9 = (__pyx_t_8 != 0);
-                if (__pyx_t_9) {
-                  goto __pyx_L29;
-                }
 
-                /* "loop_for.pyx":173
- *                                     if self.DataBase[ 'exit' ] is None: pass
- *                                     else:
- *                                         self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 173, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 173, __pyx_L1_error)
-
-                  /* "loop_for.pyx":174
- *                                     else:
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         broke     = True
- *                                         break
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":175
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True
- *                                         broke     = True             # <<<<<<<<<<<<<<
- *                                         break
- *                                 else: break
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":176
- *                                         doubleKey = True
- *                                         broke     = True
- *                                         break             # <<<<<<<<<<<<<<
- *                                 else: break
- *                             elif 'for'    in keys           :
- */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L29:;
-
-                /* "loop_for.pyx":164
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
+                /* "loop_for.pyx":364
+ *                                     #subfor_value   = _string_[ 'value' ]
+ *                                     s, subfor_value, error = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][ tabulation : ],
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)             # <<<<<<<<<<<<<<
  * 
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
+ *                                     if not error:
  */
-                goto __pyx_L27;
-              }
+                if (PyDict_SetItem(__pyx_t_16, __pyx_n_s_data_base, __pyx_v_self->DataBase) < 0) __PYX_ERR(0, 363, __pyx_L1_error)
+                __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 364, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (PyDict_SetItem(__pyx_t_16, __pyx_n_s_line, __pyx_t_3) < 0) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-              /* "loop_for.pyx":177
- *                                         broke     = True
- *                                         break
- *                                 else: break             # <<<<<<<<<<<<<<
- *                             elif 'for'    in keys           :
- *                                 subfor_values  = _string_[ 'for' ]
+                /* "loop_for.pyx":363
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     #subfor_value   = _string_[ 'value' ]
+ *                                     s, subfor_value, error = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][ tabulation : ],             # <<<<<<<<<<<<<<
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
  */
-              /*else*/ {
-                goto __pyx_L14_break;
-              }
-              __pyx_L27:;
+                __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_empty_tuple, __pyx_t_16); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
 
-              /* "loop_for.pyx":157
- *                                             break
+                /* "loop_for.pyx":364
+ *                                     #subfor_value   = _string_[ 'value' ]
+ *                                     s, subfor_value, error = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][ tabulation : ],
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)             # <<<<<<<<<<<<<<
+ * 
+ *                                     if not error:
+ */
+                __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_FOR); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 364, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_16);
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                __pyx_t_3 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 364, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_3);
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_function, __pyx_n_s_loop) < 0) __PYX_ERR(0, 364, __pyx_L1_error)
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_interpreter, Py_False) < 0) __PYX_ERR(0, 364, __pyx_L1_error)
+                if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_locked, Py_False) < 0) __PYX_ERR(0, 364, __pyx_L1_error)
+                __pyx_t_17 = __Pyx_PyObject_Call(__pyx_t_16, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 364, __pyx_L1_error)
+                __Pyx_GOTREF(__pyx_t_17);
+                __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+                if ((likely(PyTuple_CheckExact(__pyx_t_17))) || (PyList_CheckExact(__pyx_t_17))) {
+                  PyObject* sequence = __pyx_t_17;
+                  Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+                  if (unlikely(size != 3)) {
+                    if (size > 3) __Pyx_RaiseTooManyValuesError(3);
+                    else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+                    __PYX_ERR(0, 363, __pyx_L1_error)
+                  }
+                  #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+                  if (likely(PyTuple_CheckExact(sequence))) {
+                    __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0); 
+                    __pyx_t_16 = PyTuple_GET_ITEM(sequence, 1); 
+                    __pyx_t_13 = PyTuple_GET_ITEM(sequence, 2); 
+                  } else {
+                    __pyx_t_3 = PyList_GET_ITEM(sequence, 0); 
+                    __pyx_t_16 = PyList_GET_ITEM(sequence, 1); 
+                    __pyx_t_13 = PyList_GET_ITEM(sequence, 2); 
+                  }
+                  __Pyx_INCREF(__pyx_t_3);
+                  __Pyx_INCREF(__pyx_t_16);
+                  __Pyx_INCREF(__pyx_t_13);
+                  #else
+                  __pyx_t_3 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __pyx_t_16 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 363, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __pyx_t_13 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 363, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_13);
+                  #endif
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                } else {
+                  Py_ssize_t index = -1;
+                  __pyx_t_1 = PyObject_GetIter(__pyx_t_17); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 363, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                  __pyx_t_18 = Py_TYPE(__pyx_t_1)->tp_iternext;
+                  index = 0; __pyx_t_3 = __pyx_t_18(__pyx_t_1); if (unlikely(!__pyx_t_3)) goto __pyx_L25_unpacking_failed;
+                  __Pyx_GOTREF(__pyx_t_3);
+                  index = 1; __pyx_t_16 = __pyx_t_18(__pyx_t_1); if (unlikely(!__pyx_t_16)) goto __pyx_L25_unpacking_failed;
+                  __Pyx_GOTREF(__pyx_t_16);
+                  index = 2; __pyx_t_13 = __pyx_t_18(__pyx_t_1); if (unlikely(!__pyx_t_13)) goto __pyx_L25_unpacking_failed;
+                  __Pyx_GOTREF(__pyx_t_13);
+                  if (__Pyx_IternextUnpackEndCheck(__pyx_t_18(__pyx_t_1), 3) < 0) __PYX_ERR(0, 363, __pyx_L1_error)
+                  __pyx_t_18 = NULL;
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  goto __pyx_L26_unpacking_done;
+                  __pyx_L25_unpacking_failed:;
+                  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                  __pyx_t_18 = NULL;
+                  if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+                  __PYX_ERR(0, 363, __pyx_L1_error)
+                  __pyx_L26_unpacking_done:;
+                }
+
+                /* "loop_for.pyx":363
+ *                                     #tabulation     = _string_[ 'tabulation' ]
+ *                                     #subfor_value   = _string_[ 'value' ]
+ *                                     s, subfor_value, error = mainFor.FOR_BLOCK(normal_string = subfor_values[0][0][ tabulation : ],             # <<<<<<<<<<<<<<
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ */
+                if (!(likely(PyDict_CheckExact(__pyx_t_16))||((__pyx_t_16) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_16)->tp_name), 0))) __PYX_ERR(0, 363, __pyx_L1_error)
+                if (!(likely(PyString_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_13)->tp_name), 0))) __PYX_ERR(0, 363, __pyx_L1_error)
+                __Pyx_XDECREF_SET(__pyx_v_s, __pyx_t_3);
+                __pyx_t_3 = 0;
+                __Pyx_XDECREF_SET(__pyx_v_subfor_value, ((PyObject*)__pyx_t_16));
+                __pyx_t_16 = 0;
+                __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_13));
+                __pyx_t_13 = 0;
+
+                /* "loop_for.pyx":366
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ *                                     if not error:             # <<<<<<<<<<<<<<
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
+ */
+                __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 366, __pyx_L1_error)
+                __pyx_t_5 = ((!__pyx_t_6) != 0);
+                if (__pyx_t_5) {
+
+                  /* "loop_for.pyx":367
+ * 
+ *                                     if not error:
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
+ *                                         if error is None:
+ */
+                  __pyx_t_17 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_17);
+                  if (PyDict_SetItem(__pyx_t_17, __pyx_n_s_DataBase, __pyx_v_self->DataBase) < 0) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __pyx_t_13 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_13);
+                  if (PyDict_SetItem(__pyx_t_17, __pyx_n_s_line, __pyx_t_13) < 0) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                  __pyx_t_13 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8loop_for_LOOP), __pyx_empty_tuple, __pyx_t_17); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_13);
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                  if (unlikely(__pyx_v_subfor_value == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 367, __pyx_L1_error)
+                  }
+                  __pyx_t_17 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_value); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_17);
+                  __pyx_t_16 = PySequence_List(__pyx_t_17); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_16);
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+
+                  /* "loop_for.pyx":368
+ *                                     if not error:
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )             # <<<<<<<<<<<<<<
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ */
+                  if (unlikely(__pyx_v_subfor_value == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 368, __pyx_L1_error)
+                  }
+                  __pyx_t_17 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_variable); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 368, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_17);
+                  if (!(likely(PyString_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 368, __pyx_L1_error)
+                  if (unlikely(__pyx_v_subfor_values == Py_None)) {
+                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                    __PYX_ERR(0, 368, __pyx_L1_error)
+                  }
+                  __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_subfor_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 368, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_3);
+                  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 368, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __pyx_t_14 = PyTuple_New(3); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 368, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_14);
+                  __Pyx_GIVEREF(__pyx_t_3);
+                  PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_3);
+                  __Pyx_GIVEREF(__pyx_t_1);
+                  PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_1);
+                  __Pyx_INCREF(__pyx_kp_s_);
+                  __Pyx_GIVEREF(__pyx_kp_s_);
+                  PyTuple_SET_ITEM(__pyx_t_14, 2, __pyx_kp_s_);
+                  __pyx_t_3 = 0;
+                  __pyx_t_1 = 0;
+
+                  /* "loop_for.pyx":367
+ * 
+ *                                     if not error:
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
+ *                                         if error is None:
+ */
+                  __pyx_t_19.__pyx_n = 1;
+                  __pyx_t_19.loop_list = ((PyObject*)__pyx_t_14);
+                  __pyx_t_1 = ((struct __pyx_vtabstruct_8loop_for_LOOP *)((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_13)->__pyx_vtab)->SubLOOP(((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_13), ((PyObject*)__pyx_t_16), ((PyObject*)__pyx_t_17), &__pyx_t_19); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_GOTREF(__pyx_t_1);
+                  __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+                  __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+                  __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
+                  __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+                  if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 367, __pyx_L1_error)
+                  __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_1));
+                  __pyx_t_1 = 0;
+
+                  /* "loop_for.pyx":369
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ */
+                  __pyx_t_5 = (__pyx_v_error == ((PyObject*)Py_None));
+                  __pyx_t_6 = (__pyx_t_5 != 0);
+                  if (__pyx_t_6) {
+
+                    /* "loop_for.pyx":370
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
+ *                                         if error is None:
+ *                                             if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ */
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 370, __pyx_L1_error)
+                    }
+                    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 370, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_1);
+                    __pyx_t_6 = (__pyx_t_1 == Py_None);
+                    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                    __pyx_t_5 = (__pyx_t_6 != 0);
+                    if (__pyx_t_5) {
+                      goto __pyx_L29;
+                    }
+
+                    /* "loop_for.pyx":372
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 break
+ */
+                    /*else*/ {
+                      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                        __PYX_ERR(0, 372, __pyx_L1_error)
+                      }
+                      if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 372, __pyx_L1_error)
+
+                      /* "loop_for.pyx":373
+ *                                             else:
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ * 
+ */
+                      __pyx_v_doubleKey = 1;
+
+                      /* "loop_for.pyx":374
+ *                                                 self.DataBase[ 'break' ] = None
+ *                                                 doubleKey = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ */
+                      goto __pyx_L9_break;
+                    }
+                    __pyx_L29:;
+
+                    /* "loop_for.pyx":376
+ *                                                 break
+ * 
+ *                                             if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ */
+                    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                      __PYX_ERR(0, 376, __pyx_L1_error)
+                    }
+                    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 376, __pyx_L1_error)
+                    __Pyx_GOTREF(__pyx_t_1);
+                    __pyx_t_5 = (__pyx_t_1 == Py_None);
+                    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+                    __pyx_t_6 = (__pyx_t_5 != 0);
+                    if (__pyx_t_6) {
+                      goto __pyx_L30;
+                    }
+
+                    /* "loop_for.pyx":378
+ *                                             if self.DataBase[ 'exit' ] is None: pass
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ */
+                    /*else*/ {
+                      if (unlikely(__pyx_v_self->DataBase == Py_None)) {
+                        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+                        __PYX_ERR(0, 378, __pyx_L1_error)
+                      }
+                      if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 378, __pyx_L1_error)
+
+                      /* "loop_for.pyx":379
+ *                                             else:
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True             # <<<<<<<<<<<<<<
+ *                                                 broke     = True
+ *                                                 break
+ */
+                      __pyx_v_doubleKey = 1;
+
+                      /* "loop_for.pyx":380
+ *                                                 self.DataBase['exit'] = None
+ *                                                 doubleKey = True
+ *                                                 broke     = True             # <<<<<<<<<<<<<<
+ *                                                 break
+ *                                         else: break
+ */
+                      __pyx_v_broke = 1;
+
+                      /* "loop_for.pyx":381
+ *                                                 doubleKey = True
+ *                                                 broke     = True
+ *                                                 break             # <<<<<<<<<<<<<<
+ *                                         else: break
  *                                     else: break
- *                             elif 'unless' in keys           :             # <<<<<<<<<<<<<<
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 #tabulation     = _string_[ 'tabulation' ]
  */
-              goto __pyx_L17;
-            }
+                      goto __pyx_L9_break;
+                    }
+                    __pyx_L30:;
 
-            /* "loop_for.pyx":178
- *                                         break
- *                                 else: break
- *                             elif 'for'    in keys           :             # <<<<<<<<<<<<<<
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 #tabulation     = _string_[ 'tabulation' ]
+                    /* "loop_for.pyx":369
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
+ *                                         if error is None:             # <<<<<<<<<<<<<<
+ *                                             if   self.DataBase[ 'break' ] is None: pass
+ *                                             else:
  */
-            __pyx_t_9 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_for, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 178, __pyx_L1_error)
-            __pyx_t_8 = (__pyx_t_9 != 0);
-            if (__pyx_t_8) {
-
-              /* "loop_for.pyx":179
- *                                 else: break
- *                             elif 'for'    in keys           :
- *                                 subfor_values  = _string_[ 'for' ]             # <<<<<<<<<<<<<<
- *                                 #tabulation     = _string_[ 'tabulation' ]
- *                                 subfor_value   = _string_[ 'value' ]
- */
-              __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_for); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 179, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              if (!(likely(PyList_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 179, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_subfor_values, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":181
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 #tabulation     = _string_[ 'tabulation' ]
- *                                 subfor_value   = _string_[ 'value' ]             # <<<<<<<<<<<<<<
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- * 
- */
-              __pyx_t_3 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 181, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              if (!(likely(PyDict_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 181, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_subfor_value, ((PyObject*)__pyx_t_3));
-              __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":182
- *                                 #tabulation     = _string_[ 'tabulation' ]
- *                                 subfor_value   = _string_[ 'value' ]
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]             # <<<<<<<<<<<<<<
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),
- */
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 182, __pyx_L1_error)
-              }
-              __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 182, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 182, __pyx_L1_error)
-              }
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 182, __pyx_L1_error)
-              }
-              __pyx_t_18 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_variable); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 182, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_t_18, __pyx_t_3) < 0)) __PYX_ERR(0, 182, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":184
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
- *                                                 subfor_value[ 'variable' ], True, (subfor_values[1], tabulation, None))
- * 
- */
-              __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              __pyx_t_18 = PyTuple_New(2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __Pyx_INCREF(__pyx_v_self->DataBase);
-              __Pyx_GIVEREF(__pyx_v_self->DataBase);
-              PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_v_self->DataBase);
-              __Pyx_GIVEREF(__pyx_t_3);
-              PyTuple_SET_ITEM(__pyx_t_18, 1, __pyx_t_3);
-              __pyx_t_3 = 0;
-              __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8loop_for_LOOP), __pyx_t_18, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 184, __pyx_L1_error)
-              }
-              __pyx_t_18 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_value); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __pyx_t_4 = PySequence_List(__pyx_t_18); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-
-              /* "loop_for.pyx":185
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),
- *                                                 subfor_value[ 'variable' ], True, (subfor_values[1], tabulation, None))             # <<<<<<<<<<<<<<
- * 
- *                                 if error is None:
- */
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 185, __pyx_L1_error)
-              }
-              __pyx_t_18 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_variable); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 185, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              if (!(likely(PyString_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 185, __pyx_L1_error)
-              if (unlikely(__pyx_v_subfor_values == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 185, __pyx_L1_error)
-              }
-              __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_subfor_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 185, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_7);
-              __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 185, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_1);
-              __Pyx_GIVEREF(__pyx_t_7);
-              PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7);
-              __Pyx_GIVEREF(__pyx_t_2);
-              PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_2);
-              __Pyx_INCREF(Py_None);
-              __Pyx_GIVEREF(Py_None);
-              PyTuple_SET_ITEM(__pyx_t_1, 2, Py_None);
-              __pyx_t_7 = 0;
-              __pyx_t_2 = 0;
-
-              /* "loop_for.pyx":184
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
- *                                                 subfor_value[ 'variable' ], True, (subfor_values[1], tabulation, None))
- * 
- */
-              __pyx_t_19.__pyx_n = 2;
-              __pyx_t_19.interpreter = 1;
-              __pyx_t_19.loop_list = ((PyObject*)__pyx_t_1);
-              __pyx_t_2 = ((struct __pyx_vtabstruct_8loop_for_LOOP *)((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_3)->__pyx_vtab)->SubLOOP(((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_3), ((PyObject*)__pyx_t_4), ((PyObject*)__pyx_t_18), &__pyx_t_19); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_2);
-              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 184, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_2));
-              __pyx_t_2 = 0;
-
-              /* "loop_for.pyx":187
- *                                                 subfor_value[ 'variable' ], True, (subfor_values[1], tabulation, None))
- * 
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-              __pyx_t_8 = (__pyx_v_error == ((PyObject*)Py_None));
-              __pyx_t_9 = (__pyx_t_8 != 0);
-              if (__pyx_t_9) {
-
-                /* "loop_for.pyx":188
- * 
- *                                 if error is None:
- *                                     if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 188, __pyx_L1_error)
-                }
-                __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 188, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_2);
-                __pyx_t_9 = (__pyx_t_2 == Py_None);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-                __pyx_t_8 = (__pyx_t_9 != 0);
-                if (__pyx_t_8) {
-                  goto __pyx_L31;
-                }
-
-                /* "loop_for.pyx":190
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 190, __pyx_L1_error)
+                    goto __pyx_L28;
                   }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 190, __pyx_L1_error)
 
-                  /* "loop_for.pyx":191
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
+                  /* "loop_for.pyx":382
+ *                                                 broke     = True
+ *                                                 break
+ *                                         else: break             # <<<<<<<<<<<<<<
+ *                                     else: break
+ *                                 else: pass
  */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":192
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L14_break;
-                }
-                __pyx_L31:;
-
-                /* "loop_for.pyx":194
- *                                         break
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 194, __pyx_L1_error)
-                }
-                __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 194, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_2);
-                __pyx_t_8 = (__pyx_t_2 == Py_None);
-                __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-                __pyx_t_9 = (__pyx_t_8 != 0);
-                if (__pyx_t_9) {
-                  goto __pyx_L32;
-                }
-
-                /* "loop_for.pyx":196
- *                                     if self.DataBase[ 'exit' ] is None: pass
- *                                     else:
- *                                         self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 196, __pyx_L1_error)
+                  /*else*/ {
+                    goto __pyx_L9_break;
                   }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 196, __pyx_L1_error)
+                  __pyx_L28:;
 
-                  /* "loop_for.pyx":197
- *                                     else:
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         broke     = True
- *                                         break
+                  /* "loop_for.pyx":366
+ *                                             data_base=self.DataBase, line=(self.line+for_line)).FOR( function = 'loop', interpreter = False, locked=False)
+ * 
+ *                                     if not error:             # <<<<<<<<<<<<<<
+ *                                         error = LOOP( DataBase=self.DataBase, line=(self.line+for_line) ).SubLOOP( for_values=list(subfor_value[ 'value' ]),
+ *                                                     var_name = subfor_value[ 'variable' ], loop_list=(subfor_values[1], tabulation, '') )
  */
-                  __pyx_v_doubleKey = 1;
+                  goto __pyx_L27;
+                }
 
-                  /* "loop_for.pyx":198
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True
- *                                         broke     = True             # <<<<<<<<<<<<<<
- *                                         break
- *                                 else: break
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":199
- *                                         doubleKey = True
- *                                         broke     = True
- *                                         break             # <<<<<<<<<<<<<<
- *                                 else: break
+                /* "loop_for.pyx":383
+ *                                                 break
+ *                                         else: break
+ *                                     else: break             # <<<<<<<<<<<<<<
+ *                                 else: pass
  *                             else: pass
  */
-                  goto __pyx_L14_break;
+                /*else*/ {
+                  goto __pyx_L9_break;
                 }
-                __pyx_L32:;
+                __pyx_L27:;
 
-                /* "loop_for.pyx":187
- *                                                 subfor_value[ 'variable' ], True, (subfor_values[1], tabulation, None))
- * 
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
+                /* "loop_for.pyx":359
+ *                                             break
+ *                                     else: break
+ *                                 elif 'for'    in keys           :             # <<<<<<<<<<<<<<
+ *                                     subfor_values  = _string_[ 'for' ]
+ *                                     #tabulation     = _string_[ 'tabulation' ]
  */
-                goto __pyx_L30;
+                goto __pyx_L12;
               }
 
-              /* "loop_for.pyx":200
- *                                         broke     = True
- *                                         break
- *                                 else: break             # <<<<<<<<<<<<<<
+              /* "loop_for.pyx":384
+ *                                         else: break
+ *                                     else: break
+ *                                 else: pass             # <<<<<<<<<<<<<<
  *                             else: pass
  *                         else: pass
  */
               /*else*/ {
-                goto __pyx_L14_break;
               }
-              __pyx_L30:;
+              __pyx_L12:;
 
-              /* "loop_for.pyx":178
- *                                         break
- *                                 else: break
- *                             elif 'for'    in keys           :             # <<<<<<<<<<<<<<
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 #tabulation     = _string_[ 'tabulation' ]
+              /* "loop_for.pyx":281
+ *                             for_line    += 1
+ * 
+ *                             if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
+ *                                 keys = list( _string_.keys() )
+ *                                 if  'any'     in keys           :
  */
-              goto __pyx_L17;
+              goto __pyx_L11;
             }
 
-            /* "loop_for.pyx":201
- *                                         break
- *                                 else: break
+            /* "loop_for.pyx":385
+ *                                     else: break
+ *                                 else: pass
  *                             else: pass             # <<<<<<<<<<<<<<
  *                         else: pass
- *                     else: pass
+ *                     if not error:
  */
             /*else*/ {
             }
-            __pyx_L17:;
+            __pyx_L11:;
 
-            /* "loop_for.pyx":97
- *                         for_line    += 1
+            /* "loop_for.pyx":278
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if locked is False:             # <<<<<<<<<<<<<<
+ *                             for_line    += 1
  * 
- *                         if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
- *                             keys = list( _string_.keys() )
- *                             if   'any'    in keys           :
  */
-            goto __pyx_L16;
+            goto __pyx_L10;
           }
 
-          /* "loop_for.pyx":202
- *                                 else: break
+          /* "loop_for.pyx":386
+ *                                 else: pass
  *                             else: pass
  *                         else: pass             # <<<<<<<<<<<<<<
- *                     else: pass
- *                 if not error:
+ *                     if not error:
+ *                         if doubleKey is False:
  */
           /*else*/ {
           }
-          __pyx_L16:;
+          __pyx_L10:;
 
-          /* "loop_for.pyx":94
+          /* "loop_for.pyx":277
  * 
- *                 for j, _string_ in enumerate( master[ : ] ):
- *                     if locked is False:             # <<<<<<<<<<<<<<
- *                         for_line    += 1
- * 
+ *                 if not error :
+ *                     for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
+ *                         if locked is False:
+ *                             for_line    += 1
  */
-          goto __pyx_L15;
         }
+        __pyx_L9_break:;
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-        /* "loop_for.pyx":203
+        /* "loop_for.pyx":387
  *                             else: pass
  *                         else: pass
- *                     else: pass             # <<<<<<<<<<<<<<
- *                 if not error:
- *                     if doubleKey is False:
+ *                     if not error:             # <<<<<<<<<<<<<<
+ *                         if doubleKey is False:
+ *                             if broke is True:  exit()
  */
-        /*else*/ {
-        }
-        __pyx_L15:;
+        __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 387, __pyx_L1_error)
+        __pyx_t_5 = ((!__pyx_t_6) != 0);
+        if (__pyx_t_5) {
 
-        /* "loop_for.pyx":93
- *                 else :  pass
+          /* "loop_for.pyx":388
+ *                         else: pass
+ *                     if not error:
+ *                         if doubleKey is False:             # <<<<<<<<<<<<<<
+ *                             if broke is True:  exit()
+ *                             else: pass
+ */
+          __pyx_t_5 = ((__pyx_v_doubleKey == 0) != 0);
+          if (__pyx_t_5) {
+
+            /* "loop_for.pyx":389
+ *                     if not error:
+ *                         if doubleKey is False:
+ *                             if broke is True:  exit()             # <<<<<<<<<<<<<<
+ *                             else: pass
+ *                         else: break
+ */
+            __pyx_t_5 = ((__pyx_v_broke == 1) != 0);
+            if (__pyx_t_5) {
+              __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_builtin_exit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 389, __pyx_L1_error)
+              __Pyx_GOTREF(__pyx_t_2);
+              __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+              goto __pyx_L33;
+            }
+
+            /* "loop_for.pyx":390
+ *                         if doubleKey is False:
+ *                             if broke is True:  exit()
+ *                             else: pass             # <<<<<<<<<<<<<<
+ *                         else: break
  * 
- *                 for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
- *                     if locked is False:
- *                         for_line    += 1
  */
-      }
-      __pyx_L14_break:;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+            /*else*/ {
+            }
+            __pyx_L33:;
 
-      /* "loop_for.pyx":204
+            /* "loop_for.pyx":388
  *                         else: pass
- *                     else: pass
- *                 if not error:             # <<<<<<<<<<<<<<
- *                     if doubleKey is False:
- *                         if broke is True:  exit()
+ *                     if not error:
+ *                         if doubleKey is False:             # <<<<<<<<<<<<<<
+ *                             if broke is True:  exit()
+ *                             else: pass
  */
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 204, __pyx_L1_error)
-      __pyx_t_8 = ((!__pyx_t_9) != 0);
-      if (__pyx_t_8) {
-
-        /* "loop_for.pyx":205
- *                     else: pass
- *                 if not error:
- *                     if doubleKey is False:             # <<<<<<<<<<<<<<
- *                         if broke is True:  exit()
- *                         else: pass
- */
-        __pyx_t_8 = ((__pyx_v_doubleKey == 0) != 0);
-        if (__pyx_t_8) {
-
-          /* "loop_for.pyx":206
- *                 if not error:
- *                     if doubleKey is False:
- *                         if broke is True:  exit()             # <<<<<<<<<<<<<<
- *                         else: pass
- *                     else: break
- */
-          __pyx_t_8 = ((__pyx_v_broke == 1) != 0);
-          if (__pyx_t_8) {
-            __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_builtin_exit); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 206, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            goto __pyx_L35;
+            goto __pyx_L32;
           }
 
-          /* "loop_for.pyx":207
- *                     if doubleKey is False:
- *                         if broke is True:  exit()
- *                         else: pass             # <<<<<<<<<<<<<<
- *                     else: break
+          /* "loop_for.pyx":391
+ *                             if broke is True:  exit()
+ *                             else: pass
+ *                         else: break             # <<<<<<<<<<<<<<
  * 
+ *                     else: break
  */
           /*else*/ {
+            goto __pyx_L6_break;
           }
-          __pyx_L35:;
+          __pyx_L32:;
 
-          /* "loop_for.pyx":205
- *                     else: pass
- *                 if not error:
- *                     if doubleKey is False:             # <<<<<<<<<<<<<<
- *                         if broke is True:  exit()
+          /* "loop_for.pyx":387
+ *                             else: pass
  *                         else: pass
+ *                     if not error:             # <<<<<<<<<<<<<<
+ *                         if doubleKey is False:
+ *                             if broke is True:  exit()
  */
-          goto __pyx_L34;
+          goto __pyx_L31;
         }
 
-        /* "loop_for.pyx":208
- *                         if broke is True:  exit()
- *                         else: pass
+        /* "loop_for.pyx":393
+ *                         else: break
+ * 
  *                     else: break             # <<<<<<<<<<<<<<
- * 
- *                 else: break
+ *                 else : break
+ *             return [None if not error else error ][0]
  */
         /*else*/ {
-          goto __pyx_L5_break;
+          goto __pyx_L6_break;
         }
-        __pyx_L34:;
+        __pyx_L31:;
 
-        /* "loop_for.pyx":204
- *                         else: pass
- *                     else: pass
- *                 if not error:             # <<<<<<<<<<<<<<
- *                     if doubleKey is False:
- *                         if broke is True:  exit()
+        /* "loop_for.pyx":276
+ *                 UPDATING( self.DataBase, var_name, for_values[ i ] )
+ * 
+ *                 if not error :             # <<<<<<<<<<<<<<
+ *                     for j, _string_ in enumerate( master[ : ] ):
+ *                         if locked is False:
  */
-        goto __pyx_L33;
+        goto __pyx_L7;
       }
 
-      /* "loop_for.pyx":210
- *                     else: break
+      /* "loop_for.pyx":394
  * 
- *                 else: break             # <<<<<<<<<<<<<<
- *             else : break
- *         return error
+ *                     else: break
+ *                 else : break             # <<<<<<<<<<<<<<
+ *             return [None if not error else error ][0]
+ *         return [None if not error else error ][0]
  */
       /*else*/ {
-        goto __pyx_L5_break;
+        goto __pyx_L6_break;
       }
-      __pyx_L33:;
-
-      /* "loop_for.pyx":80
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )
- * 
- *             if not error :             # <<<<<<<<<<<<<<
- *                 if i == 0   :
- *                     if interpreter is False:
- */
-      goto __pyx_L6;
+      __pyx_L7:;
     }
+    __pyx_L6_break:;
 
-    /* "loop_for.pyx":211
+    /* "loop_for.pyx":395
+ *                     else: break
+ *                 else : break
+ *             return [None if not error else error ][0]             # <<<<<<<<<<<<<<
+ *         return [None if not error else error ][0]
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 395, __pyx_L1_error)
+    if (((!__pyx_t_5) != 0)) {
+      __Pyx_INCREF(Py_None);
+      __pyx_t_2 = Py_None;
+    } else {
+      __Pyx_INCREF(__pyx_v_error);
+      __pyx_t_2 = __pyx_v_error;
+    }
+    __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
+    __pyx_t_2 = 0;
+    __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_t_1, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
+    goto __pyx_L0;
+
+    /* "loop_for.pyx":255
+ *         loop, tabulation, error = loop_list
  * 
- *                 else: break
- *             else : break             # <<<<<<<<<<<<<<
- *         return error
+ *         if not error :             # <<<<<<<<<<<<<<
+ *             master = loop['for']
  * 
  */
-    /*else*/ {
-      goto __pyx_L5_break;
-    }
-    __pyx_L6:;
   }
-  __pyx_L5_break:;
 
-  /* "loop_for.pyx":212
- *                 else: break
- *             else : break
- *         return error             # <<<<<<<<<<<<<<
- * 
- *     cdef SubLOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):
+  /* "loop_for.pyx":396
+ *                 else : break
+ *             return [None if not error else error ][0]
+ *         return [None if not error else error ][0]             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(__pyx_v_error);
-  __pyx_r = __pyx_v_error;
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 396, __pyx_L1_error)
+  if (((!__pyx_t_5) != 0)) {
+    __Pyx_INCREF(Py_None);
+    __pyx_t_2 = Py_None;
+  } else {
+    __Pyx_INCREF(__pyx_v_error);
+    __pyx_t_2 = __pyx_v_error;
+  }
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_t_1, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "loop_for.pyx":30
- *             self._values_       = self.DataBase[ 'variables' ][ 'values' ]
+  /* "loop_for.pyx":223
+ *         else: return [None if not error else error ][0]
  * 
- *     cpdef LOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):             # <<<<<<<<<<<<<<
+ *     cdef SubLOOP( self, list for_values, str var_name, tuple loop_list = () ):             # <<<<<<<<<<<<<<
  *         cdef:
  *             str     error, normal_string, err
  */
@@ -4232,2485 +6889,10 @@ static PyObject *__pyx_f_8loop_for_4LOOP_LOOP(struct __pyx_obj_8loop_for_LOOP *_
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_18);
-  __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_error);
-  __Pyx_XDECREF(__pyx_v_normal_string);
-  __Pyx_XDECREF(__pyx_v_loop);
-  __Pyx_XDECREF(__pyx_v_any_values);
-  __Pyx_XDECREF(__pyx_v_keys);
-  __Pyx_XDECREF(__pyx_v_lexer);
-  __Pyx_XDECREF(__pyx_v_master);
-  __Pyx_XDECREF(__pyx_v_if_values);
-  __Pyx_XDECREF(__pyx_v_unless_values);
-  __Pyx_XDECREF(__pyx_v_subfor_value);
-  __Pyx_XDECREF(__pyx_v_subfor_values);
-  __Pyx_XDECREF(__pyx_v__string_);
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* Python wrapper */
-static PyObject *__pyx_pw_8loop_for_4LOOP_3LOOP(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8loop_for_4LOOP_3LOOP(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  PyObject *__pyx_v_for_values = 0;
-  PyObject *__pyx_v_var_name = 0;
-  int __pyx_v_interpreter;
-  PyObject *__pyx_v_loop_list = 0;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("LOOP (wrapper)", 0);
-  {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_for_values,&__pyx_n_s_var_name,&__pyx_n_s_interpreter,&__pyx_n_s_loop_list,0};
-    PyObject* values[4] = {0,0,0,0};
-    values[3] = ((PyObject*)__pyx_empty_tuple);
-    if (unlikely(__pyx_kwds)) {
-      Py_ssize_t kw_args;
-      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
-      switch (pos_args) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        CYTHON_FALLTHROUGH;
-        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-        CYTHON_FALLTHROUGH;
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        CYTHON_FALLTHROUGH;
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        CYTHON_FALLTHROUGH;
-        case  0: break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-      kw_args = PyDict_Size(__pyx_kwds);
-      switch (pos_args) {
-        case  0:
-        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_for_values)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
-        CYTHON_FALLTHROUGH;
-        case  1:
-        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_var_name)) != 0)) kw_args--;
-        else {
-          __Pyx_RaiseArgtupleInvalid("LOOP", 0, 2, 4, 1); __PYX_ERR(0, 30, __pyx_L3_error)
-        }
-        CYTHON_FALLTHROUGH;
-        case  2:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_interpreter);
-          if (value) { values[2] = value; kw_args--; }
-        }
-        CYTHON_FALLTHROUGH;
-        case  3:
-        if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_loop_list);
-          if (value) { values[3] = value; kw_args--; }
-        }
-      }
-      if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "LOOP") < 0)) __PYX_ERR(0, 30, __pyx_L3_error)
-      }
-    } else {
-      switch (PyTuple_GET_SIZE(__pyx_args)) {
-        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
-        CYTHON_FALLTHROUGH;
-        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
-        CYTHON_FALLTHROUGH;
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-    }
-    __pyx_v_for_values = ((PyObject*)values[0]);
-    __pyx_v_var_name = ((PyObject*)values[1]);
-    if (values[2]) {
-      __pyx_v_interpreter = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_interpreter == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 30, __pyx_L3_error)
-    } else {
-      __pyx_v_interpreter = ((int)0);
-    }
-    __pyx_v_loop_list = ((PyObject*)values[3]);
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("LOOP", 0, 2, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 30, __pyx_L3_error)
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return NULL;
-  __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_for_values), (&PyList_Type), 1, "for_values", 1))) __PYX_ERR(0, 30, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_var_name), (&PyString_Type), 1, "var_name", 1))) __PYX_ERR(0, 30, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_loop_list), (&PyTuple_Type), 1, "loop_list", 1))) __PYX_ERR(0, 30, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8loop_for_4LOOP_2LOOP(((struct __pyx_obj_8loop_for_LOOP *)__pyx_v_self), __pyx_v_for_values, __pyx_v_var_name, __pyx_v_interpreter, __pyx_v_loop_list);
-
-  /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_8loop_for_4LOOP_2LOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, int __pyx_v_interpreter, PyObject *__pyx_v_loop_list) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_8loop_for_4LOOP_LOOP __pyx_t_2;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("LOOP", 0);
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2.__pyx_n = 2;
-  __pyx_t_2.interpreter = __pyx_v_interpreter;
-  __pyx_t_2.loop_list = __pyx_v_loop_list;
-  __pyx_t_1 = __pyx_vtabptr_8loop_for_LOOP->LOOP(__pyx_v_self, __pyx_v_for_values, __pyx_v_var_name, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
-  goto __pyx_L0;
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("loop_for.LOOP.LOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "loop_for.pyx":214
- *         return error
- * 
- *     cdef SubLOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):             # <<<<<<<<<<<<<<
- *         cdef:
- *             str     error, normal_string, err
- */
-
-static PyObject *__pyx_f_8loop_for_4LOOP_SubLOOP(struct __pyx_obj_8loop_for_LOOP *__pyx_v_self, PyObject *__pyx_v_for_values, PyObject *__pyx_v_var_name, struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP *__pyx_optional_args) {
-  int __pyx_v_interpreter = ((int)0);
-  PyObject *__pyx_v_loop_list = ((PyObject*)__pyx_empty_tuple);
-  PyObject *__pyx_v_error = 0;
-  PyObject *__pyx_v_normal_string = 0;
-  PyObject *__pyx_v_loop = 0;
-  PyObject *__pyx_v_any_values = 0;
-  PyObject *__pyx_v_keys = 0;
-  PyObject *__pyx_v_lexer = 0;
-  long __pyx_v_counting;
-  long __pyx_v_index;
-  int __pyx_v_i;
-  CYTHON_UNUSED int __pyx_v_j;
-  long __pyx_v_for_line;
-  int __pyx_v_tabulation;
-  PyObject *__pyx_v_master = 0;
-  CYTHON_UNUSED int __pyx_v_active_tab;
-  int __pyx_v_boolean_value;
-  PyObject *__pyx_v_if_values = 0;
-  int __pyx_v_doubleKey;
-  int __pyx_v_broke;
-  int __pyx_v_locked;
-  PyObject *__pyx_v_unless_values = 0;
-  PyObject *__pyx_v_subfor_value = 0;
-  CYTHON_UNUSED PyObject *__pyx_v_subfor_values = 0;
-  PyObject *__pyx_v__string_ = NULL;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
-  long __pyx_t_6;
-  int __pyx_t_7;
-  Py_ssize_t __pyx_t_8;
-  Py_ssize_t __pyx_t_9;
-  int __pyx_t_10;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
-  int __pyx_t_13;
-  PyObject *__pyx_t_14 = NULL;
-  PyObject *(*__pyx_t_15)(PyObject *);
-  Py_ssize_t __pyx_t_16;
-  int __pyx_t_17;
-  PyObject *__pyx_t_18 = NULL;
-  struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP __pyx_t_19;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("SubLOOP", 0);
-  if (__pyx_optional_args) {
-    if (__pyx_optional_args->__pyx_n > 0) {
-      __pyx_v_interpreter = __pyx_optional_args->interpreter;
-      if (__pyx_optional_args->__pyx_n > 1) {
-        __pyx_v_loop_list = __pyx_optional_args->loop_list;
-      }
-    }
-  }
-
-  /* "loop_for.pyx":240
- *             list    subfor_values
- * 
- *         error       = ''             # <<<<<<<<<<<<<<
- *         counting    = 0
- *         doubleKey   = False
- */
-  __Pyx_INCREF(__pyx_kp_s_);
-  __pyx_v_error = __pyx_kp_s_;
-
-  /* "loop_for.pyx":241
- * 
- *         error       = ''
- *         counting    = 0             # <<<<<<<<<<<<<<
- *         doubleKey   = False
- *         broke       = False
- */
-  __pyx_v_counting = 0;
-
-  /* "loop_for.pyx":242
- *         error       = ''
- *         counting    = 0
- *         doubleKey   = False             # <<<<<<<<<<<<<<
- *         broke       = False
- * 
- */
-  __pyx_v_doubleKey = 0;
-
-  /* "loop_for.pyx":243
- *         counting    = 0
- *         doubleKey   = False
- *         broke       = False             # <<<<<<<<<<<<<<
- * 
- *         if var_name in self.variables:
- */
-  __pyx_v_broke = 0;
-
-  /* "loop_for.pyx":245
- *         broke       = False
- * 
- *         if var_name in self.variables:             # <<<<<<<<<<<<<<
- * 
- *             index   = self.variables.index( var_name )
- */
-  __pyx_t_1 = (__Pyx_PySequence_ContainsTF(__pyx_v_var_name, __pyx_v_self->variables, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 245, __pyx_L1_error)
-  __pyx_t_2 = (__pyx_t_1 != 0);
-  if (__pyx_t_2) {
-
-    /* "loop_for.pyx":247
- *         if var_name in self.variables:
- * 
- *             index   = self.variables.index( var_name )             # <<<<<<<<<<<<<<
- *             self._values_[ index ] = for_values[ -1 ]
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->variables, __pyx_n_s_index); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 247, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = NULL;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
-      __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
-      if (likely(__pyx_t_5)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-        __Pyx_INCREF(__pyx_t_5);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_4, function);
-      }
-    }
-    __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_v_var_name) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_var_name);
-    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 247, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_6 = __Pyx_PyInt_As_long(__pyx_t_3); if (unlikely((__pyx_t_6 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 247, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_v_index = __pyx_t_6;
-
-    /* "loop_for.pyx":248
- * 
- *             index   = self.variables.index( var_name )
- *             self._values_[ index ] = for_values[ -1 ]             # <<<<<<<<<<<<<<
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- * 
- */
-    if (unlikely(__pyx_v_for_values == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 248, __pyx_L1_error)
-    }
-    __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_for_values, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 248, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    if (unlikely(__pyx_v_self->_values_ == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 248, __pyx_L1_error)
-    }
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_self->_values_, __pyx_v_index, __pyx_t_3, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 248, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "loop_for.pyx":249
- *             index   = self.variables.index( var_name )
- *             self._values_[ index ] = for_values[ -1 ]
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
- * 
- *         else:
- */
-    __pyx_t_3 = __pyx_v_self->_values_;
-    __Pyx_INCREF(__pyx_t_3);
-    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 249, __pyx_L1_error)
-    }
-    __pyx_t_4 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 249, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely(PyObject_SetItem(__pyx_t_4, __pyx_n_s_values, __pyx_t_3) < 0)) __PYX_ERR(0, 249, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "loop_for.pyx":245
- *         broke       = False
- * 
- *         if var_name in self.variables:             # <<<<<<<<<<<<<<
- * 
- *             index   = self.variables.index( var_name )
- */
-    goto __pyx_L3;
-  }
-
-  /* "loop_for.pyx":252
- * 
- *         else:
- *             self.variables.append( var_name )             # <<<<<<<<<<<<<<
- *             self._values_.append( for_values[ 0 ] )
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- */
-  /*else*/ {
-    if (unlikely(__pyx_v_self->variables == Py_None)) {
-      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
-      __PYX_ERR(0, 252, __pyx_L1_error)
-    }
-    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_self->variables, __pyx_v_var_name); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 252, __pyx_L1_error)
-
-    /* "loop_for.pyx":253
- *         else:
- *             self.variables.append( var_name )
- *             self._values_.append( for_values[ 0 ] )             # <<<<<<<<<<<<<<
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- *             self.DataBase[ 'variables' ][ 'vars' ] = self.variables
- */
-    if (unlikely(__pyx_v_self->_values_ == Py_None)) {
-      PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "append");
-      __PYX_ERR(0, 253, __pyx_L1_error)
-    }
-    if (unlikely(__pyx_v_for_values == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 253, __pyx_L1_error)
-    }
-    __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_for_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 253, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_self->_values_, __pyx_t_3); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 253, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "loop_for.pyx":254
- *             self.variables.append( var_name )
- *             self._values_.append( for_values[ 0 ] )
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_             # <<<<<<<<<<<<<<
- *             self.DataBase[ 'variables' ][ 'vars' ] = self.variables
- * 
- */
-    __pyx_t_3 = __pyx_v_self->_values_;
-    __Pyx_INCREF(__pyx_t_3);
-    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 254, __pyx_L1_error)
-    }
-    __pyx_t_4 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 254, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely(PyObject_SetItem(__pyx_t_4, __pyx_n_s_values, __pyx_t_3) < 0)) __PYX_ERR(0, 254, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "loop_for.pyx":255
- *             self._values_.append( for_values[ 0 ] )
- *             self.DataBase[ 'variables' ][ 'values' ] = self._values_
- *             self.DataBase[ 'variables' ][ 'vars' ] = self.variables             # <<<<<<<<<<<<<<
- * 
- * 
- */
-    __pyx_t_3 = __pyx_v_self->variables;
-    __Pyx_INCREF(__pyx_t_3);
-    if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 255, __pyx_L1_error)
-    }
-    __pyx_t_4 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_variables); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 255, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely(PyObject_SetItem(__pyx_t_4, __pyx_n_s_vars, __pyx_t_3) < 0)) __PYX_ERR(0, 255, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  }
-  __pyx_L3:;
-
-  /* "loop_for.pyx":258
- * 
- * 
- *         for i in range( len( for_values ) ):             # <<<<<<<<<<<<<<
- *             for_line    = 0
- *             counting    += 1
- */
-  if (unlikely(__pyx_v_for_values == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 258, __pyx_L1_error)
-  }
-  __pyx_t_8 = PyList_GET_SIZE(__pyx_v_for_values); if (unlikely(__pyx_t_8 == ((Py_ssize_t)-1))) __PYX_ERR(0, 258, __pyx_L1_error)
-  __pyx_t_9 = __pyx_t_8;
-  for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
-    __pyx_v_i = __pyx_t_10;
-
-    /* "loop_for.pyx":259
- * 
- *         for i in range( len( for_values ) ):
- *             for_line    = 0             # <<<<<<<<<<<<<<
- *             counting    += 1
- *             locked      = False
- */
-    __pyx_v_for_line = 0;
-
-    /* "loop_for.pyx":260
- *         for i in range( len( for_values ) ):
- *             for_line    = 0
- *             counting    += 1             # <<<<<<<<<<<<<<
- *             locked      = False
- * 
- */
-    __pyx_v_counting = (__pyx_v_counting + 1);
-
-    /* "loop_for.pyx":261
- *             for_line    = 0
- *             counting    += 1
- *             locked      = False             # <<<<<<<<<<<<<<
- * 
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )
- */
-    __pyx_v_locked = 0;
-
-    /* "loop_for.pyx":263
- *             locked      = False
- * 
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )             # <<<<<<<<<<<<<<
- * 
- *             if not error :
- */
-    __pyx_t_3 = __pyx_v_self->DataBase;
-    __Pyx_INCREF(__pyx_t_3);
-    if (unlikely(__pyx_v_for_values == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 263, __pyx_L1_error)
-    }
-    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_for_values, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 263, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __pyx_f_8loop_for_UPDATING(((PyObject*)__pyx_t_3), __pyx_v_var_name, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 263, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-    /* "loop_for.pyx":265
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )
- * 
- *             if not error :             # <<<<<<<<<<<<<<
- *                 if i == 0   :
- *                     if interpreter is False:
- */
-    __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 265, __pyx_L1_error)
-    __pyx_t_1 = ((!__pyx_t_2) != 0);
-    if (__pyx_t_1) {
-
-      /* "loop_for.pyx":266
- * 
- *             if not error :
- *                 if i == 0   :             # <<<<<<<<<<<<<<
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- */
-      __pyx_t_1 = ((__pyx_v_i == 0) != 0);
-      if (__pyx_t_1) {
-
-        /* "loop_for.pyx":267
- *             if not error :
- *                 if i == 0   :
- *                     if interpreter is False:             # <<<<<<<<<<<<<<
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- */
-        __pyx_t_1 = ((__pyx_v_interpreter == 0) != 0);
-        if (__pyx_t_1) {
-
-          /* "loop_for.pyx":268
- *                 if i == 0   :
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,             # <<<<<<<<<<<<<<
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                     else:  loop, tabulation, error = loop_list
- */
-          __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_for_statement); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 268, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_EXTERNAL_FOR_STATEMENT); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 268, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-          /* "loop_for.pyx":269
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )             # <<<<<<<<<<<<<<
- *                     else:  loop, tabulation, error = loop_list
- *                 else :  loop = loop
- */
-          __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 269, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_12 = NULL;
-          __pyx_t_13 = 0;
-          if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_11))) {
-            __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_11);
-            if (likely(__pyx_t_12)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_11);
-              __Pyx_INCREF(__pyx_t_12);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_11, function);
-              __pyx_t_13 = 1;
-            }
-          }
-          #if CYTHON_FAST_PYCALL
-          if (PyFunction_Check(__pyx_t_11)) {
-            PyObject *__pyx_temp[4] = {__pyx_t_12, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
-            __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_13, 3+__pyx_t_13); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          } else
-          #endif
-          #if CYTHON_FAST_PYCCALL
-          if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-            PyObject *__pyx_temp[4] = {__pyx_t_12, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
-            __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_13, 3+__pyx_t_13); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          } else
-          #endif
-          {
-            __pyx_t_14 = PyTuple_New(3+__pyx_t_13); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_14);
-            if (__pyx_t_12) {
-              __Pyx_GIVEREF(__pyx_t_12); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_12); __pyx_t_12 = NULL;
-            }
-            __Pyx_INCREF(Py_None);
-            __Pyx_GIVEREF(Py_None);
-            PyTuple_SET_ITEM(__pyx_t_14, 0+__pyx_t_13, Py_None);
-            __Pyx_INCREF(__pyx_v_self->DataBase);
-            __Pyx_GIVEREF(__pyx_v_self->DataBase);
-            PyTuple_SET_ITEM(__pyx_t_14, 1+__pyx_t_13, __pyx_v_self->DataBase);
-            __Pyx_GIVEREF(__pyx_t_3);
-            PyTuple_SET_ITEM(__pyx_t_14, 2+__pyx_t_13, __pyx_t_3);
-            __pyx_t_3 = 0;
-            __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_14, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          }
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-          __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_FOR_STATEMENT); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 269, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_4 = NULL;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_11))) {
-            __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_11);
-            if (likely(__pyx_t_4)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_11);
-              __Pyx_INCREF(__pyx_t_4);
-              __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_11, function);
-            }
-          }
-          __pyx_t_5 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_11, __pyx_t_4, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_int_1);
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 269, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if ((likely(PyTuple_CheckExact(__pyx_t_5))) || (PyList_CheckExact(__pyx_t_5))) {
-            PyObject* sequence = __pyx_t_5;
-            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-            if (unlikely(size != 3)) {
-              if (size > 3) __Pyx_RaiseTooManyValuesError(3);
-              else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 268, __pyx_L1_error)
-            }
-            #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            if (likely(PyTuple_CheckExact(sequence))) {
-              __pyx_t_11 = PyTuple_GET_ITEM(sequence, 0); 
-              __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1); 
-              __pyx_t_14 = PyTuple_GET_ITEM(sequence, 2); 
-            } else {
-              __pyx_t_11 = PyList_GET_ITEM(sequence, 0); 
-              __pyx_t_4 = PyList_GET_ITEM(sequence, 1); 
-              __pyx_t_14 = PyList_GET_ITEM(sequence, 2); 
-            }
-            __Pyx_INCREF(__pyx_t_11);
-            __Pyx_INCREF(__pyx_t_4);
-            __Pyx_INCREF(__pyx_t_14);
-            #else
-            __pyx_t_11 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_11);
-            __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __pyx_t_14 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_14);
-            #endif
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          } else {
-            Py_ssize_t index = -1;
-            __pyx_t_3 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 268, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_3);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __pyx_t_15 = Py_TYPE(__pyx_t_3)->tp_iternext;
-            index = 0; __pyx_t_11 = __pyx_t_15(__pyx_t_3); if (unlikely(!__pyx_t_11)) goto __pyx_L9_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_11);
-            index = 1; __pyx_t_4 = __pyx_t_15(__pyx_t_3); if (unlikely(!__pyx_t_4)) goto __pyx_L9_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_4);
-            index = 2; __pyx_t_14 = __pyx_t_15(__pyx_t_3); if (unlikely(!__pyx_t_14)) goto __pyx_L9_unpacking_failed;
-            __Pyx_GOTREF(__pyx_t_14);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_3), 3) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
-            __pyx_t_15 = NULL;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            goto __pyx_L10_unpacking_done;
-            __pyx_L9_unpacking_failed:;
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_15 = NULL;
-            if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 268, __pyx_L1_error)
-            __pyx_L10_unpacking_done:;
-          }
-
-          /* "loop_for.pyx":268
- *                 if i == 0   :
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,             # <<<<<<<<<<<<<<
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                     else:  loop, tabulation, error = loop_list
- */
-          if (!(likely(PyDict_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 268, __pyx_L1_error)
-          __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 268, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (!(likely(PyString_CheckExact(__pyx_t_14))||((__pyx_t_14) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_14)->tp_name), 0))) __PYX_ERR(0, 268, __pyx_L1_error)
-          __Pyx_XDECREF_SET(__pyx_v_loop, ((PyObject*)__pyx_t_11));
-          __pyx_t_11 = 0;
-          __pyx_v_tabulation = __pyx_t_13;
-          __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_14));
-          __pyx_t_14 = 0;
-
-          /* "loop_for.pyx":267
- *             if not error :
- *                 if i == 0   :
- *                     if interpreter is False:             # <<<<<<<<<<<<<<
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- */
-          goto __pyx_L8;
-        }
-
-        /* "loop_for.pyx":270
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                     else:  loop, tabulation, error = loop_list             # <<<<<<<<<<<<<<
- *                 else :  loop = loop
- * 
- */
-        /*else*/ {
-          if (likely(__pyx_v_loop_list != Py_None)) {
-            PyObject* sequence = __pyx_v_loop_list;
-            Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-            if (unlikely(size != 3)) {
-              if (size > 3) __Pyx_RaiseTooManyValuesError(3);
-              else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 270, __pyx_L1_error)
-            }
-            #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0); 
-            __pyx_t_14 = PyTuple_GET_ITEM(sequence, 1); 
-            __pyx_t_4 = PyTuple_GET_ITEM(sequence, 2); 
-            __Pyx_INCREF(__pyx_t_5);
-            __Pyx_INCREF(__pyx_t_14);
-            __Pyx_INCREF(__pyx_t_4);
-            #else
-            __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 270, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __pyx_t_14 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 270, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_14);
-            __pyx_t_4 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 270, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            #endif
-          } else {
-            __Pyx_RaiseNoneNotIterableError(); __PYX_ERR(0, 270, __pyx_L1_error)
-          }
-          if (!(likely(PyDict_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 270, __pyx_L1_error)
-          __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_14); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 270, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 270, __pyx_L1_error)
-          __Pyx_XDECREF_SET(__pyx_v_loop, ((PyObject*)__pyx_t_5));
-          __pyx_t_5 = 0;
-          __pyx_v_tabulation = __pyx_t_13;
-          __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_4));
-          __pyx_t_4 = 0;
-        }
-        __pyx_L8:;
-
-        /* "loop_for.pyx":266
- * 
- *             if not error :
- *                 if i == 0   :             # <<<<<<<<<<<<<<
- *                     if interpreter is False:
- *                         loop, tabulation, error = for_statement.EXTERNAL_FOR_STATEMENT( None,
- */
-        goto __pyx_L7;
-      }
-
-      /* "loop_for.pyx":271
- *                                             self.DataBase, (self.line+for_line) ).FOR_STATEMENT( 1 )
- *                     else:  loop, tabulation, error = loop_list
- *                 else :  loop = loop             # <<<<<<<<<<<<<<
- * 
- *                 master = loop[ 'for' ]
- */
-      /*else*/ {
-        if (unlikely(!__pyx_v_loop)) { __Pyx_RaiseUnboundLocalError("loop"); __PYX_ERR(0, 271, __pyx_L1_error) }
-        __Pyx_INCREF(__pyx_v_loop);
-        __Pyx_XDECREF_SET(__pyx_v_loop, __pyx_v_loop);
-      }
-      __pyx_L7:;
-
-      /* "loop_for.pyx":273
- *                 else :  loop = loop
- * 
- *                 master = loop[ 'for' ]             # <<<<<<<<<<<<<<
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):
- */
-      if (unlikely(__pyx_v_loop == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 273, __pyx_L1_error)
-      }
-      __pyx_t_4 = __Pyx_PyDict_GetItem(__pyx_v_loop, __pyx_n_s_for); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 273, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      if (!(likely(PyList_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 273, __pyx_L1_error)
-      __Pyx_XDECREF_SET(__pyx_v_master, ((PyObject*)__pyx_t_4));
-      __pyx_t_4 = 0;
-
-      /* "loop_for.pyx":275
- *                 master = loop[ 'for' ]
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
- *                     if locked is False:
- *                         for_line    += 1
- */
-      __pyx_t_13 = 0;
-      if (unlikely(__pyx_v_master == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 275, __pyx_L1_error)
-      }
-      __pyx_t_4 = __Pyx_PyList_GetSlice(__pyx_v_master, 0, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_14 = __pyx_t_4; __Pyx_INCREF(__pyx_t_14); __pyx_t_16 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      for (;;) {
-        if (__pyx_t_16 >= PyList_GET_SIZE(__pyx_t_14)) break;
-        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_16); __Pyx_INCREF(__pyx_t_4); __pyx_t_16++; if (unlikely(0 < 0)) __PYX_ERR(0, 275, __pyx_L1_error)
-        #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_14, __pyx_t_16); __pyx_t_16++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 275, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_4);
-        #endif
-        __Pyx_XDECREF_SET(__pyx_v__string_, __pyx_t_4);
-        __pyx_t_4 = 0;
-        __pyx_v_j = __pyx_t_13;
-        __pyx_t_13 = (__pyx_t_13 + 1);
-
-        /* "loop_for.pyx":276
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):
- *                     if locked is False:             # <<<<<<<<<<<<<<
- *                         for_line    += 1
- * 
- */
-        __pyx_t_1 = ((__pyx_v_locked == 0) != 0);
-        if (__pyx_t_1) {
-
-          /* "loop_for.pyx":277
- *                 for j, _string_ in enumerate( master[ : ] ):
- *                     if locked is False:
- *                         for_line    += 1             # <<<<<<<<<<<<<<
- * 
- *                         if type( _string_ ) == type( dict() ):
- */
-          __pyx_v_for_line = (__pyx_v_for_line + 1);
-
-          /* "loop_for.pyx":279
- *                         for_line    += 1
- * 
- *                         if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
- *                             keys = list( _string_.keys() )
- *                             if  'any'     in keys           :
- */
-          __pyx_t_4 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 279, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_5 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v__string_)), ((PyObject *)Py_TYPE(__pyx_t_4)), Py_EQ); __Pyx_XGOTREF(__pyx_t_5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 279, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 279, __pyx_L1_error)
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (__pyx_t_1) {
-
-            /* "loop_for.pyx":280
- * 
- *                         if type( _string_ ) == type( dict() ):
- *                             keys = list( _string_.keys() )             # <<<<<<<<<<<<<<
- *                             if  'any'     in keys           :
- *                                 any_values      = list( _string_[ 'any' ] )
- */
-            __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v__string_, __pyx_n_s_keys); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 280, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __pyx_t_11 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
-              __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_4);
-              if (likely(__pyx_t_11)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-                __Pyx_INCREF(__pyx_t_11);
-                __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_4, function);
-              }
-            }
-            __pyx_t_5 = (__pyx_t_11) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_11) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
-            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 280, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_5);
-            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-            __pyx_t_4 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 280, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_4);
-            __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __Pyx_XDECREF_SET(__pyx_v_keys, ((PyObject*)__pyx_t_4));
-            __pyx_t_4 = 0;
-
-            /* "loop_for.pyx":281
- *                         if type( _string_ ) == type( dict() ):
- *                             keys = list( _string_.keys() )
- *                             if  'any'     in keys           :             # <<<<<<<<<<<<<<
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]
- */
-            __pyx_t_1 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_any, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 281, __pyx_L1_error)
-            __pyx_t_2 = (__pyx_t_1 != 0);
-            if (__pyx_t_2) {
-
-              /* "loop_for.pyx":282
- *                             keys = list( _string_.keys() )
- *                             if  'any'     in keys           :
- *                                 any_values      = list( _string_[ 'any' ] )             # <<<<<<<<<<<<<<
- *                                 normal_string   = any_values[ 0 ]
- *                                 active_tab      = any_values[ 1 ]
- */
-              __pyx_t_4 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_any); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 282, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_5 = PySequence_List(__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 282, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __Pyx_XDECREF_SET(__pyx_v_any_values, ((PyObject*)__pyx_t_5));
-              __pyx_t_5 = 0;
-
-              /* "loop_for.pyx":283
- *                             if  'any'     in keys           :
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]             # <<<<<<<<<<<<<<
- *                                 active_tab      = any_values[ 1 ]
- *                                 lexer           = _string_[ 'lex' ]
- */
-              __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_any_values, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 283, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              if (!(likely(PyString_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 283, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_normal_string, ((PyObject*)__pyx_t_5));
-              __pyx_t_5 = 0;
-
-              /* "loop_for.pyx":284
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]
- *                                 active_tab      = any_values[ 1 ]             # <<<<<<<<<<<<<<
- *                                 lexer           = _string_[ 'lex' ]
- * 
- */
-              __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_any_values, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 284, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 284, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              __pyx_v_active_tab = __pyx_t_2;
-
-              /* "loop_for.pyx":285
- *                                 normal_string   = any_values[ 0 ]
- *                                 active_tab      = any_values[ 1 ]
- *                                 lexer           = _string_[ 'lex' ]             # <<<<<<<<<<<<<<
- * 
- *                                 error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,
- */
-              __pyx_t_5 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_lex); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 285, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              if (!(likely(PyDict_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 285, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_lexer, ((PyObject*)__pyx_t_5));
-              __pyx_t_5 = 0;
-
-              /* "loop_for.pyx":287
- *                                 lexer           = _string_[ 'lex' ]
- * 
- *                                 error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,             # <<<<<<<<<<<<<<
- *                                         ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
- * 
- */
-              __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_for_statement); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 287, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_NEXT_ANALYZE); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 287, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_11);
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-
-              /* "loop_for.pyx":288
- * 
- *                                 error    = for_statement.NEXT_ANALYZE( normal_string, self.DataBase,
- *                                         ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )             # <<<<<<<<<<<<<<
- * 
- *                                 if not error:
- */
-              __pyx_t_4 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 288, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_3 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_11))) {
-                __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_11);
-                if (likely(__pyx_t_3)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_11);
-                  __Pyx_INCREF(__pyx_t_3);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_11, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_11)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_4};
-                __pyx_t_5 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __Pyx_GOTREF(__pyx_t_5);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_normal_string, __pyx_v_self->DataBase, __pyx_t_4};
-                __pyx_t_5 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __Pyx_GOTREF(__pyx_t_5);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_12 = PyTuple_New(3+__pyx_t_17); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 287, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                if (__pyx_t_3) {
-                  __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_3); __pyx_t_3 = NULL;
-                }
-                __Pyx_INCREF(__pyx_v_normal_string);
-                __Pyx_GIVEREF(__pyx_v_normal_string);
-                PyTuple_SET_ITEM(__pyx_t_12, 0+__pyx_t_17, __pyx_v_normal_string);
-                __Pyx_INCREF(__pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_v_self->DataBase);
-                PyTuple_SET_ITEM(__pyx_t_12, 1+__pyx_t_17, __pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_t_4);
-                PyTuple_SET_ITEM(__pyx_t_12, 2+__pyx_t_17, __pyx_t_4);
-                __pyx_t_4 = 0;
-                __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_12, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_SUB_ANALYZE); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 288, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_11);
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              __pyx_t_5 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 288, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_type, __pyx_n_s_loop) < 0) __PYX_ERR(0, 288, __pyx_L1_error)
-              if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_lexer, __pyx_v_lexer) < 0) __PYX_ERR(0, 288, __pyx_L1_error)
-              __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_empty_tuple, __pyx_t_5); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 288, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 288, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":290
- *                                         ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
- * 
- *                                 if not error:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-              __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 290, __pyx_L1_error)
-              __pyx_t_1 = ((!__pyx_t_2) != 0);
-              if (__pyx_t_1) {
-
-                /* "loop_for.pyx":291
- * 
- *                                 if not error:
- *                                     if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 291, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 291, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_1 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_2 = (__pyx_t_1 != 0);
-                if (__pyx_t_2) {
-                  goto __pyx_L17;
-                }
-
-                /* "loop_for.pyx":293
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 293, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 293, __pyx_L1_error)
-
-                  /* "loop_for.pyx":294
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":295
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L17:;
-
-                /* "loop_for.pyx":297
- *                                         break
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 297, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 297, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_2 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_1 = (__pyx_t_2 != 0);
-                if (__pyx_t_1) {
-                  goto __pyx_L18;
-                }
-
-                /* "loop_for.pyx":299
- *                                     if self.DataBase[ 'exit' ] is None: pass
- *                                     else:
- *                                         self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 299, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 299, __pyx_L1_error)
-
-                  /* "loop_for.pyx":300
- *                                     else:
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         broke     = True
- *                                         break
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":301
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True
- *                                         broke     = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":302
- *                                         doubleKey = True
- *                                         broke     = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'pass' ] is None: pass
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L18:;
-
-                /* "loop_for.pyx":304
- *                                         break
- * 
- *                                     if self.DataBase[ 'pass' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else: locked      = True
- * 
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 304, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_pass); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 304, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_1 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_2 = (__pyx_t_1 != 0);
-                if (__pyx_t_2) {
-                  goto __pyx_L19;
-                }
-
-                /* "loop_for.pyx":305
- * 
- *                                     if self.DataBase[ 'pass' ] is None: pass
- *                                     else: locked      = True             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'continue' ] is None: pass
- */
-                /*else*/ {
-                  __pyx_v_locked = 1;
-                }
-                __pyx_L19:;
-
-                /* "loop_for.pyx":307
- *                                     else: locked      = True
- * 
- *                                     if self.DataBase[ 'continue' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else: locked      = True
- * 
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 307, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_continue); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 307, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_2 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_1 = (__pyx_t_2 != 0);
-                if (__pyx_t_1) {
-                  goto __pyx_L20;
-                }
-
-                /* "loop_for.pyx":308
- * 
- *                                     if self.DataBase[ 'continue' ] is None: pass
- *                                     else: locked      = True             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'next' ] is None: pass
- */
-                /*else*/ {
-                  __pyx_v_locked = 1;
-                }
-                __pyx_L20:;
-
-                /* "loop_for.pyx":310
- *                                     else: locked      = True
- * 
- *                                     if self.DataBase[ 'next' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else: locked      = True
- * 
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 310, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_next); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 310, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_1 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_2 = (__pyx_t_1 != 0);
-                if (__pyx_t_2) {
-                  goto __pyx_L21;
-                }
-
-                /* "loop_for.pyx":311
- * 
- *                                     if self.DataBase[ 'next' ] is None: pass
- *                                     else: locked      = True             # <<<<<<<<<<<<<<
- * 
- *                                 else : break
- */
-                /*else*/ {
-                  __pyx_v_locked = 1;
-                }
-                __pyx_L21:;
-
-                /* "loop_for.pyx":290
- *                                         ( self.line+for_line ) ).SUB_ANALYZE( _type_ = 'loop', _lexer_ = lexer )
- * 
- *                                 if not error:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-                goto __pyx_L16;
-              }
-
-              /* "loop_for.pyx":313
- *                                     else: locked      = True
- * 
- *                                 else : break             # <<<<<<<<<<<<<<
- * 
- *                             elif 'if'     in keys           :
- */
-              /*else*/ {
-                goto __pyx_L12_break;
-              }
-              __pyx_L16:;
-
-              /* "loop_for.pyx":281
- *                         if type( _string_ ) == type( dict() ):
- *                             keys = list( _string_.keys() )
- *                             if  'any'     in keys           :             # <<<<<<<<<<<<<<
- *                                 any_values      = list( _string_[ 'any' ] )
- *                                 normal_string   = any_values[ 0 ]
- */
-              goto __pyx_L15;
-            }
-
-            /* "loop_for.pyx":315
- *                                 else : break
- * 
- *                             elif 'if'     in keys           :             # <<<<<<<<<<<<<<
- *                                     if_values      = _string_[ 'if' ]
- *                                     tabulation     = _string_[ 'tabulation' ]
- */
-            __pyx_t_2 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_if, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 315, __pyx_L1_error)
-            __pyx_t_1 = (__pyx_t_2 != 0);
-            if (__pyx_t_1) {
-
-              /* "loop_for.pyx":316
- * 
- *                             elif 'if'     in keys           :
- *                                     if_values      = _string_[ 'if' ]             # <<<<<<<<<<<<<<
- *                                     tabulation     = _string_[ 'tabulation' ]
- *                                     boolean_value  = _string_[ 'value' ]
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_if); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 316, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              if (!(likely(PyList_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 316, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_if_values, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":317
- *                             elif 'if'     in keys           :
- *                                     if_values      = _string_[ 'if' ]
- *                                     tabulation     = _string_[ 'tabulation' ]             # <<<<<<<<<<<<<<
- *                                     boolean_value  = _string_[ 'value' ]
- * 
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_tabulation); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 317, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_12); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 317, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __pyx_v_tabulation = __pyx_t_17;
-
-              /* "loop_for.pyx":318
- *                                     if_values      = _string_[ 'if' ]
- *                                     tabulation     = _string_[ 'tabulation' ]
- *                                     boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
- * 
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 318, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 318, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __pyx_v_boolean_value = __pyx_t_1;
-
-              /* "loop_for.pyx":320
- *                                     boolean_value  = _string_[ 'value' ]
- * 
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:
- */
-              __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_n_s_loop_if_statement); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 320, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_11);
-              __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_INTERNAL_IF_LOOP_STATEMENT); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 320, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-
-              /* "loop_for.pyx":321
- * 
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )             # <<<<<<<<<<<<<<
- *                                     if error is None:
- *                                         if   self.DataBase[ 'break' ] is None: pass
- */
-              __pyx_t_11 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 321, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_11);
-              __pyx_t_3 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
-                __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_4);
-                if (likely(__pyx_t_3)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-                  __Pyx_INCREF(__pyx_t_3);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_4, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_4)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_3, Py_None, __pyx_v_self->DataBase, __pyx_t_11};
-                __pyx_t_5 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 320, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __Pyx_GOTREF(__pyx_t_5);
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_3, Py_None, __pyx_v_self->DataBase, __pyx_t_11};
-                __pyx_t_5 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 320, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __Pyx_GOTREF(__pyx_t_5);
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_18 = PyTuple_New(3+__pyx_t_17); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 320, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_18);
-                if (__pyx_t_3) {
-                  __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_t_3); __pyx_t_3 = NULL;
-                }
-                __Pyx_INCREF(Py_None);
-                __Pyx_GIVEREF(Py_None);
-                PyTuple_SET_ITEM(__pyx_t_18, 0+__pyx_t_17, Py_None);
-                __Pyx_INCREF(__pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_v_self->DataBase);
-                PyTuple_SET_ITEM(__pyx_t_18, 1+__pyx_t_17, __pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_t_11);
-                PyTuple_SET_ITEM(__pyx_t_18, 2+__pyx_t_17, __pyx_t_11);
-                __pyx_t_11 = 0;
-                __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_18, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 320, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
-                __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_IF_STATEMENT); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 321, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              __pyx_t_5 = __Pyx_PyBool_FromLong(__pyx_v_boolean_value); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 321, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 321, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __pyx_t_11 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
-                __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_4);
-                if (likely(__pyx_t_11)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-                  __Pyx_INCREF(__pyx_t_11);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_4, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_4)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_11, __pyx_t_5, __pyx_t_18, __pyx_v_if_values, __pyx_n_s_loop};
-                __pyx_t_12 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 321, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-                __Pyx_GOTREF(__pyx_t_12);
-                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-                __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_11, __pyx_t_5, __pyx_t_18, __pyx_v_if_values, __pyx_n_s_loop};
-                __pyx_t_12 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 321, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-                __Pyx_GOTREF(__pyx_t_12);
-                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-                __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_3 = PyTuple_New(4+__pyx_t_17); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 321, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_3);
-                if (__pyx_t_11) {
-                  __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_11); __pyx_t_11 = NULL;
-                }
-                __Pyx_GIVEREF(__pyx_t_5);
-                PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_17, __pyx_t_5);
-                __Pyx_GIVEREF(__pyx_t_18);
-                PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_17, __pyx_t_18);
-                __Pyx_INCREF(__pyx_v_if_values);
-                __Pyx_GIVEREF(__pyx_v_if_values);
-                PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_17, __pyx_v_if_values);
-                __Pyx_INCREF(__pyx_n_s_loop);
-                __Pyx_GIVEREF(__pyx_n_s_loop);
-                PyTuple_SET_ITEM(__pyx_t_3, 3+__pyx_t_17, __pyx_n_s_loop);
-                __pyx_t_5 = 0;
-                __pyx_t_18 = 0;
-                __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_3, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 321, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 321, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":322
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:             # <<<<<<<<<<<<<<
- *                                         if   self.DataBase[ 'break' ] is None: pass
- *                                         else:
- */
-              __pyx_t_1 = (__pyx_v_error == ((PyObject*)Py_None));
-              __pyx_t_2 = (__pyx_t_1 != 0);
-              if (__pyx_t_2) {
-
-                /* "loop_for.pyx":323
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:
- *                                         if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                         else:
- *                                             self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 323, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 323, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_2 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_1 = (__pyx_t_2 != 0);
-                if (__pyx_t_1) {
-                  goto __pyx_L23;
-                }
-
-                /* "loop_for.pyx":325
- *                                         if   self.DataBase[ 'break' ] is None: pass
- *                                         else:
- *                                             self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                             doubleKey = True
- *                                             break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 325, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 325, __pyx_L1_error)
-
-                  /* "loop_for.pyx":326
- *                                         else:
- *                                             self.DataBase[ 'break' ] = None
- *                                             doubleKey = True             # <<<<<<<<<<<<<<
- *                                             break
- * 
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":327
- *                                             self.DataBase[ 'break' ] = None
- *                                             doubleKey = True
- *                                             break             # <<<<<<<<<<<<<<
- * 
- *                                         if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L23:;
-
-                /* "loop_for.pyx":329
- *                                             break
- * 
- *                                         if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                         else:
- *                                             self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 329, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 329, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_1 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_2 = (__pyx_t_1 != 0);
-                if (__pyx_t_2) {
-                  goto __pyx_L24;
-                }
-
-                /* "loop_for.pyx":331
- *                                         if self.DataBase[ 'exit' ] is None: pass
- *                                         else:
- *                                             self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                             doubleKey = True
- *                                             broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 331, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 331, __pyx_L1_error)
-
-                  /* "loop_for.pyx":332
- *                                         else:
- *                                             self.DataBase['exit'] = None
- *                                             doubleKey = True             # <<<<<<<<<<<<<<
- *                                             broke     = True
- *                                             break
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":333
- *                                             self.DataBase['exit'] = None
- *                                             doubleKey = True
- *                                             broke     = True             # <<<<<<<<<<<<<<
- *                                             break
- *                                     else: break
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":334
- *                                             doubleKey = True
- *                                             broke     = True
- *                                             break             # <<<<<<<<<<<<<<
- *                                     else: break
- *                             elif 'unless' in keys           :
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L24:;
-
-                /* "loop_for.pyx":322
- *                                     error = loop_if_statement.INTERNAL_IF_LOOP_STATEMENT( None , self.DataBase,
- *                                             (self.line+for_line) ).IF_STATEMENT( boolean_value, tabulation , if_values, 'loop' )
- *                                     if error is None:             # <<<<<<<<<<<<<<
- *                                         if   self.DataBase[ 'break' ] is None: pass
- *                                         else:
- */
-                goto __pyx_L22;
-              }
-
-              /* "loop_for.pyx":335
- *                                             broke     = True
- *                                             break
- *                                     else: break             # <<<<<<<<<<<<<<
- *                             elif 'unless' in keys           :
- *                                 unless_values  = _string_[ 'unless' ]
- */
-              /*else*/ {
-                goto __pyx_L12_break;
-              }
-              __pyx_L22:;
-
-              /* "loop_for.pyx":315
- *                                 else : break
- * 
- *                             elif 'if'     in keys           :             # <<<<<<<<<<<<<<
- *                                     if_values      = _string_[ 'if' ]
- *                                     tabulation     = _string_[ 'tabulation' ]
- */
-              goto __pyx_L15;
-            }
-
-            /* "loop_for.pyx":336
- *                                             break
- *                                     else: break
- *                             elif 'unless' in keys           :             # <<<<<<<<<<<<<<
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 tabulation     = _string_[ 'tabulation' ]
- */
-            __pyx_t_2 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_unless, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 336, __pyx_L1_error)
-            __pyx_t_1 = (__pyx_t_2 != 0);
-            if (__pyx_t_1) {
-
-              /* "loop_for.pyx":337
- *                                     else: break
- *                             elif 'unless' in keys           :
- *                                 unless_values  = _string_[ 'unless' ]             # <<<<<<<<<<<<<<
- *                                 tabulation     = _string_[ 'tabulation' ]
- *                                 boolean_value  = _string_[ 'value' ]
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_unless); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 337, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              if (!(likely(PyList_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 337, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_unless_values, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":338
- *                             elif 'unless' in keys           :
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 tabulation     = _string_[ 'tabulation' ]             # <<<<<<<<<<<<<<
- *                                 boolean_value  = _string_[ 'value' ]
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_tabulation); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 338, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_12); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 338, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __pyx_v_tabulation = __pyx_t_17;
-
-              /* "loop_for.pyx":339
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 tabulation     = _string_[ 'tabulation' ]
- *                                 boolean_value  = _string_[ 'value' ]             # <<<<<<<<<<<<<<
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 339, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 339, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __pyx_v_boolean_value = __pyx_t_1;
-
-              /* "loop_for.pyx":340
- *                                 tabulation     = _string_[ 'tabulation' ]
- *                                 boolean_value  = _string_[ 'value' ]
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,             # <<<<<<<<<<<<<<
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
- * 
- */
-              __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_loop_unless_statement); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 340, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_INTERNAL_UNLESS_FOR_STATEMENT); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 340, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-              /* "loop_for.pyx":341
- *                                 boolean_value  = _string_[ 'value' ]
- *                                 error = loop_unless_statement.INTERNAL_UNLESS_FOR_STATEMENT( None , self.DataBase,
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )             # <<<<<<<<<<<<<<
- * 
- *                                 if error is None:
- */
-              __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 341, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_3);
-              __pyx_t_5 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_18))) {
-                __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_18);
-                if (likely(__pyx_t_5)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_18);
-                  __Pyx_INCREF(__pyx_t_5);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_18, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_5, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
-                __pyx_t_4 = __Pyx_PyFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[4] = {__pyx_t_5, Py_None, __pyx_v_self->DataBase, __pyx_t_3};
-                __pyx_t_4 = __Pyx_PyCFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 3+__pyx_t_17); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_11 = PyTuple_New(3+__pyx_t_17); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 340, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_11);
-                if (__pyx_t_5) {
-                  __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_5); __pyx_t_5 = NULL;
-                }
-                __Pyx_INCREF(Py_None);
-                __Pyx_GIVEREF(Py_None);
-                PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_17, Py_None);
-                __Pyx_INCREF(__pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_v_self->DataBase);
-                PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_17, __pyx_v_self->DataBase);
-                __Pyx_GIVEREF(__pyx_t_3);
-                PyTuple_SET_ITEM(__pyx_t_11, 2+__pyx_t_17, __pyx_t_3);
-                __pyx_t_3 = 0;
-                __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_11, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 340, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_4);
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              __pyx_t_18 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_UNLESS_STATEMENT); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 341, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-              __pyx_t_4 = __Pyx_PyBool_FromLong(__pyx_v_boolean_value); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 341, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_4);
-              __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_tabulation); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 341, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_11);
-              __pyx_t_3 = NULL;
-              __pyx_t_17 = 0;
-              if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_18))) {
-                __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_18);
-                if (likely(__pyx_t_3)) {
-                  PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_18);
-                  __Pyx_INCREF(__pyx_t_3);
-                  __Pyx_INCREF(function);
-                  __Pyx_DECREF_SET(__pyx_t_18, function);
-                  __pyx_t_17 = 1;
-                }
-              }
-              #if CYTHON_FAST_PYCALL
-              if (PyFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_t_4, __pyx_t_11, __pyx_v_unless_values, __pyx_n_s_loop};
-                __pyx_t_12 = __Pyx_PyFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 341, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __Pyx_GOTREF(__pyx_t_12);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              } else
-              #endif
-              #if CYTHON_FAST_PYCCALL
-              if (__Pyx_PyFastCFunction_Check(__pyx_t_18)) {
-                PyObject *__pyx_temp[5] = {__pyx_t_3, __pyx_t_4, __pyx_t_11, __pyx_v_unless_values, __pyx_n_s_loop};
-                __pyx_t_12 = __Pyx_PyCFunction_FastCall(__pyx_t_18, __pyx_temp+1-__pyx_t_17, 4+__pyx_t_17); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 341, __pyx_L1_error)
-                __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-                __Pyx_GOTREF(__pyx_t_12);
-                __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-              } else
-              #endif
-              {
-                __pyx_t_5 = PyTuple_New(4+__pyx_t_17); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 341, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_5);
-                if (__pyx_t_3) {
-                  __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
-                }
-                __Pyx_GIVEREF(__pyx_t_4);
-                PyTuple_SET_ITEM(__pyx_t_5, 0+__pyx_t_17, __pyx_t_4);
-                __Pyx_GIVEREF(__pyx_t_11);
-                PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_17, __pyx_t_11);
-                __Pyx_INCREF(__pyx_v_unless_values);
-                __Pyx_GIVEREF(__pyx_v_unless_values);
-                PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_17, __pyx_v_unless_values);
-                __Pyx_INCREF(__pyx_n_s_loop);
-                __Pyx_GIVEREF(__pyx_n_s_loop);
-                PyTuple_SET_ITEM(__pyx_t_5, 3+__pyx_t_17, __pyx_n_s_loop);
-                __pyx_t_4 = 0;
-                __pyx_t_11 = 0;
-                __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_18, __pyx_t_5, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 341, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              }
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 341, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":343
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
- * 
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-              __pyx_t_1 = (__pyx_v_error == ((PyObject*)Py_None));
-              __pyx_t_2 = (__pyx_t_1 != 0);
-              if (__pyx_t_2) {
-
-                /* "loop_for.pyx":344
- * 
- *                                 if error is None:
- *                                     if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 344, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 344, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_2 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_1 = (__pyx_t_2 != 0);
-                if (__pyx_t_1) {
-                  goto __pyx_L26;
-                }
-
-                /* "loop_for.pyx":346
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 346, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 346, __pyx_L1_error)
-
-                  /* "loop_for.pyx":347
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":348
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L26:;
-
-                /* "loop_for.pyx":350
- *                                         break
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 350, __pyx_L1_error)
-                }
-                __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 350, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_12);
-                __pyx_t_1 = (__pyx_t_12 == Py_None);
-                __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-                __pyx_t_2 = (__pyx_t_1 != 0);
-                if (__pyx_t_2) {
-                  goto __pyx_L27;
-                }
-
-                /* "loop_for.pyx":352
- *                                     if self.DataBase[ 'exit' ] is None: pass
- *                                     else:
- *                                         self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 352, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 352, __pyx_L1_error)
-
-                  /* "loop_for.pyx":353
- *                                     else:
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         broke     = True
- *                                         break
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":354
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True
- *                                         broke     = True             # <<<<<<<<<<<<<<
- *                                         break
- *                                 else: break
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":355
- *                                         doubleKey = True
- *                                         broke     = True
- *                                         break             # <<<<<<<<<<<<<<
- *                                 else: break
- *                             elif 'for'    in keys           :
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L27:;
-
-                /* "loop_for.pyx":343
- *                                         (self.line+for_line) ).UNLESS_STATEMENT( boolean_value, tabulation, unless_values, 'loop' )
- * 
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-                goto __pyx_L25;
-              }
-
-              /* "loop_for.pyx":356
- *                                         broke     = True
- *                                         break
- *                                 else: break             # <<<<<<<<<<<<<<
- *                             elif 'for'    in keys           :
- *                                 subfor_values  = _string_[ 'for' ]
- */
-              /*else*/ {
-                goto __pyx_L12_break;
-              }
-              __pyx_L25:;
-
-              /* "loop_for.pyx":336
- *                                             break
- *                                     else: break
- *                             elif 'unless' in keys           :             # <<<<<<<<<<<<<<
- *                                 unless_values  = _string_[ 'unless' ]
- *                                 tabulation     = _string_[ 'tabulation' ]
- */
-              goto __pyx_L15;
-            }
-
-            /* "loop_for.pyx":357
- *                                         break
- *                                 else: break
- *                             elif 'for'    in keys           :             # <<<<<<<<<<<<<<
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 tabulation     = _string_[ 'tabulation' ]
- */
-            __pyx_t_2 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_for, __pyx_v_keys, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 357, __pyx_L1_error)
-            __pyx_t_1 = (__pyx_t_2 != 0);
-            if (__pyx_t_1) {
-
-              /* "loop_for.pyx":358
- *                                 else: break
- *                             elif 'for'    in keys           :
- *                                 subfor_values  = _string_[ 'for' ]             # <<<<<<<<<<<<<<
- *                                 tabulation     = _string_[ 'tabulation' ]
- *                                 subfor_value   = _string_[ 'value' ]
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_for); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 358, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              if (!(likely(PyList_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 358, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_subfor_values, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":359
- *                             elif 'for'    in keys           :
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 tabulation     = _string_[ 'tabulation' ]             # <<<<<<<<<<<<<<
- *                                 subfor_value   = _string_[ 'value' ]
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_tabulation); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 359, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_17 = __Pyx_PyInt_As_int(__pyx_t_12); if (unlikely((__pyx_t_17 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 359, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __pyx_v_tabulation = __pyx_t_17;
-
-              /* "loop_for.pyx":360
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 tabulation     = _string_[ 'tabulation' ]
- *                                 subfor_value   = _string_[ 'value' ]             # <<<<<<<<<<<<<<
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- * 
- */
-              __pyx_t_12 = __Pyx_PyObject_Dict_GetItem(__pyx_v__string_, __pyx_n_s_value); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 360, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              if (!(likely(PyDict_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 360, __pyx_L1_error)
-              __Pyx_XDECREF_SET(__pyx_v_subfor_value, ((PyObject*)__pyx_t_12));
-              __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":361
- *                                 tabulation     = _string_[ 'tabulation' ]
- *                                 subfor_value   = _string_[ 'value' ]
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]             # <<<<<<<<<<<<<<
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),
- */
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 361, __pyx_L1_error)
-              }
-              __pyx_t_12 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_value); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 361, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 361, __pyx_L1_error)
-              }
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 361, __pyx_L1_error)
-              }
-              __pyx_t_18 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_variable); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 361, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_t_18, __pyx_t_12) < 0)) __PYX_ERR(0, 361, __pyx_L1_error)
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-
-              /* "loop_for.pyx":363
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
- *                                                 subfor_value[ 'variable' ], interpreter, loop_list )
- *                                 if error is None:
- */
-              __pyx_t_12 = __Pyx_PyInt_From_long((__pyx_v_self->line + __pyx_v_for_line)); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __pyx_t_18 = PyTuple_New(2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __Pyx_INCREF(__pyx_v_self->DataBase);
-              __Pyx_GIVEREF(__pyx_v_self->DataBase);
-              PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_v_self->DataBase);
-              __Pyx_GIVEREF(__pyx_t_12);
-              PyTuple_SET_ITEM(__pyx_t_18, 1, __pyx_t_12);
-              __pyx_t_12 = 0;
-              __pyx_t_12 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8loop_for_LOOP), __pyx_t_18, NULL); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_12);
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 363, __pyx_L1_error)
-              }
-              __pyx_t_18 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_value); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              __pyx_t_5 = PySequence_List(__pyx_t_18); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_5);
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-
-              /* "loop_for.pyx":364
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),
- *                                                 subfor_value[ 'variable' ], interpreter, loop_list )             # <<<<<<<<<<<<<<
- *                                 if error is None:
- *                                     if   self.DataBase[ 'break' ] is None: pass
- */
-              if (unlikely(__pyx_v_subfor_value == Py_None)) {
-                PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                __PYX_ERR(0, 364, __pyx_L1_error)
-              }
-              __pyx_t_18 = __Pyx_PyDict_GetItem(__pyx_v_subfor_value, __pyx_n_s_variable); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 364, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_18);
-              if (!(likely(PyString_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 364, __pyx_L1_error)
-
-              /* "loop_for.pyx":363
- *                                 self.DataBase[ subfor_value[ 'variable' ] ] = subfor_value[ 'value' ]
- * 
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),             # <<<<<<<<<<<<<<
- *                                                 subfor_value[ 'variable' ], interpreter, loop_list )
- *                                 if error is None:
- */
-              __pyx_t_19.__pyx_n = 2;
-              __pyx_t_19.interpreter = __pyx_v_interpreter;
-              __pyx_t_19.loop_list = __pyx_v_loop_list;
-              __pyx_t_11 = ((struct __pyx_vtabstruct_8loop_for_LOOP *)((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_12)->__pyx_vtab)->SubLOOP(((struct __pyx_obj_8loop_for_LOOP *)__pyx_t_12), ((PyObject*)__pyx_t_5), ((PyObject*)__pyx_t_18), &__pyx_t_19); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_GOTREF(__pyx_t_11);
-              __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-              __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-              if (!(likely(PyString_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 363, __pyx_L1_error)
-              __Pyx_DECREF_SET(__pyx_v_error, ((PyObject*)__pyx_t_11));
-              __pyx_t_11 = 0;
-
-              /* "loop_for.pyx":365
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),
- *                                                 subfor_value[ 'variable' ], interpreter, loop_list )
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-              __pyx_t_1 = (__pyx_v_error == ((PyObject*)Py_None));
-              __pyx_t_2 = (__pyx_t_1 != 0);
-              if (__pyx_t_2) {
-
-                /* "loop_for.pyx":366
- *                                                 subfor_value[ 'variable' ], interpreter, loop_list )
- *                                 if error is None:
- *                                     if   self.DataBase[ 'break' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 366, __pyx_L1_error)
-                }
-                __pyx_t_11 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_break); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 366, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_11);
-                __pyx_t_2 = (__pyx_t_11 == Py_None);
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-                __pyx_t_1 = (__pyx_t_2 != 0);
-                if (__pyx_t_1) {
-                  goto __pyx_L29;
-                }
-
-                /* "loop_for.pyx":368
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         break
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 368, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_break, Py_None) < 0)) __PYX_ERR(0, 368, __pyx_L1_error)
-
-                  /* "loop_for.pyx":369
- *                                     else:
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         break
- * 
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":370
- *                                         self.DataBase[ 'break' ] = None
- *                                         doubleKey = True
- *                                         break             # <<<<<<<<<<<<<<
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L29:;
-
-                /* "loop_for.pyx":372
- *                                         break
- * 
- *                                     if self.DataBase[ 'exit' ] is None: pass             # <<<<<<<<<<<<<<
- *                                     else:
- *                                         self.DataBase['exit'] = None
- */
-                if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                  PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                  __PYX_ERR(0, 372, __pyx_L1_error)
-                }
-                __pyx_t_11 = __Pyx_PyDict_GetItem(__pyx_v_self->DataBase, __pyx_n_s_exit); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 372, __pyx_L1_error)
-                __Pyx_GOTREF(__pyx_t_11);
-                __pyx_t_1 = (__pyx_t_11 == Py_None);
-                __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-                __pyx_t_2 = (__pyx_t_1 != 0);
-                if (__pyx_t_2) {
-                  goto __pyx_L30;
-                }
-
-                /* "loop_for.pyx":374
- *                                     if self.DataBase[ 'exit' ] is None: pass
- *                                     else:
- *                                         self.DataBase['exit'] = None             # <<<<<<<<<<<<<<
- *                                         doubleKey = True
- *                                         broke     = True
- */
-                /*else*/ {
-                  if (unlikely(__pyx_v_self->DataBase == Py_None)) {
-                    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-                    __PYX_ERR(0, 374, __pyx_L1_error)
-                  }
-                  if (unlikely(PyDict_SetItem(__pyx_v_self->DataBase, __pyx_n_s_exit, Py_None) < 0)) __PYX_ERR(0, 374, __pyx_L1_error)
-
-                  /* "loop_for.pyx":375
- *                                     else:
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True             # <<<<<<<<<<<<<<
- *                                         broke     = True
- *                                         break
- */
-                  __pyx_v_doubleKey = 1;
-
-                  /* "loop_for.pyx":376
- *                                         self.DataBase['exit'] = None
- *                                         doubleKey = True
- *                                         broke     = True             # <<<<<<<<<<<<<<
- *                                         break
- *                                 else: break
- */
-                  __pyx_v_broke = 1;
-
-                  /* "loop_for.pyx":377
- *                                         doubleKey = True
- *                                         broke     = True
- *                                         break             # <<<<<<<<<<<<<<
- *                                 else: break
- *                             else: pass
- */
-                  goto __pyx_L12_break;
-                }
-                __pyx_L30:;
-
-                /* "loop_for.pyx":365
- *                                 error = LOOP( self.DataBase, (self.line+for_line) ).SubLOOP( list(subfor_value[ 'value' ]),
- *                                                 subfor_value[ 'variable' ], interpreter, loop_list )
- *                                 if error is None:             # <<<<<<<<<<<<<<
- *                                     if   self.DataBase[ 'break' ] is None: pass
- *                                     else:
- */
-                goto __pyx_L28;
-              }
-
-              /* "loop_for.pyx":378
- *                                         broke     = True
- *                                         break
- *                                 else: break             # <<<<<<<<<<<<<<
- *                             else: pass
- *                         else: pass
- */
-              /*else*/ {
-                goto __pyx_L12_break;
-              }
-              __pyx_L28:;
-
-              /* "loop_for.pyx":357
- *                                         break
- *                                 else: break
- *                             elif 'for'    in keys           :             # <<<<<<<<<<<<<<
- *                                 subfor_values  = _string_[ 'for' ]
- *                                 tabulation     = _string_[ 'tabulation' ]
- */
-              goto __pyx_L15;
-            }
-
-            /* "loop_for.pyx":379
- *                                         break
- *                                 else: break
- *                             else: pass             # <<<<<<<<<<<<<<
- *                         else: pass
- *                     else: pass
- */
-            /*else*/ {
-            }
-            __pyx_L15:;
-
-            /* "loop_for.pyx":279
- *                         for_line    += 1
- * 
- *                         if type( _string_ ) == type( dict() ):             # <<<<<<<<<<<<<<
- *                             keys = list( _string_.keys() )
- *                             if  'any'     in keys           :
- */
-            goto __pyx_L14;
-          }
-
-          /* "loop_for.pyx":380
- *                                 else: break
- *                             else: pass
- *                         else: pass             # <<<<<<<<<<<<<<
- *                     else: pass
- *                 if not error:
- */
-          /*else*/ {
-          }
-          __pyx_L14:;
-
-          /* "loop_for.pyx":276
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):
- *                     if locked is False:             # <<<<<<<<<<<<<<
- *                         for_line    += 1
- * 
- */
-          goto __pyx_L13;
-        }
-
-        /* "loop_for.pyx":381
- *                             else: pass
- *                         else: pass
- *                     else: pass             # <<<<<<<<<<<<<<
- *                 if not error:
- *                     if doubleKey is False:
- */
-        /*else*/ {
-        }
-        __pyx_L13:;
-
-        /* "loop_for.pyx":275
- *                 master = loop[ 'for' ]
- * 
- *                 for j, _string_ in enumerate( master[ : ] ):             # <<<<<<<<<<<<<<
- *                     if locked is False:
- *                         for_line    += 1
- */
-      }
-      __pyx_L12_break:;
-      __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-
-      /* "loop_for.pyx":382
- *                         else: pass
- *                     else: pass
- *                 if not error:             # <<<<<<<<<<<<<<
- *                     if doubleKey is False:
- *                         if broke is True:  exit()
- */
-      __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_error); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 382, __pyx_L1_error)
-      __pyx_t_1 = ((!__pyx_t_2) != 0);
-      if (__pyx_t_1) {
-
-        /* "loop_for.pyx":383
- *                     else: pass
- *                 if not error:
- *                     if doubleKey is False:             # <<<<<<<<<<<<<<
- *                         if broke is True:  exit()
- *                         else: pass
- */
-        __pyx_t_1 = ((__pyx_v_doubleKey == 0) != 0);
-        if (__pyx_t_1) {
-
-          /* "loop_for.pyx":384
- *                 if not error:
- *                     if doubleKey is False:
- *                         if broke is True:  exit()             # <<<<<<<<<<<<<<
- *                         else: pass
- *                     else: break
- */
-          __pyx_t_1 = ((__pyx_v_broke == 1) != 0);
-          if (__pyx_t_1) {
-            __pyx_t_14 = __Pyx_PyObject_CallNoArg(__pyx_builtin_exit); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 384, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_14);
-            __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-            goto __pyx_L33;
-          }
-
-          /* "loop_for.pyx":385
- *                     if doubleKey is False:
- *                         if broke is True:  exit()
- *                         else: pass             # <<<<<<<<<<<<<<
- *                     else: break
- * 
- */
-          /*else*/ {
-          }
-          __pyx_L33:;
-
-          /* "loop_for.pyx":383
- *                     else: pass
- *                 if not error:
- *                     if doubleKey is False:             # <<<<<<<<<<<<<<
- *                         if broke is True:  exit()
- *                         else: pass
- */
-          goto __pyx_L32;
-        }
-
-        /* "loop_for.pyx":386
- *                         if broke is True:  exit()
- *                         else: pass
- *                     else: break             # <<<<<<<<<<<<<<
- * 
- *                 else: break
- */
-        /*else*/ {
-          goto __pyx_L5_break;
-        }
-        __pyx_L32:;
-
-        /* "loop_for.pyx":382
- *                         else: pass
- *                     else: pass
- *                 if not error:             # <<<<<<<<<<<<<<
- *                     if doubleKey is False:
- *                         if broke is True:  exit()
- */
-        goto __pyx_L31;
-      }
-
-      /* "loop_for.pyx":388
- *                     else: break
- * 
- *                 else: break             # <<<<<<<<<<<<<<
- *             else : break
- *         return error
- */
-      /*else*/ {
-        goto __pyx_L5_break;
-      }
-      __pyx_L31:;
-
-      /* "loop_for.pyx":265
- *             UPDATING( self.DataBase, var_name, for_values[ i ] )
- * 
- *             if not error :             # <<<<<<<<<<<<<<
- *                 if i == 0   :
- *                     if interpreter is False:
- */
-      goto __pyx_L6;
-    }
-
-    /* "loop_for.pyx":389
- * 
- *                 else: break
- *             else : break             # <<<<<<<<<<<<<<
- *         return error
- */
-    /*else*/ {
-      goto __pyx_L5_break;
-    }
-    __pyx_L6:;
-  }
-  __pyx_L5_break:;
-
-  /* "loop_for.pyx":390
- *                 else: break
- *             else : break
- *         return error             # <<<<<<<<<<<<<<
- */
-  __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(__pyx_v_error);
-  __pyx_r = __pyx_v_error;
-  goto __pyx_L0;
-
-  /* "loop_for.pyx":214
- *         return error
- * 
- *     cdef SubLOOP( self, list for_values, str var_name, bint interpreter = False, tuple loop_list = () ):             # <<<<<<<<<<<<<<
- *         cdef:
- *             str     error, normal_string, err
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_XDECREF(__pyx_t_13);
   __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_XDECREF(__pyx_t_18);
+  __Pyx_XDECREF(__pyx_t_16);
+  __Pyx_XDECREF(__pyx_t_17);
   __Pyx_AddTraceback("loop_for.LOOP.SubLOOP", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -6726,12 +6908,13 @@ static PyObject *__pyx_f_8loop_for_4LOOP_SubLOOP(struct __pyx_obj_8loop_for_LOOP
   __Pyx_XDECREF(__pyx_v_subfor_value);
   __Pyx_XDECREF(__pyx_v_subfor_values);
   __Pyx_XDECREF(__pyx_v__string_);
+  __Pyx_XDECREF(__pyx_v_s);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "loop_for.pyx":17
+/* "loop_for.pyx":19
  * cdef class LOOP:
  *     cdef:
  *         public dict    DataBase             # <<<<<<<<<<<<<<
@@ -6789,7 +6972,7 @@ static int __pyx_pf_8loop_for_4LOOP_8DataBase_2__set__(struct __pyx_obj_8loop_fo
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  if (!(likely(PyDict_CheckExact(__pyx_v_value))||((__pyx_v_value) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_v_value)->tp_name), 0))) __PYX_ERR(0, 17, __pyx_L1_error)
+  if (!(likely(PyDict_CheckExact(__pyx_v_value))||((__pyx_v_value) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_v_value)->tp_name), 0))) __PYX_ERR(0, 19, __pyx_L1_error)
   __pyx_t_1 = __pyx_v_value;
   __Pyx_INCREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
@@ -6839,7 +7022,7 @@ static int __pyx_pf_8loop_for_4LOOP_8DataBase_4__del__(struct __pyx_obj_8loop_fo
   return __pyx_r;
 }
 
-/* "loop_for.pyx":18
+/* "loop_for.pyx":20
  *     cdef:
  *         public dict    DataBase
  *         public int     line             # <<<<<<<<<<<<<<
@@ -6869,7 +7052,7 @@ static PyObject *__pyx_pf_8loop_for_4LOOP_4line___get__(struct __pyx_obj_8loop_f
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->line); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->line); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6907,7 +7090,7 @@ static int __pyx_pf_8loop_for_4LOOP_4line_2__set__(struct __pyx_obj_8loop_for_LO
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L1_error)
   __pyx_v_self->line = __pyx_t_1;
 
   /* function exit code */
@@ -7894,12 +8077,13 @@ static struct PyModuleDef __pyx_moduledef = {
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 0},
   {&__pyx_n_s_DataBase, __pyx_k_DataBase, sizeof(__pyx_k_DataBase), 0, 0, 1, 1},
-  {&__pyx_n_s_EXTERNAL_FOR_STATEMENT, __pyx_k_EXTERNAL_FOR_STATEMENT, sizeof(__pyx_k_EXTERNAL_FOR_STATEMENT), 0, 0, 1, 1},
-  {&__pyx_n_s_FOR_STATEMENT, __pyx_k_FOR_STATEMENT, sizeof(__pyx_k_FOR_STATEMENT), 0, 0, 1, 1},
+  {&__pyx_n_s_FOR, __pyx_k_FOR, sizeof(__pyx_k_FOR), 0, 0, 1, 1},
+  {&__pyx_n_s_FOR_BLOCK, __pyx_k_FOR_BLOCK, sizeof(__pyx_k_FOR_BLOCK), 0, 0, 1, 1},
   {&__pyx_n_s_IF_STATEMENT, __pyx_k_IF_STATEMENT, sizeof(__pyx_k_IF_STATEMENT), 0, 0, 1, 1},
   {&__pyx_n_s_INTERNAL_IF_LOOP_STATEMENT, __pyx_k_INTERNAL_IF_LOOP_STATEMENT, sizeof(__pyx_k_INTERNAL_IF_LOOP_STATEMENT), 0, 0, 1, 1},
   {&__pyx_n_s_INTERNAL_UNLESS_FOR_STATEMENT, __pyx_k_INTERNAL_UNLESS_FOR_STATEMENT, sizeof(__pyx_k_INTERNAL_UNLESS_FOR_STATEMENT), 0, 0, 1, 1},
   {&__pyx_kp_s_Incompatible_checksums_s_vs_0xbd, __pyx_k_Incompatible_checksums_s_vs_0xbd, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xbd), 0, 0, 1, 0},
+  {&__pyx_n_s_KeyError, __pyx_k_KeyError, sizeof(__pyx_k_KeyError), 0, 0, 1, 1},
   {&__pyx_n_s_LOOP, __pyx_k_LOOP, sizeof(__pyx_k_LOOP), 0, 0, 1, 1},
   {&__pyx_n_s_NEXT_ANALYZE, __pyx_k_NEXT_ANALYZE, sizeof(__pyx_k_NEXT_ANALYZE), 0, 0, 1, 1},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
@@ -7910,30 +8094,36 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_break, __pyx_k_break, sizeof(__pyx_k_break), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_continue, __pyx_k_continue, sizeof(__pyx_k_continue), 0, 0, 1, 1},
+  {&__pyx_n_s_data_base, __pyx_k_data_base, sizeof(__pyx_k_data_base), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
   {&__pyx_n_s_exit, __pyx_k_exit, sizeof(__pyx_k_exit), 0, 0, 1, 1},
   {&__pyx_n_s_for, __pyx_k_for, sizeof(__pyx_k_for), 0, 0, 1, 1},
-  {&__pyx_n_s_for_statement, __pyx_k_for_statement, sizeof(__pyx_k_for_statement), 0, 0, 1, 1},
+  {&__pyx_n_s_for_analyze, __pyx_k_for_analyze, sizeof(__pyx_k_for_analyze), 0, 0, 1, 1},
   {&__pyx_n_s_for_values, __pyx_k_for_values, sizeof(__pyx_k_for_values), 0, 0, 1, 1},
+  {&__pyx_n_s_function, __pyx_k_function, sizeof(__pyx_k_function), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_n_s_if, __pyx_k_if, sizeof(__pyx_k_if), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
   {&__pyx_n_s_interpreter, __pyx_k_interpreter, sizeof(__pyx_k_interpreter), 0, 0, 1, 1},
+  {&__pyx_n_s_j, __pyx_k_j, sizeof(__pyx_k_j), 0, 0, 1, 1},
   {&__pyx_n_s_keys, __pyx_k_keys, sizeof(__pyx_k_keys), 0, 0, 1, 1},
   {&__pyx_n_s_lex, __pyx_k_lex, sizeof(__pyx_k_lex), 0, 0, 1, 1},
   {&__pyx_n_s_lexer, __pyx_k_lexer, sizeof(__pyx_k_lexer), 0, 0, 1, 1},
   {&__pyx_n_s_line, __pyx_k_line, sizeof(__pyx_k_line), 0, 0, 1, 1},
+  {&__pyx_n_s_locked, __pyx_k_locked, sizeof(__pyx_k_locked), 0, 0, 1, 1},
   {&__pyx_n_s_loop, __pyx_k_loop, sizeof(__pyx_k_loop), 0, 0, 1, 1},
   {&__pyx_n_s_loop_for, __pyx_k_loop_for, sizeof(__pyx_k_loop_for), 0, 0, 1, 1},
   {&__pyx_n_s_loop_if_statement, __pyx_k_loop_if_statement, sizeof(__pyx_k_loop_if_statement), 0, 0, 1, 1},
   {&__pyx_n_s_loop_list, __pyx_k_loop_list, sizeof(__pyx_k_loop_list), 0, 0, 1, 1},
   {&__pyx_n_s_loop_unless_statement, __pyx_k_loop_unless_statement, sizeof(__pyx_k_loop_unless_statement), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_n_s_mainFor, __pyx_k_mainFor, sizeof(__pyx_k_mainFor), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {&__pyx_n_s_next, __pyx_k_next, sizeof(__pyx_k_next), 0, 0, 1, 1},
+  {&__pyx_n_s_normal_string, __pyx_k_normal_string, sizeof(__pyx_k_normal_string), 0, 0, 1, 1},
   {&__pyx_n_s_pass, __pyx_k_pass, sizeof(__pyx_k_pass), 0, 0, 1, 1},
   {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_PickleError, __pyx_k_pyx_PickleError, sizeof(__pyx_k_pyx_PickleError), 0, 0, 1, 1},
@@ -7967,9 +8157,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 73, __pyx_L1_error)
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 93, __pyx_L1_error)
-  __pyx_builtin_exit = __Pyx_GetBuiltinName(__pyx_n_s_exit); if (!__pyx_builtin_exit) __PYX_ERR(0, 206, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 70, __pyx_L1_error)
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_builtin_KeyError = __Pyx_GetBuiltinName(__pyx_n_s_KeyError); if (!__pyx_builtin_KeyError) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_builtin_exit = __Pyx_GetBuiltinName(__pyx_n_s_exit); if (!__pyx_builtin_exit) __PYX_ERR(0, 214, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -7998,7 +8189,6 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   __pyx_umethod_PyList_Type_index.type = (PyObject*)&PyList_Type;
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_198450848 = PyInt_FromLong(198450848L); if (unlikely(!__pyx_int_198450848)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -8047,16 +8237,16 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_8loop_for_LOOP = &__pyx_vtable_8loop_for_LOOP;
   __pyx_vtable_8loop_for_LOOP.LOOP = (PyObject *(*)(struct __pyx_obj_8loop_for_LOOP *, PyObject *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_8loop_for_4LOOP_LOOP *__pyx_optional_args))__pyx_f_8loop_for_4LOOP_LOOP;
   __pyx_vtable_8loop_for_LOOP.SubLOOP = (PyObject *(*)(struct __pyx_obj_8loop_for_LOOP *, PyObject *, PyObject *, struct __pyx_opt_args_8loop_for_4LOOP_SubLOOP *__pyx_optional_args))__pyx_f_8loop_for_4LOOP_SubLOOP;
-  if (PyType_Ready(&__pyx_type_8loop_for_LOOP) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_8loop_for_LOOP) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_8loop_for_LOOP.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8loop_for_LOOP.tp_dictoffset && __pyx_type_8loop_for_LOOP.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_8loop_for_LOOP.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_8loop_for_LOOP.tp_dict, __pyx_vtabptr_8loop_for_LOOP) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_LOOP, (PyObject *)&__pyx_type_8loop_for_LOOP) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_8loop_for_LOOP) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_8loop_for_LOOP.tp_dict, __pyx_vtabptr_8loop_for_LOOP) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_LOOP, (PyObject *)&__pyx_type_8loop_for_LOOP) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_8loop_for_LOOP) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
   __pyx_ptype_8loop_for_LOOP = &__pyx_type_8loop_for_LOOP;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -8292,85 +8482,106 @@ if (!__Pyx_RefNanny) {
 
   /* "loop_for.pyx":2
  * #from script.PARXER.LEXER_CONFIGURE.lexer_and_parxer import NEXT_ANALYZE
- * from script.PARXER.PARXER_FUNCTIONS._FOR_               import for_statement             # <<<<<<<<<<<<<<
- * from script.PARXER.PARXER_FUNCTIONS._IF_                import loop_if_statement
+ * from script.PARXER.PARXER_FUNCTIONS._IF_                import loop_if_statement             # <<<<<<<<<<<<<<
  * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
+ * from script.PARXER.PARXER_FUNCTIONS._FOR_.FOR.WIN       import for_analyze
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_for_statement);
-  __Pyx_GIVEREF(__pyx_n_s_for_statement);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_for_statement);
+  __Pyx_INCREF(__pyx_n_s_loop_if_statement);
+  __Pyx_GIVEREF(__pyx_n_s_loop_if_statement);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_loop_if_statement);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_script_PARXER_PARXER_FUNCTIONS, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_for_statement); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_loop_if_statement); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_for_statement, __pyx_t_1) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_loop_if_statement, __pyx_t_1) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "loop_for.pyx":3
  * #from script.PARXER.LEXER_CONFIGURE.lexer_and_parxer import NEXT_ANALYZE
- * from script.PARXER.PARXER_FUNCTIONS._FOR_               import for_statement
- * from script.PARXER.PARXER_FUNCTIONS._IF_                import loop_if_statement             # <<<<<<<<<<<<<<
- * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
- * 
+ * from script.PARXER.PARXER_FUNCTIONS._IF_                import loop_if_statement
+ * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement             # <<<<<<<<<<<<<<
+ * from script.PARXER.PARXER_FUNCTIONS._FOR_.FOR.WIN       import for_analyze
+ * from loop                                               import mainFor
  */
   __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_INCREF(__pyx_n_s_loop_if_statement);
-  __Pyx_GIVEREF(__pyx_n_s_loop_if_statement);
-  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_loop_if_statement);
+  __Pyx_INCREF(__pyx_n_s_loop_unless_statement);
+  __Pyx_GIVEREF(__pyx_n_s_loop_unless_statement);
+  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_loop_unless_statement);
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_script_PARXER_PARXER_FUNCTIONS_2, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_loop_if_statement); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_loop_unless_statement); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_loop_if_statement, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_loop_unless_statement, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "loop_for.pyx":4
- * from script.PARXER.PARXER_FUNCTIONS._FOR_               import for_statement
  * from script.PARXER.PARXER_FUNCTIONS._IF_                import loop_if_statement
- * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement             # <<<<<<<<<<<<<<
+ * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
+ * from script.PARXER.PARXER_FUNCTIONS._FOR_.FOR.WIN       import for_analyze             # <<<<<<<<<<<<<<
+ * from loop                                               import mainFor
  * 
- * cdef dict UPDATING(dict base, str name, value):
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_n_s_loop_unless_statement);
-  __Pyx_GIVEREF(__pyx_n_s_loop_unless_statement);
-  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_loop_unless_statement);
+  __Pyx_INCREF(__pyx_n_s_for_analyze);
+  __Pyx_GIVEREF(__pyx_n_s_for_analyze);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_for_analyze);
   __pyx_t_2 = __Pyx_Import(__pyx_n_s_script_PARXER_PARXER_FUNCTIONS_3, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_loop_unless_statement); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_for_analyze); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_loop_unless_statement, __pyx_t_1) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_for_analyze, __pyx_t_1) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "loop_for.pyx":5
+ * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
+ * from script.PARXER.PARXER_FUNCTIONS._FOR_.FOR.WIN       import for_analyze
+ * from loop                                               import mainFor             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_n_s_mainFor);
+  __Pyx_GIVEREF(__pyx_n_s_mainFor);
+  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_mainFor);
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_loop, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_mainFor); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_mainFor, __pyx_t_2) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_LOOP(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_8loop_for_1__pyx_unpickle_LOOP, NULL, __pyx_n_s_loop_for); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_LOOP, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_8loop_for_1__pyx_unpickle_LOOP, NULL, __pyx_n_s_loop_for); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_LOOP, __pyx_t_1) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "loop_for.pyx":1
  * #from script.PARXER.LEXER_CONFIGURE.lexer_and_parxer import NEXT_ANALYZE             # <<<<<<<<<<<<<<
- * from script.PARXER.PARXER_FUNCTIONS._FOR_               import for_statement
  * from script.PARXER.PARXER_FUNCTIONS._IF_                import loop_if_statement
+ * from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import loop_unless_statement
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /*--- Wrapped vars code ---*/
 
@@ -8918,6 +9129,24 @@ static CYTHON_INLINE PyObject * __Pyx_PyCFunction_FastCall(PyObject *func_obj, P
 }
 #endif
 
+/* RaiseTooManyValuesToUnpack */
+static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+    PyErr_Format(PyExc_ValueError,
+                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
+}
+
+/* RaiseNeedMoreValuesToUnpack */
+static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+    PyErr_Format(PyExc_ValueError,
+                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
+                 index, (index == 1) ? "" : "s");
+}
+
+/* RaiseNoneIterError */
+static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+}
+
 /* PyObjectCall2Args */
 static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
     PyObject *args, *result = NULL;
@@ -9094,111 +9323,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
     return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
 }
 
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        return NULL;
-    }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
-}
-
-/* RaiseTooManyValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
-    PyErr_Format(PyExc_ValueError,
-                 "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
-}
-
-/* RaiseNeedMoreValuesToUnpack */
-static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
-    PyErr_Format(PyExc_ValueError,
-                 "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
-                 index, (index == 1) ? "" : "s");
-}
-
-/* IterFinish */
-static CYTHON_INLINE int __Pyx_IterFinish(void) {
-#if CYTHON_FAST_THREAD_STATE
-    PyThreadState *tstate = __Pyx_PyThreadState_Current;
-    PyObject* exc_type = tstate->curexc_type;
-    if (unlikely(exc_type)) {
-        if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) {
-            PyObject *exc_value, *exc_tb;
-            exc_value = tstate->curexc_value;
-            exc_tb = tstate->curexc_traceback;
-            tstate->curexc_type = 0;
-            tstate->curexc_value = 0;
-            tstate->curexc_traceback = 0;
-            Py_DECREF(exc_type);
-            Py_XDECREF(exc_value);
-            Py_XDECREF(exc_tb);
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-    return 0;
-#else
-    if (unlikely(PyErr_Occurred())) {
-        if (likely(PyErr_ExceptionMatches(PyExc_StopIteration))) {
-            PyErr_Clear();
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-    return 0;
-#endif
-}
-
-/* UnpackItemEndCheck */
-static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
-    if (unlikely(retval)) {
-        Py_DECREF(retval);
-        __Pyx_RaiseTooManyValuesError(expected);
-        return -1;
-    } else {
-        return __Pyx_IterFinish();
-    }
-    return 0;
-}
-
-/* RaiseNoneIterError */
-static CYTHON_INLINE void __Pyx_RaiseNoneNotIterableError(void) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-}
-
-/* None */
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
-    PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
-}
-
 /* SliceTupleAndList */
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE void __Pyx_crop_slice(Py_ssize_t* _start, Py_ssize_t* _stop, Py_ssize_t* _length) {
@@ -9258,48 +9382,61 @@ static CYTHON_INLINE PyObject* __Pyx_PyTuple_GetSlice(
 }
 #endif
 
-/* PyObjectCallNoArg */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
-#if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(func)) {
-        return __Pyx_PyFunction_FastCall(func, NULL, 0);
-    }
-#endif
-#ifdef __Pyx_CyFunction_USED
-    if (likely(PyCFunction_Check(func) || __Pyx_CyFunction_Check(func)))
-#else
-    if (likely(PyCFunction_Check(func)))
-#endif
+/* GetTopmostException */
+#if CYTHON_USE_EXC_INFO_STACK
+static _PyErr_StackItem *
+__Pyx_PyErr_GetTopmostException(PyThreadState *tstate)
+{
+    _PyErr_StackItem *exc_info = tstate->exc_info;
+    while ((exc_info->exc_type == NULL || exc_info->exc_type == Py_None) &&
+           exc_info->previous_item != NULL)
     {
-        if (likely(PyCFunction_GET_FLAGS(func) & METH_NOARGS)) {
-            return __Pyx_PyObject_CallMethO(func, NULL);
-        }
+        exc_info = exc_info->previous_item;
     }
-    return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
+    return exc_info;
 }
 #endif
 
-/* ArgTypeTest */
-static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
-{
-    if (unlikely(!type)) {
-        PyErr_SetString(PyExc_SystemError, "Missing type object");
-        return 0;
-    }
-    else if (exact) {
-        #if PY_MAJOR_VERSION == 2
-        if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
-        #endif
-    }
-    else {
-        if (likely(__Pyx_TypeCheck(obj, type))) return 1;
-    }
-    PyErr_Format(PyExc_TypeError,
-        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
-        name, type->tp_name, Py_TYPE(obj)->tp_name);
-    return 0;
+/* SaveResetException */
+#if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx__ExceptionSave(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    #if CYTHON_USE_EXC_INFO_STACK
+    _PyErr_StackItem *exc_info = __Pyx_PyErr_GetTopmostException(tstate);
+    *type = exc_info->exc_type;
+    *value = exc_info->exc_value;
+    *tb = exc_info->exc_traceback;
+    #else
+    *type = tstate->exc_type;
+    *value = tstate->exc_value;
+    *tb = tstate->exc_traceback;
+    #endif
+    Py_XINCREF(*type);
+    Py_XINCREF(*value);
+    Py_XINCREF(*tb);
 }
+static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    #if CYTHON_USE_EXC_INFO_STACK
+    _PyErr_StackItem *exc_info = tstate->exc_info;
+    tmp_type = exc_info->exc_type;
+    tmp_value = exc_info->exc_value;
+    tmp_tb = exc_info->exc_traceback;
+    exc_info->exc_type = type;
+    exc_info->exc_value = value;
+    exc_info->exc_traceback = tb;
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = type;
+    tstate->exc_value = value;
+    tstate->exc_traceback = tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+}
+#endif
 
 /* PyErrExceptionMatches */
 #if CYTHON_FAST_THREAD_STATE
@@ -9325,6 +9462,495 @@ static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tsta
     return __Pyx_PyErr_GivenExceptionMatches(exc_type, err);
 }
 #endif
+
+/* GetException */
+#if CYTHON_FAST_THREAD_STATE
+static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb)
+#else
+static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb)
+#endif
+{
+    PyObject *local_type, *local_value, *local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    local_type = tstate->curexc_type;
+    local_value = tstate->curexc_value;
+    local_tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+#else
+    PyErr_Fetch(&local_type, &local_value, &local_tb);
+#endif
+    PyErr_NormalizeException(&local_type, &local_value, &local_tb);
+#if CYTHON_FAST_THREAD_STATE
+    if (unlikely(tstate->curexc_type))
+#else
+    if (unlikely(PyErr_Occurred()))
+#endif
+        goto bad;
+    #if PY_MAJOR_VERSION >= 3
+    if (local_tb) {
+        if (unlikely(PyException_SetTraceback(local_value, local_tb) < 0))
+            goto bad;
+    }
+    #endif
+    Py_XINCREF(local_tb);
+    Py_XINCREF(local_type);
+    Py_XINCREF(local_value);
+    *type = local_type;
+    *value = local_value;
+    *tb = local_tb;
+#if CYTHON_FAST_THREAD_STATE
+    #if CYTHON_USE_EXC_INFO_STACK
+    {
+        _PyErr_StackItem *exc_info = tstate->exc_info;
+        tmp_type = exc_info->exc_type;
+        tmp_value = exc_info->exc_value;
+        tmp_tb = exc_info->exc_traceback;
+        exc_info->exc_type = local_type;
+        exc_info->exc_value = local_value;
+        exc_info->exc_traceback = local_tb;
+    }
+    #else
+    tmp_type = tstate->exc_type;
+    tmp_value = tstate->exc_value;
+    tmp_tb = tstate->exc_traceback;
+    tstate->exc_type = local_type;
+    tstate->exc_value = local_value;
+    tstate->exc_traceback = local_tb;
+    #endif
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+#else
+    PyErr_SetExcInfo(local_type, local_value, local_tb);
+#endif
+    return 0;
+bad:
+    *type = 0;
+    *value = 0;
+    *tb = 0;
+    Py_XDECREF(local_type);
+    Py_XDECREF(local_value);
+    Py_XDECREF(local_tb);
+    return -1;
+}
+
+/* PyObjectCallNoArg */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
+#if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(func)) {
+        return __Pyx_PyFunction_FastCall(func, NULL, 0);
+    }
+#endif
+#ifdef __Pyx_CyFunction_USED
+    if (likely(PyCFunction_Check(func) || __Pyx_CyFunction_Check(func)))
+#else
+    if (likely(PyCFunction_Check(func)))
+#endif
+    {
+        if (likely(PyCFunction_GET_FLAGS(func) & METH_NOARGS)) {
+            return __Pyx_PyObject_CallMethO(func, NULL);
+        }
+    }
+    return __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL);
+}
+#endif
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
+}
+
+/* IterFinish */
+static CYTHON_INLINE int __Pyx_IterFinish(void) {
+#if CYTHON_FAST_THREAD_STATE
+    PyThreadState *tstate = __Pyx_PyThreadState_Current;
+    PyObject* exc_type = tstate->curexc_type;
+    if (unlikely(exc_type)) {
+        if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) {
+            PyObject *exc_value, *exc_tb;
+            exc_value = tstate->curexc_value;
+            exc_tb = tstate->curexc_traceback;
+            tstate->curexc_type = 0;
+            tstate->curexc_value = 0;
+            tstate->curexc_traceback = 0;
+            Py_DECREF(exc_type);
+            Py_XDECREF(exc_value);
+            Py_XDECREF(exc_tb);
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+#else
+    if (unlikely(PyErr_Occurred())) {
+        if (likely(PyErr_ExceptionMatches(PyExc_StopIteration))) {
+            PyErr_Clear();
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+#endif
+}
+
+/* UnpackItemEndCheck */
+static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
+    if (unlikely(retval)) {
+        Py_DECREF(retval);
+        __Pyx_RaiseTooManyValuesError(expected);
+        return -1;
+    } else {
+        return __Pyx_IterFinish();
+    }
+    return 0;
+}
+
+/* CIntToDigits */
+static const char DIGIT_PAIRS_10[2*10*10+1] = {
+    "00010203040506070809"
+    "10111213141516171819"
+    "20212223242526272829"
+    "30313233343536373839"
+    "40414243444546474849"
+    "50515253545556575859"
+    "60616263646566676869"
+    "70717273747576777879"
+    "80818283848586878889"
+    "90919293949596979899"
+};
+static const char DIGIT_PAIRS_8[2*8*8+1] = {
+    "0001020304050607"
+    "1011121314151617"
+    "2021222324252627"
+    "3031323334353637"
+    "4041424344454647"
+    "5051525354555657"
+    "6061626364656667"
+    "7071727374757677"
+};
+static const char DIGITS_HEX[2*16+1] = {
+    "0123456789abcdef"
+    "0123456789ABCDEF"
+};
+
+/* BuildPyUnicode */
+static PyObject* __Pyx_PyUnicode_BuildFromAscii(Py_ssize_t ulength, char* chars, int clength,
+                                                int prepend_sign, char padding_char) {
+    PyObject *uval;
+    Py_ssize_t uoffset = ulength - clength;
+#if CYTHON_USE_UNICODE_INTERNALS
+    Py_ssize_t i;
+#if CYTHON_PEP393_ENABLED
+    void *udata;
+    uval = PyUnicode_New(ulength, 127);
+    if (unlikely(!uval)) return NULL;
+    udata = PyUnicode_DATA(uval);
+#else
+    Py_UNICODE *udata;
+    uval = PyUnicode_FromUnicode(NULL, ulength);
+    if (unlikely(!uval)) return NULL;
+    udata = PyUnicode_AS_UNICODE(uval);
+#endif
+    if (uoffset > 0) {
+        i = 0;
+        if (prepend_sign) {
+            __Pyx_PyUnicode_WRITE(PyUnicode_1BYTE_KIND, udata, 0, '-');
+            i++;
+        }
+        for (; i < uoffset; i++) {
+            __Pyx_PyUnicode_WRITE(PyUnicode_1BYTE_KIND, udata, i, padding_char);
+        }
+    }
+    for (i=0; i < clength; i++) {
+        __Pyx_PyUnicode_WRITE(PyUnicode_1BYTE_KIND, udata, uoffset+i, chars[i]);
+    }
+#else
+    {
+        PyObject *sign = NULL, *padding = NULL;
+        uval = NULL;
+        if (uoffset > 0) {
+            prepend_sign = !!prepend_sign;
+            if (uoffset > prepend_sign) {
+                padding = PyUnicode_FromOrdinal(padding_char);
+                if (likely(padding) && uoffset > prepend_sign + 1) {
+                    PyObject *tmp;
+                    PyObject *repeat = PyInt_FromSize_t(uoffset - prepend_sign);
+                    if (unlikely(!repeat)) goto done_or_error;
+                    tmp = PyNumber_Multiply(padding, repeat);
+                    Py_DECREF(repeat);
+                    Py_DECREF(padding);
+                    padding = tmp;
+                }
+                if (unlikely(!padding)) goto done_or_error;
+            }
+            if (prepend_sign) {
+                sign = PyUnicode_FromOrdinal('-');
+                if (unlikely(!sign)) goto done_or_error;
+            }
+        }
+        uval = PyUnicode_DecodeASCII(chars, clength, NULL);
+        if (likely(uval) && padding) {
+            PyObject *tmp = PyNumber_Add(padding, uval);
+            Py_DECREF(uval);
+            uval = tmp;
+        }
+        if (likely(uval) && sign) {
+            PyObject *tmp = PyNumber_Add(sign, uval);
+            Py_DECREF(uval);
+            uval = tmp;
+        }
+done_or_error:
+        Py_XDECREF(padding);
+        Py_XDECREF(sign);
+    }
+#endif
+    return uval;
+}
+
+/* CIntToPyUnicode */
+#ifdef _MSC_VER
+    #ifndef _MSC_STDINT_H_
+        #if _MSC_VER < 1300
+           typedef unsigned short    uint16_t;
+        #else
+           typedef unsigned __int16  uint16_t;
+        #endif
+    #endif
+#else
+   #include <stdint.h>
+#endif
+static CYTHON_INLINE PyObject* __Pyx_PyUnicode_From_int(int value, Py_ssize_t width, char padding_char, char format_char) {
+    char digits[sizeof(int)*3+2];
+    char *dpos, *end = digits + sizeof(int)*3+2;
+    const char *hex_digits = DIGITS_HEX;
+    Py_ssize_t length, ulength;
+    int prepend_sign, last_one_off;
+    int remaining;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+    const int neg_one = (int) -1, const_zero = (int) 0;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic pop
+#endif
+    const int is_unsigned = neg_one > const_zero;
+    if (format_char == 'X') {
+        hex_digits += 16;
+        format_char = 'x';
+    }
+    remaining = value;
+    last_one_off = 0;
+    dpos = end;
+    do {
+        int digit_pos;
+        switch (format_char) {
+        case 'o':
+            digit_pos = abs((int)(remaining % (8*8)));
+            remaining = (int) (remaining / (8*8));
+            dpos -= 2;
+            *(uint16_t*)dpos = ((const uint16_t*)DIGIT_PAIRS_8)[digit_pos];
+            last_one_off = (digit_pos < 8);
+            break;
+        case 'd':
+            digit_pos = abs((int)(remaining % (10*10)));
+            remaining = (int) (remaining / (10*10));
+            dpos -= 2;
+            *(uint16_t*)dpos = ((const uint16_t*)DIGIT_PAIRS_10)[digit_pos];
+            last_one_off = (digit_pos < 10);
+            break;
+        case 'x':
+            *(--dpos) = hex_digits[abs((int)(remaining % 16))];
+            remaining = (int) (remaining / 16);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    } while (unlikely(remaining != 0));
+    if (last_one_off) {
+        assert(*dpos == '0');
+        dpos++;
+    }
+    length = end - dpos;
+    ulength = length;
+    prepend_sign = 0;
+    if (!is_unsigned && value <= neg_one) {
+        if (padding_char == ' ' || width <= length + 1) {
+            *(--dpos) = '-';
+            ++length;
+        } else {
+            prepend_sign = 1;
+        }
+        ++ulength;
+    }
+    if (width > ulength) {
+        ulength = width;
+    }
+    if (ulength == 1) {
+        return PyUnicode_FromOrdinal(*dpos);
+    }
+    return __Pyx_PyUnicode_BuildFromAscii(ulength, dpos, (int) length, prepend_sign, padding_char);
+}
+
+/* None */
+static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
+    PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
+}
+
+/* SliceObject */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(PyObject* obj,
+        Py_ssize_t cstart, Py_ssize_t cstop,
+        PyObject** _py_start, PyObject** _py_stop, PyObject** _py_slice,
+        int has_cstart, int has_cstop, CYTHON_UNUSED int wraparound) {
+#if CYTHON_USE_TYPE_SLOTS
+    PyMappingMethods* mp;
+#if PY_MAJOR_VERSION < 3
+    PySequenceMethods* ms = Py_TYPE(obj)->tp_as_sequence;
+    if (likely(ms && ms->sq_slice)) {
+        if (!has_cstart) {
+            if (_py_start && (*_py_start != Py_None)) {
+                cstart = __Pyx_PyIndex_AsSsize_t(*_py_start);
+                if ((cstart == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
+            } else
+                cstart = 0;
+        }
+        if (!has_cstop) {
+            if (_py_stop && (*_py_stop != Py_None)) {
+                cstop = __Pyx_PyIndex_AsSsize_t(*_py_stop);
+                if ((cstop == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
+            } else
+                cstop = PY_SSIZE_T_MAX;
+        }
+        if (wraparound && unlikely((cstart < 0) | (cstop < 0)) && likely(ms->sq_length)) {
+            Py_ssize_t l = ms->sq_length(obj);
+            if (likely(l >= 0)) {
+                if (cstop < 0) {
+                    cstop += l;
+                    if (cstop < 0) cstop = 0;
+                }
+                if (cstart < 0) {
+                    cstart += l;
+                    if (cstart < 0) cstart = 0;
+                }
+            } else {
+                if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                    goto bad;
+                PyErr_Clear();
+            }
+        }
+        return ms->sq_slice(obj, cstart, cstop);
+    }
+#endif
+    mp = Py_TYPE(obj)->tp_as_mapping;
+    if (likely(mp && mp->mp_subscript))
+#endif
+    {
+        PyObject* result;
+        PyObject *py_slice, *py_start, *py_stop;
+        if (_py_slice) {
+            py_slice = *_py_slice;
+        } else {
+            PyObject* owned_start = NULL;
+            PyObject* owned_stop = NULL;
+            if (_py_start) {
+                py_start = *_py_start;
+            } else {
+                if (has_cstart) {
+                    owned_start = py_start = PyInt_FromSsize_t(cstart);
+                    if (unlikely(!py_start)) goto bad;
+                } else
+                    py_start = Py_None;
+            }
+            if (_py_stop) {
+                py_stop = *_py_stop;
+            } else {
+                if (has_cstop) {
+                    owned_stop = py_stop = PyInt_FromSsize_t(cstop);
+                    if (unlikely(!py_stop)) {
+                        Py_XDECREF(owned_start);
+                        goto bad;
+                    }
+                } else
+                    py_stop = Py_None;
+            }
+            py_slice = PySlice_New(py_start, py_stop, Py_None);
+            Py_XDECREF(owned_start);
+            Py_XDECREF(owned_stop);
+            if (unlikely(!py_slice)) goto bad;
+        }
+#if CYTHON_USE_TYPE_SLOTS
+        result = mp->mp_subscript(obj, py_slice);
+#else
+        result = PyObject_GetItem(obj, py_slice);
+#endif
+        if (!_py_slice) {
+            Py_DECREF(py_slice);
+        }
+        return result;
+    }
+    PyErr_Format(PyExc_TypeError,
+        "'%.200s' object is unsliceable", Py_TYPE(obj)->tp_name);
+bad:
+    return NULL;
+}
+
+/* ArgTypeTest */
+static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
+{
+    if (unlikely(!type)) {
+        PyErr_SetString(PyExc_SystemError, "Missing type object");
+        return 0;
+    }
+    else if (exact) {
+        #if PY_MAJOR_VERSION == 2
+        if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
+        #endif
+    }
+    else {
+        if (likely(__Pyx_TypeCheck(obj, type))) return 1;
+    }
+    PyErr_Format(PyExc_TypeError,
+        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
+        name, type->tp_name, Py_TYPE(obj)->tp_name);
+    return 0;
+}
 
 /* PyErrFetchRestore */
 #if CYTHON_FAST_THREAD_STATE

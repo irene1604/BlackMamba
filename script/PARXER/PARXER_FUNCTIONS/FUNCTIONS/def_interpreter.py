@@ -1,14 +1,13 @@
 from script.STDIN.WinSTDIN                      import stdin
-from script.DATA_BASE                           import data_base as db
 from script                                     import control_string
-from script.PARXER.PARXER_FUNCTIONS._FOR_       import end_for_else
+from statement                                  import externalRest
 from script.PARXER.PARXER_FUNCTIONS._IF_        import if_inter
+from script.PARXER.PARXER_FUNCTIONS._IF_        import IfError                  as Ie
 from script.LEXER.FUNCTION                      import main
-from script.PARXER.PARXER_FUNCTIONS.FUNCTIONS   import def_end, functions
-from script.STDIN.LinuxSTDIN                    import bm_configure as bm
-try:  from CythonModules.Windows                import fileError as fe 
-except ImportError:  from CythonModules.Linux   import fileError as fe 
-from script.PARXER                              import module_load_treatment  as mlt
+from script.PARXER.PARXER_FUNCTIONS.FUNCTIONS   import functions
+from script.PARXER                              import module_load_treatment    as mlt
+from functions                                  import internalDef              as ID
+from script.DATA_BASE                           import data_base                as db
     
 
 class EXTERNAL_DEF_STATEMENT:
@@ -59,9 +58,12 @@ class EXTERNAL_DEF_STATEMENT:
                                                                         self.line ).STDIN_FOR_INTERPRETER( k, _string_ )
                     if self.error is None:    
                         if self.active_tab is True:
-                            self.get_block, self.value, self.error = def_end.INTERNAL_BLOCKS( self.string,
-                                            self.normal_string, self.data_base, self.line ).BLOCKS( k+1 , class_name, class_key,
-                                                                                                    self.data_base[ 'current_func' ], loop = loop )
+                            self.get_block, self.value, self.error = ID.INTERNAL_BLOCKS( string=self.string,
+                                        normal_string=self.normal_string, data_base=self.data_base, 
+                                        line=self.if_line ).BLOCKS( tabulation=k+ 1,
+                                        function=_type_, interpreter = False, class_name= class_name, class_key=class_key,
+                                        func_name=self.data_base[ 'current_func' ], loop = True, locked=True)
+                                        
                             if self.error is None:
                                 if class_key is False: pass 
                                 else: 
@@ -90,7 +92,7 @@ class EXTERNAL_DEF_STATEMENT:
                                             
                                             else: break
                                         else: 
-                                            self.error = if_inter.ERRORS( self.line ).ERROR4()
+                                            self.error = Ie.ERRORS( self.line ).ERROR4()
                                             break                  
                                     elif self.get_block == 'empty'  :
                                         if self.space <= 2:
@@ -148,8 +150,8 @@ class EXTERNAL_DEF_STATEMENT:
                                 else:break
                             else: break
                         else:
-                            self.get_block, self.value, self.error = end_for_else.EXTERNAL_BLOCKS(self.string,
-                                            self.normal_string, self.data_base, self.line).BLOCKS( self.tabulation )
+                            self.get_block, self.value, self.error = externalRest.EXTERNAL_BLOCKS(normal_string=self.normal_string, 
+                                                                data_base=self.data_base, line=self.line).BLOCKS(tabulation=self.tabulation)
                             
                             if self.error is None:
                                 if self.get_block   == 'end:'   :
@@ -178,7 +180,7 @@ class EXTERNAL_DEF_STATEMENT:
                     else: break
                 else: pass
             else:
-                self.error = if_inter.ERRORS( self.line ).ERROR4()
+                self.error = Ie.ERRORS( self.line ).ERROR4()
                 break
                 
         EXTERNAL_DEF_STATEMENT( self.master, self.data_base, self.line ).UPDATE_FUNCTION( self.def_starage, self.subFunc )#self.subFunc
@@ -245,9 +247,12 @@ class INTERNAL_DEF_STATEMENT:
                     if self.error is None:    
                         if self.active_tab is True:
 
-                            self.get_block, self.value, self.error = def_end.INTERNAL_BLOCKS( self.string,
-                                            self.normal_string, self.data_base, self.line ).BLOCKS( k + 1, class_name, class_key,
-                                                                                                    self.data_base[ 'current_func' ], loop = loop )
+                            self.get_block, self.value, self.error = ID.INTERNAL_BLOCKS( string=self.string,
+                                        normal_string=self.normal_string, data_base=self.data_base, 
+                                        line=self.if_line ).BLOCKS( tabulation=k+ 1,
+                                        function=_type_, interpreter = False, class_name= class_name, class_key=class_key,
+                                        func_name=self.data_base[ 'current_func' ], loop = True)
+                                        
                             if self.error is None:
                                 if class_key is False: pass 
                                 else: 
@@ -276,7 +281,7 @@ class INTERNAL_DEF_STATEMENT:
                                             
                                             else: break
                                         else: 
-                                            self.error = if_inter.ERRORS( self.line ).ERROR4()
+                                            self.error = Ie.ERRORS( self.line ).ERROR4()
                                             break
                                     elif self.get_block == 'empty'  :
                                         if self.space <= 2:
@@ -312,12 +317,11 @@ class INTERNAL_DEF_STATEMENT:
                                     else:
                                         self.error = functions.ERRORS( self.line ).ERROR10()
                                         break
-     
                                 else:break
                             else: break
                         else:
-                            self.get_block, self.value, self.error = end_for_else.EXTERNAL_BLOCKS(self.string,
-                                            self.normal_string, self.data_base, self.line).BLOCKS( k )
+                            self.get_block, self.value, self.error = externalRest.EXTERNAL_BLOCKS(normal_string=self.normal_string, 
+                                                                data_base=self.data_base, line=self.line).BLOCKS(tabulation=self.tabulation)
 
                             if self.error is None:
                                 if self.get_block   == 'end:'   :
@@ -330,7 +334,6 @@ class INTERNAL_DEF_STATEMENT:
                                     else:
                                         self.error = functions.ERRORS( self.line ).ERROR17( self.history[ -1 ] )
                                         break
-
                                 elif self.get_block == 'empty'  :
                                     if self.space <= 2:
                                         self.space += 1
@@ -338,7 +341,6 @@ class INTERNAL_DEF_STATEMENT:
                                     else:
                                         self.error = functions.ERRORS( self.line ).ERROR10()
                                         break
-
                                 else:
                                     self.error = functions.ERRORS( self.line ).ERROR10()
                                     break
@@ -346,7 +348,7 @@ class INTERNAL_DEF_STATEMENT:
                     else: break
                 else: pass
             else:
-                self.error = if_inter.ERRORS( self.line ).ERROR4()
+                self.error = Ie.ERRORS( self.line ).ERROR4()
                 break
 
         EXTERNAL_DEF_STATEMENT( self.master, self.data_base, self.line ).UPDATE_FUNCTION( self.def_starage, {} )

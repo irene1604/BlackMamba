@@ -1,6 +1,5 @@
 import cython
 from script                                             import control_string
-from script.PARXER.PARXER_FUNCTIONS._FOR_               import end_for_else
 from script.PARXER.PARXER_FUNCTIONS._UNLESS_            import unless_statement
 from script.PARXER.PARXER_FUNCTIONS._SWITCH_            import switch_statement
 from script.PARXER.PARXER_FUNCTIONS._BEGIN_COMMENT_     import comment
@@ -11,6 +10,7 @@ from script.PARXER.PARXER_FUNCTIONS._IF_                import IfError
 from statement                                          import InternalStatement as IS
 from statement                                          import externalIF as eIF
 from updatingDataBase                                   import updating
+from script.PARXER.PARXER_FUNCTIONS.WHILE               import while_statement
 try:  from CythonModules.Linux                          import loop_for
 except ImportError: from CythonModules.Windows          import loop_for
 
@@ -202,7 +202,7 @@ class EXTERNAL_IF_LOOP_STATEMENT:
                                         else: pass
                                 elif self.get_block == 'for:'    :
                                     self.next_line  = j + 1
-                                    self.before     = end_for_else.CHECK_VALUES(self.data_base).BEFORE()
+                                    self.before     = updating.UPDATE( data_base=self.data_base ).BEFORE()
                                     self.store_value.append( self.normal_string )
                                     self.history.append( 'for' )
                                     self.space = 0
@@ -259,6 +259,32 @@ class EXTERNAL_IF_LOOP_STATEMENT:
                                             if self.error is None: pass
                                             else: break
                                         else: pass
+                                elif self.get_block == 'while:'  :
+                                    self.next_line  = j + 1
+                                    self.store_value.append(self.normal_string)
+                                    self.history.append('unless')
+                                    self.space      = 0
+
+                                    if self.data_base['pass'] is None:  pass
+                                    else: self.keyPass = True
+
+                                    if self.history[ -1 ] in [ 'elif', 'else' ]:
+                                        if self.bool_value is True:
+                                            self.error = while_statement.INTERNAL_WHILE_LOOP_STATEMENT(self.master, self.data_base,
+                                                     self.line).WHILE_STATEMENT(  self.value, self.tabulation + 1, self.loop_list[j + 1],
+                                                main_string=self.normal_string[ self.tabulation : ], _type_=_type_, keyPass=self.keyPass)
+
+                                            if self.error is None: self.keyPass    = False
+                                            else: break
+                                        else: pass
+                                    else:
+                                        if self.bool_value is True:
+                                            self.error = while_statement.EXTERNAL_WHILE_LOOP_STATEMENT(self.master, self.data_base,
+                                                    self.line).WHILE_STATEMENT(  self.value, self.tabulation + 1, self.loop_list[j + 1],
+                                                main_string=self.normal_string[self.tabulation:], _type_=_type_,  keyPass=self.keyPass)
+                                            if self.error is None: self.keyPass    = False
+                                            else: break
+                                        else: pass
                                 elif self.get_block == 'empty'   :
                                     if self.space <= self.max_emtyLine: self.space += 1
                                     else:
@@ -280,7 +306,7 @@ class EXTERNAL_IF_LOOP_STATEMENT:
                             self.get_block, self.value, self.error = eIF.EXTERNAL_BLOCKS(string=self.string,
                                             normal_string=self.normal_string, data_base=self.data_base,  line=self.line).BLOCKS(
                                             tabulation=self.tabulation, function=_type_, interpreter=True)
-
+                            
                             if self.error is None:
                                 if   self.get_block == 'end:'  :
                                     if self.store_value:
@@ -555,7 +581,7 @@ class INTERNAL_IF_LOOP_STATEMENT:
                                         else: pass
                                 elif self.get_block == 'for:'   :
                                     self.next_line  = j + 1
-                                    self.before     = end_for_else.CHECK_VALUES(self.data_base).BEFORE()
+                                    self.before     = updating.UPDATE( data_base=self.data_base ).BEFORE()
                                     self.store_value.append( self.normal_string )
                                     self.history.append( 'for' )
                                     self.space = 0
@@ -612,6 +638,32 @@ class INTERNAL_IF_LOOP_STATEMENT:
                                             if self.error is None: pass
                                             else: break
                                         else: pass
+                                elif self.get_block == 'while:'  :
+                                    self.next_line  = j + 1
+                                    self.store_value.append(self.normal_string)
+                                    self.history.append('unless')
+                                    self.space      = 0
+
+                                    if self.data_base['pass'] is None:  pass
+                                    else: self.keyPass = True
+
+                                    if self.history[ -1 ] in [ 'elif', 'else' ]:
+                                        if self.bool_value is True:
+                                            self.error = while_statement.EXTERNAL_WHILE_LOOP_STATEMENT(self.master, self.data_base,
+                                                     self.line).WHILE_STATEMENT(  self.value, self.tabulation + 1, self.loop_list[j + 1],
+                                                main_string=self.normal_string[ self.tabulation : ], _type_=_type_, keyPass=self.keyPass)
+
+                                            if self.error is None: self.keyPass    = False
+                                            else: break
+                                        else: pass
+                                    else:
+                                        if self.bool_value is True:
+                                            self.error = while_statement.EXTERNAL_WHILE_LOOP_STATEMENT(self.master, self.data_base,
+                                                    self.line).WHILE_STATEMENT(  self.value, self.tabulation + 1, self.loop_list[j + 1],
+                                                main_string=self.normal_string[self.tabulation:], _type_=_type_,  keyPass=self.keyPass)
+                                            if self.error is None: self.keyPass    = False
+                                            else: break
+                                        else: pass
                                 elif self.get_block == 'empty'  :
                                     if self.space <= self.max_emtyLine:  self.space += 1
                                     else:   
@@ -633,14 +685,13 @@ class INTERNAL_IF_LOOP_STATEMENT:
                             self.get_block, self.value, self.error = eIF.EXTERNAL_BLOCKS(string=self.string,
                                                         normal_string=self.normal_string, data_base=self.data_base, line=self.line).BLOCKS(
                                                         tabulation=self.tabulation,  function=_type_, interpreter=True)
-
+                            
                             if self.error is None:
                                 if self.get_block   == 'end:' :
                                     if self.store_value:
                                         del self.store_value[ : ]
                                         del self.history[ : ]
                                         del self.boolean_store[ : ]
-                                        
                                         if self.tabulation == 1:  self.data_base['pass'] = None 
                                         else: pass
 
@@ -657,7 +708,7 @@ class INTERNAL_IF_LOOP_STATEMENT:
                                             self.bool_key           = None
 
                                             for _bool_ in self.boolean_store:
-                                                if _bool_ == True:
+                                                if _bool_ is True:
                                                     self.bool_key = True
                                                     break
                                                 else:   self.bool_key = False

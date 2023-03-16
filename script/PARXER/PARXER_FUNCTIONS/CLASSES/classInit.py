@@ -1,4 +1,3 @@
-from imp import load_dynamic
 from script.LEXER.FUNCTION                          import main
 from script.PARXER.PARXER_FUNCTIONS.FUNCTIONS       import functions as func
 from src.classes                                    import error as er
@@ -93,7 +92,7 @@ class CLASS_TREATMENT:
                                     
                     self.function_names     = self.main_body[ 'function_names' ]
                     self.inheritanceClass   = self.main_body[ 'class_inheritance' ]
-                                
+                    
                     if self.main_body[ 'init_function' ] is None: 
                         
                         self._variables_        = None
@@ -147,6 +146,7 @@ class CLASS_TREATMENT:
                                                                     self.line).INIT_FUNCTION( self.normal_expr, self._return_ )
                                                     if self.error is None: 
                                                         self.new_data_base           = self._new_data_base_[ 'data_base' ]
+                                                        self._types_                 = self._new_data_base_[ 'type' ]
                                                         
                                                         if self.key is True:
                                                             if self._variables_:
@@ -165,7 +165,7 @@ class CLASS_TREATMENT:
                                                         
                                                         self.final_values, self.value_from_db, self.initialize_values, self.error = run_func.RUN_FUNCTION( self.DataBase, self.line,
                                                                 self.new_data_base, self._new_data_base_).RUN( self.all_data_analyses, self.name ,
-                                                                                                        tabulation = tabulation )
+                                                                                                        tabulation = tabulation, _type_ = self._types_ )
                                                     else: pass 
                                                 else: pass 
                                             else: pass
@@ -240,7 +240,7 @@ class CLASS_TREATMENT:
                                         
                                     self._, self.value, self.variables, self.error = run_func.RUN_FUNCTION( self.DataBase, self.line,
                                                                     self.new_data_base1, self._new_data_base_).RUN(self.all_data_analyses_init, 
-                                                                                    'initialize', tabulation = tabulation)
+                                                                                    'initialize', tabulation = tabulation, _type_ = None )
                                     
                                     if self.error is None:
                                         if self.expr != self.name: 
@@ -287,6 +287,7 @@ class CLASS_TREATMENT:
                                                                 
                                                                 if self.error is None:
                                                                     self.new_data_base           = self._new_data_base_[ 'data_base' ]
+                                                                    self._types_                 = self._new_data_base_[ 'type' ]
                                                                     self.vars                    = self.variables[ 'vars' ]
                                                                     self.values                  = self.variables[ 'values' ]
                                                                     
@@ -319,7 +320,7 @@ class CLASS_TREATMENT:
                                                                     self.all_data_analyses       = self.all_data_analyses[ self.name ][ 'history_of_data' ]
                                                                     self.final_values, self.value_from_db, self.initialize_values, self.error = run_func.RUN_FUNCTION( self.DataBase, self.line,
                                                                                 self.new_data_base, self._new_data_base_).RUN( self.all_data_analyses, self.name,
-                                                                                                                              tabulation = tabulation)
+                                                                                                                              tabulation = tabulation, _type_ = self._types_ )
                                                                     
                                                                 else: pass 
                                                             else: pass

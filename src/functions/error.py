@@ -170,3 +170,23 @@ class ERRORS:
         error = '{}cannot be {}a function. {}line: {}{}'.format(self.white, self.yellow, self.white, self.yellow,self.line)
         self.error = fe.FileErrors('SyntaxError').Errors() + '{}The subfunction {}{} '.format(self.white,  self.red, string) + error
         return self.error + self.reset
+    
+    def ERROR24( self, string1, string2 ):
+        error = '{}instead {} {}type. {}line: {}{}'.format(self.white, string2, self.white, self.white, self.yellow,self.line)
+        self.error = fe.FileErrors('TypeError').Errors() + '{}returning type error. got {} '.format(self.white,  string1) + error
+        return self.error + self.reset
+    
+    def ERROR25( self, name: str  ):
+        error = '{}cannot return any values. {}line: {}{}'.format(self.yellow, self.white, self.yellow,self.line)
+        self.error = fe.FileErrors('ValueError').Errors() + '{}{} '.format(self.cyan,  name) + error
+        return self.error + self.reset
+    
+    def ERROR26( self ):
+        error = '{}function is used you cannot assigned any value to a variable. {}line: {}{}'.format(self.white, self.white, self.yellow,self.line)
+        self.error = fe.FileErrors('AttributeError').Errors() + '{}anonymous '.format(self.red) + error
+        return self.error + self.reset
+    
+    def ERROR27( self, name ):
+        error = '{}function {}{} {}cannot be empty. {}line: {}{}'.format(self.white, self.green, name, self.white, self.white, self.yellow,self.line)
+        self.error = fe.FileErrors('AttributeError').Errors() + '{}anonymous '.format(self.red) + error
+        return self.error + self.reset
